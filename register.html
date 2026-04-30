@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>استمارة تسجيل طالب جديد - مدرسة جيل الإبداع</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+--school-blue: #1a3a5a;
+--light-bg: #f4f7f9;
+}
+
+body {
+font-family: 'Tajawal', sans-serif;
+background-color: #d1d1d1;
+/* يمكنك تغيير الرابط أدناه لوضع صورة خلفية للموقع كاملاً */
+background-image: url('background-image.jpg');
+background-size: cover;
+background-attachment: fixed;
+display: flex;
+justify-content: center;
+padding: 20px;
+margin: 0;
+}
+
+.paper-container {
+width: 100%;
+max-width: 800px;
+background: white;
+padding: 40px;
+box-shadow: 0 0 20px rgba(0,0,0,0.2);
+border: 2px solid var(--school-blue);
+position: relative;
+}
+
+/* ترويسة الاستمارة */
+.header-box {
+text-align: center;
+border-bottom: 2px solid var(--school-blue);
+margin-bottom: 30px;
+padding-bottom: 10px;
+}
+
+.header-box h1 {
+color: var(--school-blue);
+font-size: 24pt;
+margin: 0;
+font-weight: 900;
+}
+
+.header-box p {
+font-size: 14pt;
+margin: 5px 0;
+color: #333;
+}
+
+/* العناوين الجانبية (أولاً، ثانياً...) */
+.section-title {
+background-color: #eef2f6;
+color: var(--school-blue);
+padding: 8px 15px;
+font-weight: bold;
+border-right: 5px solid var(--school-blue);
+margin: 25px 0 15px 0;
+font-size: 1.1rem;
+}
+
+.grid-container {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 15px;
+}
+
+.form-group {
+display: flex;
+align-items: center;
+margin-bottom: 10px;
+}
+
+.form-group label {
+white-space: nowrap;
+margin-left: 10px;
+font-weight: bold;
+color: #444;
+min-width: 120px;
+}
+
+input[type="text"], input[type="number"], input[type="tel"], select, textarea {
+width: 100%;
+border: none;
+border-bottom: 1px dotted #000;
+padding: 5px;
+font-family: 'Tajawal', sans-serif;
+font-size: 1rem;
+background: transparent;
+outline: none;
+}
+
+input:focus { border-bottom: 2px solid var(--school-blue); }
+
+.notice-box {
+border: 1px solid #000;
+padding: 15px;
+margin-top: 20px;
+font-size: 0.9rem;
+line-height: 1.6;
+text-align: justify;
+}
+
+.footer-signatures {
+margin-top: 40px;
+display: flex;
+justify-content: space-between;
+text-align: center;
+font-weight: bold;
+font-size: 0.9rem;
+}
+
+.submit-area {
+text-align: center;
+margin-top: 50px;
+}
+
+.btn-send {
+background-color: var(--school-blue);
+color: white;
+padding: 15px 50px;
+border: none;
+border-radius: 5px;
+font-size: 1.2rem;
+font-weight: bold;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.btn-send:hover { background-color: #2c3e50; }
+
+@media (max-width: 600px) {
+.grid-container { grid-template-columns: 1fr; }
+.paper-container { padding: 15px; }
+}
+</style>
+</head>
+<body>
+
+<div class="paper-container">
+<div class="header-box">
+<h1>مدارس جيل الإبداع النموذجية الخاصة</h1>
+<p>استمارة تسجيل وتقييم طالب جديد</p>
+</div>
+
+<form action="https://formspree.io/f/alibdaajil@gmail.com" method="POST">
+<div class="section-title">أولاً: البيانات الشخصية</div>
+<div class="form-group">
+<label>اسم الطالب رباعي:</label>
+<input type="text" name="اسم الطالب" required>
+</div>
+<div class="grid-container">
+<div class="form-group">
+<label>المرحلة:</label>
+<input type="text" name="المرحلة">
+</div>
+<div class="form-group">
+<label>عمر الطالب:</label>
+<input type="number" name="العمر">
+</div>
+<div class="form-group">
+<label>هاتف الترحيل:</label>
+<input type="tel" name="هاتف الترحيل">
+</div>
+<div class="form-group">
+<label>الصف:</label>
+<input type="text" name="الصف">
+</div>
+</div>
+<div class="form-group">
+<label>هاتف ولي الأمر:</label>
+<input type="tel" name="هاتف ولي الأمر" required>
+</div>
+
+<div class="section-title">ثانياً: السيرة الأكاديمية (العام الماضي)</div>
+<div class="form-group">
+<label>المدرسة السابقة:</label>
+<input type="text" name="المدرسة السابقة">
+</div>
+<div class="grid-container">
+<div class="form-group">
+<label>النسبة المئوية:</label>
+<input type="text" name="النسبة">
+</div>
+<div class="form-group">
+<label>النتيجة (ناجح/راسب):</label>
+<input type="text" name="النتيجة">
+</div>
+</div>
+<div class="form-group">
+<label>نقاط الضعف الأكاديمية:</label>
+<input type="text" name="نقاط الضعف">
+</div>
+
+<div class="section-title">ثالثاً: الحالة الصحية والنفسية</div>
+<div class="grid-container">
+<div class="form-group">
+<label>الحالة النفسية:</label>
+<input type="text" name="الحالة النفسية">
+</div>
+<div class="form-group">
+<label>الحالة الصحية:</label>
+<input type="text" name="الحالة الصحية">
+</div>
+</div>
+
+<div class="section-title">رابعاً: بيانات ولي الأمر التفصيلية</div>
+<div class="form-group">
+<label>اسم ولي الأمر:</label>
+<input type="text" name="اسم ولي الأمر" required>
+</div>
+<div class="form-group">
+<label>عنوان السكن (بالضبط):</label>
+<input type="text" name="العنوان">
+</div>
+<div class="grid-container">
+<div class="form-group">
+<label>رقم الهاتف الاحتياطي:</label>
+<input type="tel" name="هاتف احتياطي">
+</div>
+<div class="form-group">
+<label>رقم الهاتف الأول:</label>
+<input type="tel" name="هاتف أساسي">
+</div>
+<div class="form-group">
+<label>جهة العمل:</label>
+<input type="text" name="العمل">
+</div>
+<div class="form-group">
+<label>رقم الهوية:</label>
+<input type="text" name="الهوية">
+</div>
+</div>
+
+<div class="section-title">سادساً: تعهد سداد الرسوم الدراسية</div>
+<div class="notice-box">
+أنا ولي أمر الطالب المذكور أعلاه، أتعهد بموجب هذه الاستمارة بالالتزام الكامل بسداد كافة الرسوم الدراسية المقررة والأقساط في مواعيدها المحددة دون تأخير، كما أقر بالالتزام بتوجيهات الإدارة ومرشدة الصف والالتزام بالزي المدرسي الموحد.
+</div>
+
+<div class="submit-area">
+<p style="margin-bottom: 10px; font-weight: bold;">بضغطك على "إرسال الطلب" يعتبر ذلك بمثابة توقيع إلكتروني وإقرار بالبيانات.</p>
+<button type="submit" class="btn-send">إرسال الطلب الآن</button>
+</div>
+</form>
+
+<div class="footer-signatures" style="margin-top: 30px; color: #777;">
+<span>التميز في التربية.. الإبداع في التعليم</span>
+</div>
+</div>
+
+</body>
+</html>
+

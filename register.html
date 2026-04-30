@@ -8,14 +8,13 @@
 <style>
 :root {
 --school-blue: #1a3a5a;
---light-bg: #f4f7f9;
+--primary-bg: #2c3e50;
 }
 
 body {
 font-family: 'Tajawal', sans-serif;
 background-color: #d1d1d1;
-/* يمكنك تغيير الرابط أدناه لوضع صورة خلفية للموقع كاملاً */
-background-image: url('background-image.jpg');
+background-image: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)), url('background-image.jpg');
 background-size: cover;
 background-attachment: fixed;
 display: flex;
@@ -34,115 +33,71 @@ border: 2px solid var(--school-blue);
 position: relative;
 }
 
-/* ترويسة الاستمارة */
-.header-box {
-text-align: center;
-border-bottom: 2px solid var(--school-blue);
-margin-bottom: 30px;
-padding-bottom: 10px;
+/* نافذة الإشعارات المنبثقة */
+.fees-overlay {
+position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background: rgba(0,0,0,0.8); z-index: 2000;
+display: flex; justify-content: center; align-items: center;
+visibility: hidden; opacity: 0; transition: 0.4s;
+}
+.fees-overlay.show { visibility: visible; opacity: 1; }
+.fees-box {
+width: 90%; max-width: 500px; background: white; border-radius: 20px; padding: 25px;
+text-align: center; border: 3px solid var(--school-blue);
+}
+.fees-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+.fees-table td, .fees-table th { border: 1px solid #ddd; padding: 10px; font-size: 0.9rem; }
+.fees-table th { background: #f8f9fa; color: var(--school-blue); }
+.close-fees {
+background: var(--school-blue); color: white; border: none;
+padding: 10px 30px; border-radius: 10px; cursor: pointer; font-weight: bold;
 }
 
-.header-box h1 {
-color: var(--school-blue);
-font-size: 24pt;
-margin: 0;
-font-weight: 900;
-}
+.header-box { text-align: center; border-bottom: 2px solid var(--school-blue); margin-bottom: 30px; padding-bottom: 10px; }
+.header-box h1 { color: var(--school-blue); font-size: 24pt; margin: 0; font-weight: 900; }
 
-.header-box p {
-font-size: 14pt;
-margin: 5px 0;
-color: #333;
-}
-
-/* العناوين الجانبية (أولاً، ثانياً...) */
 .section-title {
-background-color: #eef2f6;
-color: var(--school-blue);
-padding: 8px 15px;
-font-weight: bold;
-border-right: 5px solid var(--school-blue);
-margin: 25px 0 15px 0;
-font-size: 1.1rem;
+background-color: #eef2f6; color: var(--school-blue); padding: 8px 15px;
+font-weight: bold; border-right: 5px solid var(--school-blue); margin: 25px 0 15px 0;
 }
 
-.grid-container {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 15px;
+.form-group { display: flex; align-items: center; margin-bottom: 15px; }
+.form-group label { min-width: 130px; font-weight: bold; color: #444; }
+
+input, select {
+width: 100%; border: none; border-bottom: 1px dotted #000; padding: 8px;
+font-family: 'Tajawal', sans-serif; font-size: 1rem; background: transparent; outline: none;
 }
+select { cursor: pointer; color: #2c3e50; font-weight: bold; }
 
-.form-group {
-display: flex;
-align-items: center;
-margin-bottom: 10px;
-}
-
-.form-group label {
-white-space: nowrap;
-margin-left: 10px;
-font-weight: bold;
-color: #444;
-min-width: 120px;
-}
-
-input[type="text"], input[type="number"], input[type="tel"], select, textarea {
-width: 100%;
-border: none;
-border-bottom: 1px dotted #000;
-padding: 5px;
-font-family: 'Tajawal', sans-serif;
-font-size: 1rem;
-background: transparent;
-outline: none;
-}
-
-input:focus { border-bottom: 2px solid var(--school-blue); }
-
-.notice-box {
-border: 1px solid #000;
-padding: 15px;
-margin-top: 20px;
-font-size: 0.9rem;
-line-height: 1.6;
-text-align: justify;
-}
-
-.footer-signatures {
-margin-top: 40px;
-display: flex;
-justify-content: space-between;
-text-align: center;
-font-weight: bold;
-font-size: 0.9rem;
-}
-
-.submit-area {
-text-align: center;
-margin-top: 50px;
-}
-
+.submit-area { text-align: center; margin-top: 40px; }
 .btn-send {
-background-color: var(--school-blue);
-color: white;
-padding: 15px 50px;
-border: none;
-border-radius: 5px;
-font-size: 1.2rem;
-font-weight: bold;
-cursor: pointer;
-transition: 0.3s;
+background-color: var(--school-blue); color: white; padding: 15px 60px;
+border: none; border-radius: 8px; font-size: 1.2rem; font-weight: bold; cursor: pointer;
 }
 
-.btn-send:hover { background-color: #2c3e50; }
-
-@media (max-width: 600px) {
-.grid-container { grid-template-columns: 1fr; }
-.paper-container { padding: 15px; }
-}
+@media (max-width: 600px) { .form-group { flex-direction: column; align-items: flex-start; } }
 </style>
 </head>
 <body>
+
+<div class="fees-overlay" id="feesModal">
+<div class="fees-box">
+<h3 style="color: var(--school-blue);">⚠️ تنبيه: الرسوم الدراسية</h3>
+<table class="fees-table">
+<tr><th>المرحلة</th><th>الرسوم (ريال)</th></tr>
+<tr><td>رياض الأطفال</td><td>1500</td></tr>
+<tr><td>الابتدائية (سنوات النقل)</td><td>2000</td></tr>
+<tr><td>المتوسطة (سنوات النقل)</td><td>2000</td></tr>
+<tr style="background: #fff3cd; font-weight: bold;">
+<td>ممتحني الشهادة (ابتدائي/متوسط)</td>
+<td>2500*</td>
+</tr>
+</table>
+<p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">* تشمل المعسكرات الصيفية والتقوية والتهيئة للامتحانات.</p>
+<button class="close-fees" onclick="closeModal()">موافق، استمرار للتسجيل</button>
+</div>
+</div>
 
 <div class="paper-container">
 <div class="header-box">
@@ -156,104 +111,71 @@ transition: 0.3s;
 <label>اسم الطالب رباعي:</label>
 <input type="text" name="اسم الطالب" required>
 </div>
-<div class="grid-container">
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
 <div class="form-group">
 <label>المرحلة:</label>
-<input type="text" name="المرحلة">
+<select name="المرحلة" required>
+<option value="" disabled selected>اختر المرحلة...</option>
+<option value="رياض أطفال">رياض أطفال</option>
+<option value="ابتدائي">ابتدائي</option>
+<option value="متوسط">متوسط</option>
+</select>
 </div>
+<div class="form-group">
+<label>الصف الدراسي:</label>
+<input type="text" name="الصف" placeholder="مثال: الثالث">
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
 <div class="form-group">
 <label>عمر الطالب:</label>
 <input type="number" name="العمر">
 </div>
 <div class="form-group">
-<label>هاتف الترحيل:</label>
-<input type="tel" name="هاتف الترحيل">
-</div>
-<div class="form-group">
-<label>الصف:</label>
-<input type="text" name="الصف">
-</div>
-</div>
-<div class="form-group">
 <label>هاتف ولي الأمر:</label>
-<input type="tel" name="هاتف ولي الأمر" required>
-</div>
-
-<div class="section-title">ثانياً: السيرة الأكاديمية (العام الماضي)</div>
-<div class="form-group">
-<label>المدرسة السابقة:</label>
-<input type="text" name="المدرسة السابقة">
-</div>
-<div class="grid-container">
-<div class="form-group">
-<label>النسبة المئوية:</label>
-<input type="text" name="النسبة">
-</div>
-<div class="form-group">
-<label>النتيجة (ناجح/راسب):</label>
-<input type="text" name="النتيجة">
-</div>
-</div>
-<div class="form-group">
-<label>نقاط الضعف الأكاديمية:</label>
-<input type="text" name="نقاط الضعف">
-</div>
-
-<div class="section-title">ثالثاً: الحالة الصحية والنفسية</div>
-<div class="grid-container">
-<div class="form-group">
-<label>الحالة النفسية:</label>
-<input type="text" name="الحالة النفسية">
-</div>
-<div class="form-group">
-<label>الحالة الصحية:</label>
-<input type="text" name="الحالة الصحية">
+<input type="tel" name="جوال ولي الأمر" required>
 </div>
 </div>
 
-<div class="section-title">رابعاً: بيانات ولي الأمر التفصيلية</div>
+<div class="section-title">ثانياً: بيانات ولي الأمر</div>
 <div class="form-group">
 <label>اسم ولي الأمر:</label>
-<input type="text" name="اسم ولي الأمر" required>
-</div>
-<div class="form-group">
-<label>عنوان السكن (بالضبط):</label>
-<input type="text" name="العنوان">
-</div>
-<div class="grid-container">
-<div class="form-group">
-<label>رقم الهاتف الاحتياطي:</label>
-<input type="tel" name="هاتف احتياطي">
-</div>
-<div class="form-group">
-<label>رقم الهاتف الأول:</label>
-<input type="tel" name="هاتف أساسي">
-</div>
-<div class="form-group">
-<label>جهة العمل:</label>
-<input type="text" name="العمل">
+<input type="text" name="ولي الأمر" required>
 </div>
 <div class="form-group">
 <label>رقم الهوية:</label>
 <input type="text" name="الهوية">
 </div>
+<div class="form-group">
+<label>عنوان السكن:</label>
+<input type="text" name="العنوان">
 </div>
 
-<div class="section-title">سادساً: تعهد سداد الرسوم الدراسية</div>
-<div class="notice-box">
-أنا ولي أمر الطالب المذكور أعلاه، أتعهد بموجب هذه الاستمارة بالالتزام الكامل بسداد كافة الرسوم الدراسية المقررة والأقساط في مواعيدها المحددة دون تأخير، كما أقر بالالتزام بتوجيهات الإدارة ومرشدة الصف والالتزام بالزي المدرسي الموحد.
+<div class="section-title">إقرار وتعهد</div>
+<div style="border: 1px solid #ccc; padding: 15px; font-size: 0.9rem; line-height: 1.6; background: #fafafa;">
+أقر أنا ولي أمر الطالب بصحة البيانات أعلاه والتزامي بسداد الرسوم الموضحة في لائحة المدرسة (1500 للرياض / 2000 للنقل / 2500 للشهادات) شاملة الخدمات الأكاديمية والتهيئة.
 </div>
 
 <div class="submit-area">
-<p style="margin-bottom: 10px; font-weight: bold;">بضغطك على "إرسال الطلب" يعتبر ذلك بمثابة توقيع إلكتروني وإقرار بالبيانات.</p>
-<button type="submit" class="btn-send">إرسال الطلب الآن</button>
+<button type="submit" class="btn-send">إرسال طلب التسجيل</button>
 </div>
 </form>
+</div>
 
-<div class="footer-signatures" style="margin-top: 30px; color: #777;">
-<span>التميز في التربية.. الإبداع في التعليم</span>
-</div>
-</div>
+<script>
+// إظهار النافذة عند تحميل الصفحة
+window.onload = function() {
+setTimeout(() => {
+document.getElementById('feesModal').classList.add('show');
+}, 500);
+}
+
+function closeModal() {
+document.getElementById('feesModal').classList.remove('show');
+}
+</script>
 
 </body>
 </html>

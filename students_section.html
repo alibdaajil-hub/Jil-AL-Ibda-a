@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إدارة الطلاب - المالك</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+--primary: #2c3e50;
+--secondary: #c0392b; /* لون خاص بقسم الإدارة */
+--accent: #f39c12;
+--bg: #f4f7f6;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+
+body { background-color: #d1d1d1; display: flex; justify-content: center; min-height: 100vh; padding: 20px 0; }
+
+.app-container {
+width: 100%; max-width: 450px; background: white; border-radius: 30px;
+box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column;
+}
+
+header { background: var(--secondary); color: white; padding: 25px; text-align: center; }
+
+.back-btn { float: right; color: white; text-decoration: none; font-size: 0.8rem; background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 5px; }
+
+.admin-tabs { display: flex; background: #eee; padding: 5px; gap: 5px; }
+.tab-btn { flex: 1; padding: 10px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.8rem; transition: 0.3s; }
+.tab-btn.active { background: var(--secondary); color: white; }
+
+.form-section { padding: 20px; flex-grow: 1; }
+
+.input-group { margin-bottom: 15px; }
+.input-group label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--primary); font-size: 0.9rem; }
+.input-group input, .input-group select {
+width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-size: 1rem; outline: none;
+}
+
+.fee-badge {
+background: #fff3cd; color: #856404; padding: 8px; border-radius: 8px;
+font-size: 0.85rem; margin-top: 5px; border: 1px solid #ffeeba; display: none;
+}
+
+.btn-update {
+width: 100%; background: var(--primary); color: white; border: none; padding: 15px;
+border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px;
+}
+
+.status-msg { text-align: center; margin-top: 15px; font-size: 0.9rem; color: #27ae60; font-weight: bold; display: none; }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+<header>
+<a href="index.html" class="back-btn">خروج</a>
+<h2>لوحة تحكم المالك</h2>
+<p style="font-size: 0.8rem; opacity: 0.9;">تحديث بيانات الطلاب والرسوم</p>
+</header>
+
+<!-- تبويبات المراحل -->
+<div class="admin-tabs">
+<button class="tab-btn active" onclick="switchStage('kindergarten', this)">رياض أطفال</button>
+<button class="tab-btn" onclick="switchStage('primary', this)">ابتدائي</button>
+<button class="tab-btn" onclick="switchStage('middle', this)">متوسط</button>
+</div>
+
+<main class="form-section">
+<form id="updateForm">
+<div class="input-group">
+<label>رقم هوية الطالب (للبحث والتحديث)</label>
+<input type="number" id="studentID" placeholder="أدخل رقم الهوية المكون من 10 أرقام" required>
+</div>
+
+<div class="input-group">
+<label>اسم الطالب الرباعي</label>
+<input type="text" id="studentName" placeholder="سيظهر الاسم هنا عند البحث">
+</div>
+
+<div class="input-group">
+<label>الصف الدراسي</label>
+<select id="classSelect" onchange="checkFees()">
+<!-- الخيارات تتغير برمجياً حسب المرحلة -->
+</select>
+<div id="feeNotice" class="fee-badge">⚠️ رسوم هذا الصف (الشهادة): 2500 ريال</div>
+</div>
+
+<div class="input-group">
+<label>حالة الرسوم</label>
+<select id="paymentStatus">
+<option value="paid">مسدد بالكامل</option>
+<option value="partial">مسدد جزئياً</option>
+<option value="unpaid">غير مسدد</option>
+</select>
+</div>
+
+<div class="input-group">
+<label>ملاحظات إضافية (المستوى الدراسي)</label>
+<input type="text" id="notes" placeholder="مثال: ممتاز، يحتاج متابعة في الإنجليزي">
+</div>
+
+<button type="button" class="btn-update" onclick="submitUpdate()">تحديث بيانات الطالب</button>
+<p id="statusMsg" class="status-msg">✅ تم تحديث البيانات بنجاح!</p>
+</form>
+</main>
+</div>
+
+<script>
+const classes = {
+kindergarten: ["مستوى أول", "مستوى ثاني"],
+primary: ["الأول ابتدائي", "الثاني ابتدائي", "الثالث ابتدائي", "الرابع ابتدائي", "الخامس ابتدائي", "السادس ابتدائي (شهادة)"],
+middle: ["الأول متوسط", "الثاني متوسط", "الثالث متوسط (شهادة)"]
+};
+
+function switchStage(stage, btn) {
+// تحديث شكل الأزرار
+document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+btn.classList.add('active');
+
+// تحديث قائمة الصفوف
+const select = document.getElementById('classSelect');
+select.innerHTML = "";
+classes[stage].forEach(cls => {
+let option = document.createElement('option');
+option.value = cls;
+option.text = cls;
+select.add(option);
+});
+checkFees();
+}
+
+function checkFees() {
+const select = document.getElementById('classSelect');
+const notice = document.getElementById('feeNotice');
+if (select.value.includes("(شهادة)")) {
+notice.style.display = "block";
+} else {
+notice.style.display = "none";
+}
+}
+
+function submitUpdate() {
+// هنا يتم الربط مع قاعدة البيانات مستقبلاً
+const msg = document.getElementById('statusMsg');
+msg.style.display = "block";
+setTimeout(() => { msg.style.display = "none"; }, 3000);
+}
+
+// تشغيل المرحلة الأولى تلقائياً عند الفتح
+window.onload = () => {
+switchStage('kindergarten', document.querySelector('.tab-btn'));
+};
+</script>
+
+</body>
+</html>
+

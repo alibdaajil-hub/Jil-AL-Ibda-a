@@ -3,248 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>سياسة الخصوصية واللوائح - مدرسة جيل الإبداع</title>
+<title>تواصل بنا - مدرسة جيل الإبداع</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 :root {
 --primary-bg: #2c3e50;
---accent-color: #7f8c8d;
---text-main: #333;
---gold: #f39c12;
---emerald: #27ae60;
+--facebook-color: #1877f2;
+--tiktok-color: #000000;
+--whatsapp-color: #25d366;
 }
-
-* {
-box-sizing: border-box;
-margin: 0;
-padding: 0;
-font-family: 'Tajawal', sans-serif;
-}
-
-body {
-background-color: #d1d1d1;
-display: flex;
-justify-content: center;
-min-height: 100vh;
-padding: 20px 0;
-}
-
-.app-container {
-width: 100%;
-max-width: 450px;
-background-color: #ffffff;
-border-radius: 30px;
-overflow: hidden;
-box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-display: flex;
-flex-direction: column;
-position: relative;
-}
-
-header {
-background: var(--primary-bg);
-color: white;
-padding: 30px 20px;
-text-align: center;
-}
-
-.back-btn {
-float: right;
-color: white;
-text-decoration: none;
-font-size: 0.8rem;
-background: rgba(255,255,255,0.1);
-padding: 5px 12px;
-border-radius: 8px;
-}
-
-.content-section {
-padding: 25px;
-flex-grow: 1;
-}
-
-h2 {
-color: var(--primary-bg);
-font-size: 1.3rem;
-margin-bottom: 20px;
-border-bottom: 2px solid var(--gold);
-display: inline-block;
-padding-bottom: 5px;
-}
-
-.policy-item {
-margin-bottom: 20px;
-display: flex;
-align-items: flex-start;
-}
-
-.icon {
-font-size: 1.2rem;
-margin-left: 12px;
-margin-top: 3px;
-}
-
-.text-content h3 {
-font-size: 1rem;
-color: #2980b9;
-margin-bottom: 4px;
-}
-
-.text-content p {
-font-size: 0.9rem;
-color: #555;
-line-height: 1.5;
-}
-
-/* نافذة الحديث المنبثقة */
-.hadith-overlay {
-position: absolute;
-top: 0; left: 0; width: 100%; height: 100%;
-background: rgba(0,0,0,0.8);
-z-index: 2000;
-display: flex;
-justify-content: center;
-align-items: center;
-visibility: hidden;
-opacity: 0;
-transition: 0.4s;
-}
-.hadith-overlay.show { visibility: visible; opacity: 1; }
-
-.hadith-card {
-width: 85%;
-background: white;
-border-radius: 20px;
-padding: 25px;
-text-align: center;
-border-top: 8px solid var(--gold);
-}
-
-.hadith-text {
-font-size: 1.1rem;
-color: var(--primary-bg);
-line-height: 1.7;
-font-weight: 700;
-margin: 15px 0;
-}
-
-.hadith-btn {
-background: var(--gold);
-color: white;
-border: none;
-padding: 10px 25px;
-border-radius: 8px;
-font-weight: bold;
-cursor: pointer;
-}
-
-/* الخاتمة */
-.closing-quote {
-text-align: center;
-padding: 20px;
-background: #fdfcf0;
-margin: 10px 20px;
-border-radius: 15px;
-font-weight: 800;
-color: #444;
-font-size: 1rem;
-border: 1px dashed #ccc;
-}
-
-footer {
-padding: 20px;
-text-align: center;
-background: #f8f9fa;
-}
-
-.btn-agree {
-background: var(--primary-bg);
-color: white;
-text-decoration: none;
-padding: 12px 40px;
-border-radius: 12px;
-font-weight: bold;
-display: inline-block;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+body { background-color: #d1d1d1; display: flex; justify-content: center; min-height: 100vh; padding: 20px 0; }
+.app-container { width: 100%; max-width: 450px; background: #fff; border-radius: 30px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; flex-direction: column; }
+header { background: var(--primary-bg); color: white; padding: 30px 20px; text-align: center; }
+.back-btn { float: right; color: white; text-decoration: none; font-size: 0.8rem; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 8px; }
+.contact-section { padding: 25px; text-align: center; flex-grow: 1; }
+.social-link { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; margin-bottom: 15px; border-radius: 15px; text-decoration: none; color: white; font-weight: bold; }
+.fb { background: var(--facebook-color); }
+.tk { background: var(--tiktok-color); }
+.admin-contact { margin-top: 30px; padding: 25px 20px; background: #fdfcf0; border-radius: 20px; border: 1px solid #e0e0e0; }
+.whatsapp-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--whatsapp-color); color: white; padding: 14px 30px; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); }
 </style>
 </head>
 <body>
-
 <div class="app-container">
-<!-- نافذة الحديث الشريف -->
-<div class="hadith-overlay" id="hadithPopup">
-<div class="hadith-card">
-<span style="font-size: 2rem;">📖</span>
-<p class="hadith-text">
-عن عبادة بن الصامت رضي الله عنه أن رسول الله صلى الله عليه وسلم قال: <br>
-<span style="color: var(--emerald);">"ليسَ منَّا مَنْ لم يُجِلَّ كبيرَنا ، ويرحمْ صغيرَنا ! ويَعْرِفْ لعالِمِنا حقَّهُ"</span>
-</p>
-<button class="hadith-btn" onclick="closeHadith()">عليه أفضل الصلاة والسلام</button>
-</div>
-</div>
-
 <header>
 <a href="index.html" class="back-btn">رجوع</a>
-<h1 style="font-size: 1.4rem; margin-top: 10px;">اللوائح والسياسات</h1>
+<h1 style="font-size: 1.4rem; margin-top: 10px;">تواصل معنا</h1>
 </header>
-
-<main class="content-section">
-<div class="policy-item">
-<div class="icon">👔</div>
-<div class="text-content">
-<h3>الالتزام بالزي المدرسي</h3>
-<p>يعد الالتزام بالزي الرسمي مظهراً من مظاهر الانضباط، وهو إلزامي لجميع الطلاب لضمان بيئة تعليمية متساوية ولائقة.</p>
-</div>
-</div>
-
-<div class="policy-item">
-<div class="icon">👩‍🏫</div>
-<div class="text-content">
-<h3>احترام المعلم والبيئة</h3>
-<p>المعلم هو الركيزة الأساسية؛ لذا فإن احترامه وتقدير البيئة الدراسية واجب أخلاقي وقانوني يترتب عليه استمرار الطالب في المدرسة.</p>
-</div>
-</div>
-
-<div class="policy-item">
-<div class="icon">💰</div>
-<div class="text-content">
-<h3>المستحقات المالية</h3>
-<p>الالتزام بسداد الأقساط في مواعيدها المحددة يضمن استمرارية تقديم الخدمة التعليمية للطالب دون انقطاع.</p>
-</div>
-</div>
-
-<div class="policy-item">
-<div class="icon">📱</div>
-<div class="text-content">
-<h3>تواصل ولي الأمر</h3>
-<p>المتابعة الدورية بين الإدارة وولي الأمر ضرورة قصوى لمراقبة المستوى الأكاديمي وتطوير مهارات الطالب.</p>
-</div>
-</div>
-
-<!-- الخاتمة المطلوبة -->
-<div class="closing-quote">
-"وعلمو النشء علماً يستبين به سبل الحياة وقبل العلم اخلاقا"
+<main class="contact-section">
+<p style="margin-bottom: 20px; font-weight: bold; color: var(--primary-bg);">تابعونا على منصاتنا</p>
+<a href="https://www.facebook.com/share/1DyuoeytJ6/?mibextid=wwXIfr" target="_blank" class="social-link fb">
+<span>👥 صفحتنا على فيسبوك</span>
+<span>←</span>
+</a>
+<a href="https://www.tiktok.com/@ekramssm?_r=1&_t=ZS-95zWTkFFxHI" target="_blank" class="social-link tk">
+<span>🎬 تابعونا على تيك توك</span>
+<span>←</span>
+</a>
+<div class="admin-contact">
+<h3 style="color: #c0392b; margin-bottom: 15px;">قسم التسجيل والإدارة</h3>
+<a href="https://wa.me/966535726796" target="_blank" class="whatsapp-btn">
+<span>💬 مراسلة عبر واتساب</span>
+</a>
+<p style="margin-top: 15px; font-size: 0.85rem;">الرقم: 0535726796</p>
 </div>
 </main>
-
-<footer>
-<a href="index.html" class="btn-agree">موافق، والعودة للرئيسية</a>
-</footer>
 </div>
-
-<script>
-// إظهار الحديث عند فتح الصفحة
-window.onload = function() {
-setTimeout(() => {
-document.getElementById('hadithPopup').classList.add('show');
-}, 500);
-}
-
-function closeHadith() {
-document.getElementById('hadithPopup').classList.remove('show');
-}
-</script>
-
 </body>
 </html>
 

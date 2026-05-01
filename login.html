@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تسجيل دخول الإدارة - جيل الإبداع</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+--primary-bg: #2c3e50;
+--admin-red: #c0392b;
+}
+
+body {
+background: var(--primary-bg);
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;
+margin: 0;
+font-family: 'Tajawal', sans-serif;
+}
+
+.login-card {
+background: white;
+padding: 40px 30px;
+border-radius: 25px;
+width: 90%;
+max-width: 350px;
+box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+text-align: center;
+}
+
+.login-card h2 {
+color: var(--primary-bg);
+margin-bottom: 10px;
+font-weight: 900;
+}
+
+.login-card p {
+color: #777;
+font-size: 0.85rem;
+margin-bottom: 25px;
+}
+
+.input-group {
+margin-bottom: 15px;
+text-align: right;
+}
+
+label {
+display: block;
+font-size: 0.8rem;
+font-weight: bold;
+margin-bottom: 5px;
+color: #555;
+}
+
+input {
+width: 100%;
+padding: 12px;
+border: 2px solid #eee;
+border-radius: 12px;
+font-size: 1rem;
+outline: none;
+transition: 0.3s;
+box-sizing: border-box;
+}
+
+input:focus {
+border-color: var(--admin-red);
+}
+
+.login-btn {
+width: 100%;
+padding: 14px;
+background: var(--admin-red);
+color: white;
+border: none;
+border-radius: 12px;
+font-size: 1.1rem;
+font-weight: bold;
+cursor: pointer;
+margin-top: 10px;
+transition: 0.3s;
+}
+
+.login-btn:active {
+transform: scale(0.95);
+}
+
+#errorMessage {
+color: #c0392b;
+font-size: 0.85rem;
+margin-top: 15px;
+display: none;
+font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<div class="login-card">
+<h2>دخول المالك</h2>
+<p>يرجى إدخال بيانات الاعتماد للوصول للإدارة</p>
+
+<div class="input-group">
+<label>اسم المستخدم</label>
+<input type="text" id="username" placeholder="Username">
+</div>
+
+<div class="input-group">
+<label>كلمة المرور</label>
+<input type="password" id="password" placeholder="Password">
+</div>
+
+<button class="login-btn" onclick="validateLogin()">تسجيل الدخول</button>
+
+<p id="errorMessage">⚠️ بيانات الدخول غير صحيحة!</p>
+</div>
+
+<script>
+function validateLogin() {
+const u = document.getElementById('username').value;
+const p = document.getElementById('password').value;
+const error = document.getElementById('errorMessage');
+
+// البيانات الجديدة التي طلبتها
+if (u === "Mus3ab" && p === "Rajnarok") {
+// توجيهك لصفحة الطلاب (تأكد من تسمية ملف المالك بهذا الاسم)
+window.location.href = "students_section.html";
+} else {
+error.style.display = "block";
+// اهتزاز بسيط للتنبيه
+document.querySelector('.login-card').style.animation = "shake 0.2s ease-in-out 0s 2";
+}
+}
+</script>
+
+</body>
+</html>
+

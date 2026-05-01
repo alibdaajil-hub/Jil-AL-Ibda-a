@@ -3,191 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مدرسة جيل الإبداع - استعلام عن طالب</title>
+<title>استعلام عن طالب - جيل الإبداع</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-:root {
---primary-bg: #2c3e50;
---accent-color: #f39c12; /* اللون البرتقالي المعتمد للاستعلام */
---text-main: #333;
-}
+:root { --primary: #2c3e50; --search-gold: #f39c12; }
+* { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+body { background: #d1d1d1; display: flex; justify-content: center; padding: 20px 0; min-height: 100vh; }
+.app-container { width: 100%; max-width: 450px; background: white; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+header { background: var(--search-gold); color: white; padding: 30px 20px; text-align: center; }
+.back-btn { float: right; color: white; text-decoration: none; font-size: 0.8rem; background: rgba(0,0,0,0.1); padding: 5px 10px; border-radius: 5px; }
+.search-body { padding: 25px; flex-grow: 1; }
+.input-group { margin-bottom: 20px; }
+label { display: block; font-weight: bold; margin-bottom: 8px; color: var(--primary); }
+input { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 12px; font-size: 1.1rem; text-align: center; outline: none; }
+input:focus { border-color: var(--search-gold); }
+.btn-search { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
 
-* {
-box-sizing: border-box;
-margin: 0;
-padding: 0;
-font-family: 'Tajawal', sans-serif;
-}
+/* منطقة عرض النتيجة */
+.result-card { display: none; margin-top: 25px; padding: 20px; border-radius: 15px; background: #f9f9f9; border: 1px solid #eee; animation: fadeIn 0.5s; }
+.result-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+.result-item:last-child { border-bottom: none; }
+.label-text { color: #777; font-size: 0.9rem; }
+.value-text { font-weight: bold; color: var(--primary); }
+.status-paid { color: #27ae60; }
+.status-unpaid { color: #c0392b; }
 
-body {
-background-color: #d1d1d1;
-display: flex;
-justify-content: center;
-min-height: 100vh;
-}
-
-.app-container {
-width: 100%;
-max-width: 450px;
-background-color: #ffffff;
-display: flex;
-flex-direction: column;
-box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-position: relative;
-}
-
-header {
-background: var(--primary-bg);
-color: white;
-padding: 30px 20px;
-text-align: center;
-border-bottom-left-radius: 30px;
-border-bottom-right-radius: 30px;
-}
-
-.back-btn {
-position: absolute;
-top: 20px;
-right: 20px;
-color: white;
-text-decoration: none;
-font-size: 1.2rem;
-}
-
-.search-section {
-padding: 30px 20px;
-flex-grow: 1;
-}
-
-.input-group {
-margin-bottom: 20px;
-}
-
-.input-group label {
-display: block;
-margin-bottom: 8px;
-font-weight: bold;
-color: var(--primary-bg);
-}
-
-.input-group input {
-width: 100%;
-padding: 15px;
-border: 2px solid #eee;
-border-radius: 12px;
-outline: none;
-transition: 0.3s;
-text-align: center;
-font-size: 1.1rem;
-}
-
-.input-group input:focus {
-border-color: var(--accent-color);
-}
-
-.btn-search {
-width: 100%;
-padding: 15px;
-background-color: var(--accent-color);
-color: white;
-border: none;
-border-radius: 12px;
-font-size: 1.1rem;
-font-weight: bold;
-cursor: pointer;
-transition: 0.3s;
-}
-
-.btn-search:active {
-transform: scale(0.98);
-}
-
-/* منطقة عرض النتائج */
-#resultArea {
-margin-top: 25px;
-display: none; /* مخفي افتراضياً */
-padding: 20px;
-border-radius: 15px;
-background: #f9f9f9;
-border: 1px solid #ddd;
-}
-
-.result-item {
-display: flex;
-justify-content: space-between;
-margin-bottom: 10px;
-border-bottom: 1px dashed #ccc;
-padding-bottom: 5px;
-}
-
-.result-label { font-weight: bold; color: #7f8c8d; }
-.result-value { color: var(--primary-bg); font-weight: bold; }
-
-footer {
-padding: 15px;
-text-align: center;
-font-size: 0.8rem;
-color: #777;
-background: #f1f1f1;
-}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 
 <div class="app-container">
 <header>
-<a href="index.html" class="back-btn">🔙</a>
+<a href="index.html" class="back-btn">رجوع</a>
 <h2>استعلام عن طالب</h2>
-<p style="font-size: 0.8rem; margin-top: 5px; opacity: 0.9;">أدخل البيانات المطلوبة لعرض حالة الطالب</p>
+<p>أدخل رقم الهوية لمتابعة الحالة</p>
 </header>
 
-<main class="search-section">
+<main class="search-body">
 <div class="input-group">
-<label>رقم الهوية / السجل المدني</label>
-<input type="number" id="studentID" placeholder="مثال: 1234567890">
+<label>رقم هوية الطالب</label>
+<input type="number" id="searchID" placeholder="10 أرقام">
 </div>
+<button class="btn-search" onclick="performSearch()">بحث الآن</button>
 
-<button class="btn-search" onclick="performSearch()">بحث الآن 🔍</button>
-
-<!-- منطقة ظهور النتيجة -->
-<div id="resultArea">
-<h3 style="text-align:center; color: var(--accent-color); margin-bottom: 15px;">بيانات الطالب</h3>
-<div id="studentData">
-<!-- سيتم تعبئة البيانات هنا بواسطة JavaScript -->
+<!-- النتيجة (تظهر عند البحث) -->
+<div id="resultArea" class="result-card">
+<div style="text-align: center; margin-bottom: 15px;">
+<span style="font-size: 3rem;">🎓</span>
+</div>
+<div class="result-item">
+<span class="label-text">اسم الطالب:</span>
+<span class="value-text" id="resName">محمد أحمد علي</span>
+</div>
+<div class="result-item">
+<span class="label-text">الصف الدراسي:</span>
+<span class="value-text" id="resClass">السادس ابتدائي</span>
+</div>
+<div class="result-item">
+<span class="label-text">حالة الرسوم:</span>
+<span class="value-text status-paid" id="resFees">مسدد</span>
+</div>
+<div class="result-item">
+<span class="label-text">ملاحظات الإدارة:</span>
+<span class="value-text" id="resNotes">ممتاز ومجتهد</span>
 </div>
 </div>
 </main>
-
-<footer>
-<p>مدرسة جيل الإبداع - قسم شؤون الطلاب</p>
-</footer>
 </div>
 
 <script>
 function performSearch() {
-const id = document.getElementById('studentID').value;
+const id = document.getElementById('searchID').value;
 const resultArea = document.getElementById('resultArea');
-const studentData = document.getElementById('studentData');
 
-if(id === "") {
-alert("الرجاء إدخال رقم الهوية أولاً");
+if(id.length < 5) {
+alert("يرجى إدخال رقم هوية صحيح");
 return;
 }
 
-// محاكاة لعملية البحث (هنا يمكنك الربط مع قاعدة بيانات لاحقاً)
-// سنقوم هنا بعمل مثال لبيانات وهمية
-if(id === "123") {
+// ملاحظة برمجية: هنا يتم استدعاء البيانات من قاعدة البيانات
+// سنقوم بإظهار نتيجة تجريبية الآن
 resultArea.style.display = "block";
-studentData.innerHTML = `
-<div class="result-item"><span class="result-label">الاسم:</span> <span class="result-value">أحمد محمد السوداني</span></div>
-<div class="result-item"><span class="result-label">المرحلة:</span> <span class="result-value">ابتدائي - الصف الرابع</span></div>
-<div class="result-item"><span class="result-label">حالة الرسوم:</span> <span class="result-value" style="color:green;">مسدد</span></div>
-<div class="result-item"><span class="result-label">حالة القبول:</span> <span class="result-value">منتظم</span></div>
-`;
-} else {
-resultArea.style.display = "block";
-studentData.innerHTML = `<p style="color:red; text-align:center;">عذراً، لم يتم العثور على بيانات لهذا الرقم.</p>`;
-}
 }
 </script>
 

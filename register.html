@@ -11,29 +11,36 @@
 body { background: #d1d1d1; display: flex; justify-content: center; padding: 20px 0; }
 .app-container { width: 100%; max-width: 480px; background: white; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
 header { background: var(--primary); color: white; padding: 20px; text-align: center; }
+.logo-small { width: 60px; margin-bottom: 10px; border-radius: 50%; }
 .form-body { padding: 20px; }
 .section-title { background: #f8f9fa; padding: 8px; border-right: 4px solid var(--gold); margin: 15px 0; font-weight: bold; color: var(--primary); }
 .input-group { margin-bottom: 12px; }
 label { display: block; font-size: 0.85rem; margin-bottom: 5px; font-weight: bold; }
-input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9rem; }
-.fee-alert { display: none; background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; margin-top: 5px; font-size: 0.85rem; border: 1px solid #ffeeba; }
-.btn-submit { width: 100%; background: var(--green); color: white; border: none; padding: 15px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 20px; }
+input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9rem; outline: none; transition: 0.3s; }
+input:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 5px rgba(243, 156, 18, 0.2); }
+.fee-alert { display: none; background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; margin-top: 5px; font-size: 0.85rem; border: 1px solid #ffeeba; border-right: 4px solid #f39c12; }
+.btn-submit { width: 100%; background: var(--green); color: white; border: none; padding: 15px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+.btn-submit:hover { background: #219150; }
+.btn-submit:active { transform: scale(0.95); }
 </style>
 </head>
 <body>
 
 <div class="app-container">
 <header>
+<!-- سيظهر اللوجو هنا تلقائياً بمجرد وضعه في المجلد باسم logo.png -->
+<img src="logo.png" alt="شعار المدرسة" class="logo-small" onerror="this.style.display='none'">
 <h2>استمارة تسجيل طالب</h2>
-<p>يرجى تعبئة البيانات بدقة</p>
+<p>مدرسة جيل الإبداع الأهلية</p>
 </header>
 
-<form class="form-body" id="registrationForm">
-<!-- بيانات الطالب الأساسية -->
+<!-- تم دمج رابط Formspree الخاص بك هنا بنجاح -->
+<form class="form-body" action="https://formspree.io/f/xgodedgy" method="POST">
+
 <div class="section-title">البيانات الدراسية</div>
 <div class="input-group">
 <label>المرحلة الدراسية</label>
-<select id="stage" onchange="updateClasses()" required>
+<select id="stage" name="المرحلة" onchange="updateClasses()" required>
 <option value="">اختر المرحلة</option>
 <option value="kg">رياض أطفال</option>
 <option value="primary">ابتدائي</option>
@@ -42,7 +49,7 @@ input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; bo
 </div>
 <div class="input-group">
 <label>الصف الدراسي</label>
-<select id="classSelect" onchange="checkSpecialFees()" required>
+<select id="classSelect" name="الصف" onchange="checkSpecialFees()" required>
 <option value="">اختر المرحلة أولاً</option>
 </select>
 <div id="feeAlert" class="fee-alert">💡 ملاحظة: رسوم هذا الصف (شهادة) هي 2500 ريال.</div>
@@ -51,46 +58,45 @@ input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; bo
 <div class="section-title">بيانات الطالب الشخصية</div>
 <div class="input-group">
 <label>اسم الطالب الرباعي</label>
-<input type="text" placeholder="كما هو في الهوية" required>
+<input type="text" name="اسم الطالب" placeholder="كما هو في الهوية" required>
 </div>
 <div class="input-group">
 <label>رقم هوية الطالب / الإقامة</label>
-<input type="number" placeholder="10 أرقام" required>
+<input type="number" name="رقم الهوية" placeholder="10 أرقام" required>
 </div>
 <div class="input-group">
 <label>المدرسة السابقة</label>
-<input type="text" placeholder="اسم آخر مدرسة التحق بها">
-</div>
-<div class="input-group">
-<label>نتيجة العام السابق (%)</label>
-<input type="text" placeholder="مثال: 95% أو ناجح">
+<input type="text" name="المدرسة السابقة" placeholder="اسم آخر مدرسة (إن وجد)">
 </div>
 
-<div class="section-title">بيانات ولي الأمر</div>
+<div class="section-title">بيانات التواصل والسكن</div>
 <div class="input-group">
 <label>رقم هاتف ولي الأمر (واتساب)</label>
-<input type="tel" placeholder="05xxxxxxxx" required>
+<input type="tel" name="هاتف ولي الأمر" placeholder="05xxxxxxxx" required>
 </div>
 <div class="input-group">
-<label>عنوان السكن الحالي</label>
-<input type="text" placeholder="المدينة - الحي" required>
+<label>عنوان السكن</label>
+<input type="text" name="السكن" placeholder="الحي - الشارع" required>
 </div>
 <div class="input-group">
-<label>جهة العمل</label>
-<input type="text" placeholder="اسم الشركة أو المؤسسة">
+<label>جهة عمل ولي الأمر</label>
+<input type="text" name="جهة العمل" placeholder="اختياري">
 </div>
 
-<div class="section-title">بيانات إضافية</div>
+<div class="section-title">معلومات إضافية</div>
 <div class="input-group">
-<label>رقم ترحيل الطالب (إن وجد)</label>
-<input type="text" placeholder="اتركه فارغاً إذا لم يوجد">
+<label>رقم الحافلة / الترحيل</label>
+<input type="text" name="رقم الترحيل" placeholder="إذا كان الطالب مشتركاً في الباص">
 </div>
 <div class="input-group">
-<label>الحالة الصحية والبدنية</label>
-<textarea rows="2" placeholder="هل يعاني الطالب من أي أمراض أو حساسية؟"></textarea>
+<label>الحالة الصحية</label>
+<textarea name="الحالة الصحية" rows="2" placeholder="اذكر أي أمراض أو حساسية إن وجدت"></textarea>
 </div>
 
-<button type="submit" class="btn-submit">إرسال طلب التسجيل</button>
+<!-- حقل خفي لإرسال نسخة لبريد ولي الأمر إذا أدخل إيميله (اختياري) -->
+<input type="hidden" name="_subject" value="تسجيل طالب جديد - جيل الإبداع">
+
+<button type="submit" class="btn-submit">تأكيد وإرسال البيانات</button>
 </form>
 </div>
 
@@ -117,9 +123,11 @@ classSelect.appendChild(opt);
 function checkSpecialFees() {
 const val = document.getElementById('classSelect').value;
 const alert = document.getElementById('feeAlert');
+// إظهار تنبيه الرسوم للصف السادس والثالث متوسط
 alert.style.display = val.includes("(شهادة)") ? "block" : "none";
 }
 </script>
+
 </body>
 </html>
 

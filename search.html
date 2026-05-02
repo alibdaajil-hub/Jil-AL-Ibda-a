@@ -2,92 +2,73 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>استعلام عن طالب - جيل الإبداع</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<title>إدارة الطلاب - جيل الإبداع</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+<!-- مكتبات Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 <style>
-:root { --primary: #2c3e50; --search-gold: #f39c12; }
-* { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
-body { background: #d1d1d1; display: flex; justify-content: center; padding: 20px 0; min-height: 100vh; }
-.app-container { width: 100%; max-width: 450px; background: white; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
-header { background: var(--search-gold); color: white; padding: 30px 20px; text-align: center; }
-.back-btn { float: right; color: white; text-decoration: none; font-size: 0.8rem; background: rgba(0,0,0,0.1); padding: 5px 10px; border-radius: 5px; }
-.search-body { padding: 25px; flex-grow: 1; }
-.input-group { margin-bottom: 20px; }
-label { display: block; font-weight: bold; margin-bottom: 8px; color: var(--primary); }
-input { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 12px; font-size: 1.1rem; text-align: center; outline: none; }
-input:focus { border-color: var(--search-gold); }
-.btn-search { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
-
-/* منطقة عرض النتيجة */
-.result-card { display: none; margin-top: 25px; padding: 20px; border-radius: 15px; background: #f9f9f9; border: 1px solid #eee; animation: fadeIn 0.5s; }
-.result-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
-.result-item:last-child { border-bottom: none; }
-.label-text { color: #777; font-size: 0.9rem; }
-.value-text { font-weight: bold; color: var(--primary); }
-.status-paid { color: #27ae60; }
-.status-unpaid { color: #c0392b; }
-
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+body { font-family: 'Tajawal', sans-serif; background: #f4f4f4; padding: 20px; direction: rtl; }
+.admin-panel { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+h2 { color: #2c3e50; text-align: center; }
+input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+.btn-save { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+.btn-save:hover { background: #219150; }
 </style>
 </head>
 <body>
 
-<div class="app-container">
-<header>
-<a href="index.html" class="back-btn">رجوع</a>
-<h2>استعلام عن طالب</h2>
-<p>أدخل رقم الهوية لمتابعة الحالة</p>
-</header>
-
-<main class="search-body">
-<div class="input-group">
-<label>رقم هوية الطالب</label>
-<input type="number" id="searchID" placeholder="10 أرقام">
-</div>
-<button class="btn-search" onclick="performSearch()">بحث الآن</button>
-
-<!-- النتيجة (تظهر عند البحث) -->
-<div id="resultArea" class="result-card">
-<div style="text-align: center; margin-bottom: 15px;">
-<span style="font-size: 3rem;">🎓</span>
-</div>
-<div class="result-item">
-<span class="label-text">اسم الطالب:</span>
-<span class="value-text" id="resName">محمد أحمد علي</span>
-</div>
-<div class="result-item">
-<span class="label-text">الصف الدراسي:</span>
-<span class="value-text" id="resClass">السادس ابتدائي</span>
-</div>
-<div class="result-item">
-<span class="label-text">حالة الرسوم:</span>
-<span class="value-text status-paid" id="resFees">مسدد</span>
-</div>
-<div class="result-item">
-<span class="label-text">ملاحظات الإدارة:</span>
-<span class="value-text" id="resNotes">ممتاز ومجتهد</span>
-</div>
-</div>
-</main>
+<div class="admin-panel">
+<h2>تحديث بيانات طالب</h2>
+<input type="number" id="sID" placeholder="رقم هوية الطالب (مفتاح البحث)">
+<input type="text" id="sName" placeholder="اسم الطالب">
+<input type="text" id="sGrade" placeholder="الصف الدراسي">
+<select id="sFees">
+<option value="مسدد">مسدد</option>
+<option value="غير مسدد">غير مسدد</option>
+</select>
+<textarea id="sNotes" placeholder="ملاحظات الإدارة"></textarea>
+<button class="btn-save" onclick="uploadData()">حفظ البيانات في السحابة</button>
 </div>
 
 <script>
-function performSearch() {
-const id = document.getElementById('searchID').value;
-const resultArea = document.getElementById('resultArea');
+// ضع إعدادات Firebase الخاصة بك هنا
+const firebaseConfig = {
+apiKey: "YOUR_API_KEY",
+authDomain: "YOUR_PROJECT.firebaseapp.com",
+projectId: "YOUR_PROJECT_ID",
+storageBucket: "YOUR_PROJECT.appspot.com",
+messagingSenderId: "YOUR_ID",
+appId: "YOUR_APP_ID"
+};
 
-if(id.length < 5) {
-alert("يرجى إدخال رقم هوية صحيح");
-return;
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+async function uploadData() {
+const id = document.getElementById('sID').value;
+const name = document.getElementById('sName').value;
+const grade = document.getElementById('sGrade').value;
+const fees = document.getElementById('sFees').value;
+const notes = document.getElementById('sNotes').value;
+
+if(!id || !name) { alert("يرجى ملء البيانات الأساسية"); return; }
+
+try {
+await db.collection("students").doc(id).set({
+name: name,
+grade: grade,
+fees: fees,
+notes: notes,
+lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+});
+alert("تم التحديث بنجاح! البيانات الآن متاحة لكل الأجهزة.");
+} catch (error) {
+console.error(error);
+alert("حدث خطأ أثناء الحفظ.");
 }
-
-// ملاحظة برمجية: هنا يتم استدعاء البيانات من قاعدة البيانات
-// سنقوم بإظهار نتيجة تجريبية الآن
-resultArea.style.display = "block";
 }
 </script>
-
 </body>
 </html>
 

@@ -13,7 +13,7 @@ body { font-family: 'Tajawal', sans-serif; background: var(--bg); margin: 0; pad
 .stat-box { background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid var(--gold); }
 .stat-box h3 { margin: 0; font-size: 0.9rem; color: #777; }
 .stat-box p { margin: 10px 0 0; font-size: 1.8rem; font-weight: 900; color: var(--primary); }
-.search-bar { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 20px; font-size: 1rem; outline: none; }
+.search-bar { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 20px; font-size: 1rem; outline: none; box-sizing: border-box; }
 .table-container { background: white; border-radius: 15px; overflow-x: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
 table { width: 100%; border-collapse: collapse; text-align: right; }
 th { background: #f8f9fa; padding: 15px; color: var(--primary); border-bottom: 2px solid #eee; }
@@ -21,8 +21,8 @@ td { padding: 15px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
 .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
 .status-paid { background: #e8f5e9; color: #2e7d32; }
 .status-unpaid { background: #ffebee; color: #c62828; }
-.btn-action { background: var(--gold); color: white; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 0.8rem; }
-.btn-exit { background: var(--red); color: white; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-weight: bold; }
+.btn-action { background: var(--gold); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; font-size: 0.8rem; }
+.btn-exit { background: var(--red); color: white; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 0.9rem; }
 </style>
 </head>
 <body>
@@ -30,9 +30,9 @@ td { padding: 15px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
 <div class="dashboard-header">
 <div>
 <h2 style="margin:0;">لوحة تحكم المالك</h2>
-<p style="margin:5px 0 0; opacity:0.8;">مدرسة جيل الإبداع الأهلية</p>
+<p style="margin:5px 0 0; opacity:0.8;">إدارة بيانات مدرسة جيل الإبداع</p>
 </div>
-<a href="index.html" class="btn-exit">خروج</a>
+<a href="index.html" class="btn-exit" onclick="localStorage.removeItem('isLoggedIn')">خروج</a>
 </div>
 
 <div class="stats-container">
@@ -46,7 +46,7 @@ td { padding: 15px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
 </div>
 </div>
 
-<input type="text" id="searchInput" class="search-bar" placeholder="ابحث باسم الطالب أو رقم الهوية...">
+<input type="text" id="searchInput" class="search-bar" placeholder="ابحث باسم الطالب أو رقم الهوية لإيجاده في الجدول...">
 
 <div class="table-container">
 <table>
@@ -54,14 +54,14 @@ td { padding: 15px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
 <tr>
 <th>الاسم</th>
 <th>الصف</th>
-<th>الهوية</th>
-<th>الحالة</th>
-<th>التاريخ</th>
-<th>إجراء</th>
+<th>رقم الهوية / الحدود</th>
+<th>حالة الرسوم</th>
+<th>تاريخ التسجيل</th>
+<th>التحكم</th>
 </tr>
 </thead>
 <tbody id="tableBody">
-<tr><td colspan="6" style="text-align:center;">جاري جلب البيانات...</td></tr>
+<tr><td colspan="6" style="text-align:center;">جاري جلب بيانات الطلاب...</td></tr>
 </tbody>
 </table>
 </div>
@@ -70,6 +70,7 @@ td { padding: 15px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+// إعدادات Firebase الخاصة بمشروعك
 const firebaseConfig = {
 apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
 authDomain: "jil-al-ibda-a.firebaseapp.com",
@@ -83,7 +84,7 @@ measurementId: "G-TSG3J0BCSE"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// جلب البيانات وعرضها
+// جلب وعرض البيانات بشكل حي
 const q = query(collection(db, "students"), orderBy("timestamp", "desc"));
 onSnapshot(q, (snapshot) => {
 const tableBody = document.getElementById('tableBody');
@@ -103,20 +104,20 @@ rows += `
 <td>${studentID}</td>
 <td><span class="status-badge ${statusClass}">${data.paymentStatus || "غير محدد"}</span></td>
 <td>${date}</td>
-<td><button onclick="goToEdit('${studentID}')" class="btn-action">تحديث ⚙️</button></td>
+<td><button onclick="goToEdit('${studentID}')" class="btn-action">تحديث وتعديل ⚙️</button></td>
 </tr>
 `;
 });
 tableBody.innerHTML = rows;
 });
 
-// وظيفة التحديث: تحفظ المعرف وتنتقل لصفحة البحث
+// وظيفة الزر: السطر الذي طلبته للتحويل إلى صفحة التعديل
 window.goToEdit = function(id) {
-localStorage.setItem('targetID', id);
-window.location.href = "search.html";
+localStorage.setItem('targetID', id); // حفظ الرقم لاستخدامه في صفحة التعديل
+window.location.href = "edit_student.html"; // السطر المحدث
 };
 
-// البحث السريع في الجدول
+// البحث داخل الجدول
 document.getElementById('searchInput').addEventListener('keyup', function() {
 let filter = this.value.toLowerCase();
 let rows = document.getElementById("tableBody").rows;

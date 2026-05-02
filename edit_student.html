@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تعديل الأقساط - جيل الإبداع</title>
+<title>تعديل بيانات الطالب - جيل الإبداع</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root { --primary: #2c3e50; --gold: #f39c12; --success: #27ae60; }
@@ -13,17 +13,16 @@ h2 { text-align: center; color: var(--primary); margin-bottom: 20px; }
 label { display: block; margin-top: 15px; font-weight: bold; color: #555; font-size: 0.9rem; }
 input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-family: 'Tajawal'; font-size: 1rem; }
 input[readonly] { background: #f9f9f9; color: #888; cursor: not-allowed; }
-.btn-save { width: 100%; padding: 15px; background: var(--success); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 25px; font-size: 1.1rem; }
+.btn-save { width: 100%; padding: 15px; background: var(--success); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 25px; font-size: 1.1rem; width: 100%; }
 .btn-cancel { display: block; text-align: center; margin-top: 15px; color: #999; text-decoration: none; }
-.info-msg { background: #e8f4fd; padding: 10px; border-radius: 8px; font-size: 0.85rem; color: #2980b9; margin-top: 5px; }
+#statusMsg { text-align: center; font-weight: bold; margin-top: 10px; }
 </style>
 </head>
 <body>
 
 <div class="edit-container">
-<h2>تعديل بيانات الأقساط 💰</h2>
-
-<div id="loadingMsg" style="text-align:center; padding:20px;">جاري تحميل بيانات الطالب...</div>
+<h2>تعديل بيانات الطالب ⚙️</h2>
+<div id="loadingMsg" style="text-align:center; padding:20px;">جاري جلب بيانات الطالب من السحابة...</div>
 
 <div id="editForm" style="display: none;">
 <label>رقم الحدود / الهوية</label>
@@ -33,25 +32,23 @@ input[readonly] { background: #f9f9f9; color: #888; cursor: not-allowed; }
 <input type="text" id="sName">
 
 <label>الصف الدراسي</label>
-<input type="text" id="sGrade" oninput="updateInstallmentOptions()" placeholder="مثال: ثالث متوسط أو تمهيدي">
-<div class="info-msg">يتم تحديد عدد الأقساط تلقائياً بناءً على الصف المكتوب هنا.</div>
+<input type="text" id="sGrade" oninput="updateInstallmentOptions()">
 
 <label>حالة سداد الأقساط</label>
-<select id="sFees">
-<!-- الخيارات ستتولد هنا تلقائياً عبر الجافا سكريبت -->
-</select>
+<select id="sFees"></select>
 
 <label>ملاحظات الإدارة</label>
 <textarea id="sNotes" rows="3"></textarea>
 
-<button class="btn-save" id="saveBtn">حفظ التعديلات</button>
-<a href="students_section.html" class="btn-cancel">رجوع للقائمة</a>
+<button class="btn-save" id="saveBtn">حفظ التعديلات الآن</button>
+<div id="statusMsg"></div>
+<a href="students_section.html" class="btn-cancel">رجوع للوحة التحكم</a>
 </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, collection, query, where, getDocs, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
@@ -64,32 +61,23 @@ appId: "1:1057703586286:web:e581aa576eef32930746ff"
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+let finalDocId = ""; // هذا سيحمل المعرف الحقيقي للوثيقة في Firebase
 
-// دالة لتوليد الأقساط بناءً على الصف
 window.updateInstallmentOptions = function(selectedValue = "") {
 const grade = document.getElementById('sGrade').value;
 const select = document.getElementById('sFees');
 let options = `<option value="غير مسدد">غير مسدد ❌</option>`;
-let count = 4; // الافتراضي لبقية الطلاب
+let count = 4;
 
-if (grade.includes("سادس") || grade.includes("ثالث")) {
-count = 5; // طلاب الشهادات
-} else if (grade.includes("روضة") || grade.includes("تمهيدي") || grade.includes("رياض")) {
-count = 3; // رياض الأطفال
-}
+if (grade.includes("سادس") || grade.includes("ثالث")) count = 5;
+else if (grade.includes("روضة") || grade.includes("تمهيدي") || grade.includes("رياض")) count = 3;
 
 for (let i = 1; i <= count; i++) {
-let val = `مسدد القسط ${getArabicOrdinal(i)}`;
+let val = `مسدد القسط ${["", "الأول", "الثاني", "الثالث", "الرابع", "الخامس"][i]}`;
 options += `<option value="${val}" ${selectedValue === val ? 'selected' : ''}>${val} ✅</option>`;
 }
-// خيار إضافي للمسدد بالكامل
 options += `<option value="مسدد بالكامل" ${selectedValue === "مسدد بالكامل" ? 'selected' : ''}>مسدد بالكامل 🏆</option>`;
 select.innerHTML = options;
-}
-
-function getArabicOrdinal(n) {
-const ordinals = ["", "الأول", "الثاني", "الثالث", "الرابع", "الخامس"];
-return ordinals[n];
 }
 
 window.onload = async function() {
@@ -97,31 +85,52 @@ const targetID = localStorage.getItem('targetID');
 if (!targetID) { window.location.href = "students_section.html"; return; }
 
 try {
-const docRef = doc(db, "students", targetID);
-const docSnap = await getDoc(docRef);
+// الخطوة 1: البحث عن طريق معرف الوثيقة المباشر
+let docRef = doc(db, "students", targetID);
+let docSnap = await getDoc(docRef);
 
-if (docSnap.exists()) {
+// الخطوة 2: إذا لم يجدها (وهذا ما يحدث مع الطلاب الجدد)، نبحث داخل الحقول
+if (!docSnap.exists()) {
+const q = query(collection(db, "students"), where("nationalID", "==", targetID));
+const querySnapshot = await getDocs(q);
+
+if (!querySnapshot.empty) {
+docSnap = querySnapshot.docs[0];
+finalDocId = docSnap.id; // المعرف العشوائي للطلاب الجدد
+}
+} else {
+finalDocId = docSnap.id; // المعرف الذي هو نفسه رقم الهوية
+}
+
+if (docSnap && (docSnap.exists || docSnap.data)) {
 const data = docSnap.data();
-document.getElementById('sID').value = targetID;
+document.getElementById('sID').value = data.nationalID || targetID;
 document.getElementById('sName').value = data.studentName || data.fullName || "";
 document.getElementById('sGrade').value = data.class || data.currentGrade || "";
-// تحديث القائمة المنسدلة بناءً على الصف والبيانات المخزنة
 updateInstallmentOptions(data.paymentStatus);
-
 document.getElementById('sNotes').value = data.adminNotes || "";
+
 document.getElementById('loadingMsg').style.display = "none";
 document.getElementById('editForm').style.display = "block";
+} else {
+alert("لم يتم العثور على الطالب في قاعدة البيانات.");
+window.location.href = "students_section.html";
 }
-} catch (e) { console.error(e); }
+} catch (e) {
+console.error(e);
+alert("حدث خطأ في جلب البيانات.");
+}
 };
 
 document.getElementById('saveBtn').addEventListener('click', async () => {
 const btn = document.getElementById('saveBtn');
+const msg = document.getElementById('statusMsg');
 btn.disabled = true;
 btn.innerText = "جاري الحفظ...";
 
 try {
-await setDoc(doc(db, "students", document.getElementById('sID').value), {
+// نستخدم المعرف الحقيقي الذي وجدناه (سواء كان عشوائياً أو رقم هوية)
+await setDoc(doc(db, "students", finalDocId), {
 studentName: document.getElementById('sName').value,
 class: document.getElementById('sGrade').value,
 paymentStatus: document.getElementById('sFees').value,
@@ -129,11 +138,14 @@ adminNotes: document.getElementById('sNotes').value,
 lastUpdate: serverTimestamp()
 }, { merge: true });
 
-alert("تم تحديث الأقساط بنجاح! ✅");
-window.location.href = "students_section.html";
+msg.style.color = "green";
+msg.innerText = "تم التحديث بنجاح! ✅";
+setTimeout(() => { window.location.href = "students_section.html"; }, 1000);
 } catch (e) {
-alert("خطأ في الحفظ");
+console.error(e);
+alert("فشل الحفظ. تأكد من اتصال الإنترنت وقواعد Firebase.");
 btn.disabled = false;
+btn.innerText = "حفظ التعديلات الآن";
 }
 });
 </script>

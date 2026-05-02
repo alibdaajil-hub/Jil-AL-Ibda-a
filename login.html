@@ -29,6 +29,7 @@ width: 90%;
 max-width: 350px;
 box-shadow: 0 15px 35px rgba(0,0,0,0.3);
 text-align: center;
+transition: transform 0.3s;
 }
 
 .login-card h2 {
@@ -96,22 +97,32 @@ margin-top: 15px;
 display: none;
 font-weight: bold;
 }
+
+/* تأثير الاهتزاز عند الخطأ */
+@keyframes shake {
+0%, 100% {transform: translateX(0);}
+25% {transform: translateX(-10px);}
+75% {transform: translateX(10px);}
+}
+.shake {
+animation: shake 0.2s ease-in-out 0s 2;
+}
 </style>
 </head>
 <body>
 
-<div class="login-card">
+<div class="login-card" id="loginCard">
 <h2>دخول المالك</h2>
-<p>يرجى إدخال بيانات الاعتماد للوصول للإدارة</p>
+<p>مدرسة جيل الإبداع - لوحة التحكم</p>
 
 <div class="input-group">
 <label>اسم المستخدم</label>
-<input type="text" id="username" placeholder="Username">
+<input type="text" id="username" placeholder="Mus3ab" required>
 </div>
 
 <div class="input-group">
 <label>كلمة المرور</label>
-<input type="password" id="password" placeholder="Password">
+<input type="password" id="password" placeholder="••••••••" required>
 </div>
 
 <button class="login-btn" onclick="validateLogin()">تسجيل الدخول</button>
@@ -124,15 +135,17 @@ function validateLogin() {
 const u = document.getElementById('username').value;
 const p = document.getElementById('password').value;
 const error = document.getElementById('errorMessage');
+const card = document.getElementById('loginCard');
 
-// البيانات الجديدة التي طلبتها
+// التحقق من بيانات المالك Musab Ibrahim Alshafia
 if (u === "Mus3ab" && p === "Rajnarok") {
-// توجيهك لصفحة الطلاب (تأكد من تسمية ملف المالك بهذا الاسم)
+// التوجيه لصفحة قسم الطلاب المعتمدة
 window.location.href = "students_section.html";
 } else {
 error.style.display = "block";
-// اهتزاز بسيط للتنبيه
-document.querySelector('.login-card').style.animation = "shake 0.2s ease-in-out 0s 2";
+// تفعيل حركة الاهتزاز
+card.classList.add('shake');
+setTimeout(() => card.classList.remove('shake'), 400);
 }
 }
 </script>

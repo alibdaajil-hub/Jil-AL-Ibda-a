@@ -2,49 +2,68 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>إدارة الطلاب - جيل الإبداع</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
-<!-- مكتبات Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 <style>
 body { font-family: 'Tajawal', sans-serif; background: #f4f4f4; padding: 20px; direction: rtl; }
 .admin-panel { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
 h2 { color: #2c3e50; text-align: center; }
-input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-.btn-save { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+label { display: block; margin-top: 10px; font-weight: bold; font-size: 0.9rem; }
+input, select, textarea { width: 100%; padding: 12px; margin: 5px 0 15px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+.btn-save { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
 .btn-save:hover { background: #219150; }
 </style>
 </head>
 <body>
 
 <div class="admin-panel">
-<h2>تحديث بيانات طالب</h2>
-<input type="number" id="sID" placeholder="رقم هوية الطالب (مفتاح البحث)">
-<input type="text" id="sName" placeholder="اسم الطالب">
-<input type="text" id="sGrade" placeholder="الصف الدراسي">
+<h2>تحديث بيانات طالب - أجيال الإبداع</h2>
+<p style="text-align: center; color: #666; font-size: 0.8rem;">استخدم رقم الهوية للبحث عن الطالب أو تحديث بياناته</p>
+
+<label>رقم هوية الطالب</label>
+<input type="number" id="sID" placeholder="أدخل رقم الهوية المكون من 10 أرقام">
+
+<label>اسم الطالب</label>
+<input type="text" id="sName" placeholder="الاسم الرباعي">
+
+<label>الصف الدراسي</label>
+<input type="text" id="sGrade" placeholder="مثال: الثالث متوسط">
+
+<label>حالة الرسوم الدراسية</label>
 <select id="sFees">
-<option value="مسدد">مسدد</option>
-<option value="غير مسدد">غير مسدد</option>
+<option value="مسدد">مسدد ✅</option>
+<option value="غير مسدد">غير مسدد ❌</option>
+<option value="قيد المراجعة">قيد المراجعة ⏳</option>
 </select>
-<textarea id="sNotes" placeholder="ملاحظات الإدارة"></textarea>
-<button class="btn-save" onclick="uploadData()">حفظ البيانات في السحابة</button>
+
+<label>ملاحظات الإدارة</label>
+<textarea id="sNotes" rows="3" placeholder="اكتب أي ملاحظات إدارية هنا..."></textarea>
+
+<button class="btn-save" id="saveBtn">حفظ التحديثات في السحابة</button>
 </div>
 
-<script>
-// ضع إعدادات Firebase الخاصة بك هنا
+<!-- استخدام النسخة الأحدث والمستقرة من Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// إعدادات مشروع جيل الإبداع الحقيقية
 const firebaseConfig = {
-apiKey: "YOUR_API_KEY",
-authDomain: "YOUR_PROJECT.firebaseapp.com",
-projectId: "YOUR_PROJECT_ID",
-storageBucket: "YOUR_PROJECT.appspot.com",
-messagingSenderId: "YOUR_ID",
-appId: "YOUR_APP_ID"
+apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
+authDomain: "jil-al-ibda-a.firebaseapp.com",
+projectId: "jil-al-ibda-a",
+storageBucket: "jil-al-ibda-a.firebasestorage.app",
+messagingSenderId: "1057703586286",
+appId: "1:1057703586286:web:e581aa576eef32930746ff",
+measurementId: "G-TSG3J0BCSE"
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+// تهيئة Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
+// دالة الحفظ
 async function uploadData() {
 const id = document.getElementById('sID').value;
 const name = document.getElementById('sName').value;
@@ -52,22 +71,30 @@ const grade = document.getElementById('sGrade').value;
 const fees = document.getElementById('sFees').value;
 const notes = document.getElementById('sNotes').value;
 
-if(!id || !name) { alert("يرجى ملء البيانات الأساسية"); return; }
+if(!id || !name) {
+alert("يرجى إدخال رقم الهوية واسم الطالب على الأقل.");
+return;
+}
 
 try {
-await db.collection("students").doc(id).set({
-name: name,
-grade: grade,
-fees: fees,
-notes: notes,
-lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
-});
-alert("تم التحديث بنجاح! البيانات الآن متاحة لكل الأجهزة.");
+// الحفظ باستخدام رقم الهوية كمعرف فريد (ID) للمستند
+await setDoc(doc(db, "students", id), {
+fullName: name,
+currentGrade: grade,
+paymentStatus: fees,
+adminNotes: notes,
+lastUpdate: serverTimestamp()
+}, { merge: true }); // Merge لضمان عدم مسح البيانات القديمة عند التحديث
+
+alert("تم التحديث بنجاح! البيانات الآن متاحة في نظام أجيال الإبداع.");
 } catch (error) {
-console.error(error);
-alert("حدث خطأ أثناء الحفظ.");
+console.error("خطأ أثناء الحفظ: ", error);
+alert("حدث خطأ! تأكد من إعدادات الحماية في Firestore (Test Mode).");
 }
 }
+
+// ربط الدالة بالزر
+document.getElementById('saveBtn').addEventListener('click', uploadData);
 </script>
 </body>
 </html>

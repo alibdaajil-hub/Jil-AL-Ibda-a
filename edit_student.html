@@ -21,14 +21,15 @@ input[readonly] { background: #eee; cursor: not-allowed; }
 
 <div class="admin-panel">
 <h2>تعديل بيانات الطالب ⚙️</h2>
-<label>رقم الحدود / الهوية (لا يمكن تعديله)</label>
+
+<label>رقم الحدود / الهوية</label>
 <input type="text" id="sID" readonly>
 
 <label>اسم الطالب</label>
-<input type="text" id="sName" placeholder="أدخل اسم الطالب">
+<input type="text" id="sName">
 
 <label>الصف الدراسي</label>
-<input type="text" id="sGrade" placeholder="مثال: الرابع">
+<input type="text" id="sGrade">
 
 <label>حالة الرسوم</label>
 <select id="sFees">
@@ -36,8 +37,8 @@ input[readonly] { background: #eee; cursor: not-allowed; }
 <option value="مسدد">مسدد ✅</option>
 </select>
 
-<label>ملاحظات الإدارة (تظهر للطالب عند الاستعلام)</label>
-<textarea id="sNotes" rows="3" placeholder="اكتب أي ملاحظات هنا..."></textarea>
+<label>ملاحظات الإدارة</label>
+<textarea id="sNotes" rows="3"></textarea>
 
 <button class="btn-save" id="saveBtn">حفظ التعديلات الآن</button>
 <a href="students_section.html" class="btn-back">إلغاء والعودة للوحة التحكم</a>
@@ -47,12 +48,12 @@ input[readonly] { background: #eee; cursor: not-allowed; }
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// إعدادات Firebase الخاصة بمشروعك
+// تم تحديث الـ ProjectId ليتوافق مع صورتك (jil-al-ibda-a)
 const firebaseConfig = {
 apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
 authDomain: "jil-al-ibda-a.firebaseapp.com",
 projectId: "jil-al-ibda-a",
-storageBucket: "jil-al-ibda-a.firebasestorage.app",
+storageBucket: "jil-al-ibda-a.appspot.com",
 messagingSenderId: "1057703586286",
 appId: "1:1057703586286:web:e581aa576eef32930746ff"
 };
@@ -60,7 +61,6 @@ appId: "1:1057703586286:web:e581aa576eef32930746ff"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// تحميل البيانات عند فتح الصفحة
 window.onload = async function() {
 const targetID = localStorage.getItem('targetID');
 if (targetID) {
@@ -75,29 +75,19 @@ document.getElementById('sGrade').value = data.class || data.currentGrade || "";
 document.getElementById('sFees').value = data.paymentStatus || "غير مسدد";
 document.getElementById('sNotes').value = data.adminNotes || "";
 }
-} catch (error) {
-console.error("خطأ في جلب البيانات:", error);
-}
+} catch (error) { console.error(error); }
 }
 };
 
-// دالة التحديث
-async function updateData() {
+document.getElementById('saveBtn').addEventListener('click', async () => {
 const id = document.getElementById('sID').value;
-const saveBtn = document.getElementById('saveBtn');
-
-if (!id) {
-alert("رقم الطالب غير موجود!");
-return;
-}
-
-saveBtn.innerText = "جاري الحفظ...";
-saveBtn.disabled = true;
+const btn = document.getElementById('saveBtn');
+btn.disabled = true;
+btn.innerText = "جاري الحفظ...";
 
 try {
-const docRef = doc(db, "students", id);
-// استخدام setDoc مع merge لتحديث البيانات أو إنشائها إن لم توجد
-await setDoc(docRef, {
+// نستخدم setDoc مع merge: true لضمان الكتابة فوق البيانات القديمة
+await setDoc(doc(db, "students", id), {
 studentName: document.getElementById('sName').value,
 class: document.getElementById('sGrade').value,
 paymentStatus: document.getElementById('sFees').value,
@@ -105,18 +95,15 @@ adminNotes: document.getElementById('sNotes').value,
 lastUpdate: serverTimestamp()
 }, { merge: true });
 
-alert("تم تحديث بيانات الطالب بنجاح! ✅");
+alert("تم التحديث بنجاح! ✅");
 window.location.href = "students_section.html";
 } catch (e) {
-console.error("Error updating document: ", e);
-alert("فشل التحديث! تأكد من أنك ضغطت على Publish في قواعد Firebase.");
-saveBtn.innerText = "حفظ التعديلات الآن";
-saveBtn.disabled = false;
+console.error(e);
+alert("فشل التحديث. تأكد من أنك ضغطت Publish في Firebase Rules");
+btn.disabled = false;
+btn.innerText = "حفظ التعديلات الآن";
 }
-}
-
-// ربط الدالة بالزر
-document.getElementById('saveBtn').addEventListener('click', updateData);
+});
 </script>
 </body>
 </html>

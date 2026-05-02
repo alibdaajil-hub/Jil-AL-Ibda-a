@@ -3,25 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تعديل بيانات الطالب - إدارة جيل الإبداع</title>
+<title>تعديل الأقساط - جيل الإبداع</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 <style>
-body { font-family: 'Tajawal', sans-serif; background: #f4f4f4; padding: 20px; direction: rtl; }
-.admin-panel { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-h2 { color: #2c3e50; text-align: center; border-bottom: 2px solid #f39c12; padding-bottom: 10px; margin-bottom: 20px; }
+:root { --primary: #2c3e50; --gold: #f39c12; --success: #27ae60; }
+body { font-family: 'Tajawal', sans-serif; background: #f0f2f5; padding: 20px; direction: rtl; }
+.edit-container { max-width: 500px; margin: 20px auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 6px solid var(--gold); }
+h2 { text-align: center; color: var(--primary); margin-bottom: 20px; }
 label { display: block; margin-top: 15px; font-weight: bold; color: #555; font-size: 0.9rem; }
-input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: 'Tajawal'; }
-input[readonly] { background: #eee; cursor: not-allowed; }
-.btn-save { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 25px; font-size: 1.1rem; font-family: 'Tajawal'; transition: 0.3s; }
-.btn-save:hover { background: #219150; }
-.btn-back { display: block; text-align: center; margin-top: 15px; color: #777; text-decoration: none; font-size: 0.9rem; }
+input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-family: 'Tajawal'; font-size: 1rem; }
+input[readonly] { background: #f9f9f9; color: #888; cursor: not-allowed; }
+.btn-save { width: 100%; padding: 15px; background: var(--success); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 25px; font-size: 1.1rem; }
+.btn-cancel { display: block; text-align: center; margin-top: 15px; color: #999; text-decoration: none; }
+.info-msg { background: #e8f4fd; padding: 10px; border-radius: 8px; font-size: 0.85rem; color: #2980b9; margin-top: 5px; }
 </style>
 </head>
 <body>
 
-<div class="admin-panel">
-<h2>تعديل بيانات الطالب ⚙️</h2>
+<div class="edit-container">
+<h2>تعديل بيانات الأقساط 💰</h2>
 
+<div id="loadingMsg" style="text-align:center; padding:20px;">جاري تحميل بيانات الطالب...</div>
+
+<div id="editForm" style="display: none;">
 <label>رقم الحدود / الهوية</label>
 <input type="text" id="sID" readonly>
 
@@ -29,31 +33,31 @@ input[readonly] { background: #eee; cursor: not-allowed; }
 <input type="text" id="sName">
 
 <label>الصف الدراسي</label>
-<input type="text" id="sGrade">
+<input type="text" id="sGrade" oninput="updateInstallmentOptions()" placeholder="مثال: ثالث متوسط أو تمهيدي">
+<div class="info-msg">يتم تحديد عدد الأقساط تلقائياً بناءً على الصف المكتوب هنا.</div>
 
-<label>حالة الرسوم</label>
+<label>حالة سداد الأقساط</label>
 <select id="sFees">
-<option value="غير مسدد">غير مسدد ❌</option>
-<option value="مسدد">مسدد ✅</option>
+<!-- الخيارات ستتولد هنا تلقائياً عبر الجافا سكريبت -->
 </select>
 
 <label>ملاحظات الإدارة</label>
 <textarea id="sNotes" rows="3"></textarea>
 
-<button class="btn-save" id="saveBtn">حفظ التعديلات الآن</button>
-<a href="students_section.html" class="btn-back">إلغاء والعودة للوحة التحكم</a>
+<button class="btn-save" id="saveBtn">حفظ التعديلات</button>
+<a href="students_section.html" class="btn-cancel">رجوع للقائمة</a>
+</div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// تم تحديث الـ ProjectId ليتوافق مع صورتك (jil-al-ibda-a)
 const firebaseConfig = {
 apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
 authDomain: "jil-al-ibda-a.firebaseapp.com",
 projectId: "jil-al-ibda-a",
-storageBucket: "jil-al-ibda-a.appspot.com",
+storageBucket: "jil-al-ibda-a.firebasestorage.app",
 messagingSenderId: "1057703586286",
 appId: "1:1057703586286:web:e581aa576eef32930746ff"
 };
@@ -61,33 +65,63 @@ appId: "1:1057703586286:web:e581aa576eef32930746ff"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// دالة لتوليد الأقساط بناءً على الصف
+window.updateInstallmentOptions = function(selectedValue = "") {
+const grade = document.getElementById('sGrade').value;
+const select = document.getElementById('sFees');
+let options = `<option value="غير مسدد">غير مسدد ❌</option>`;
+let count = 4; // الافتراضي لبقية الطلاب
+
+if (grade.includes("سادس") || grade.includes("ثالث")) {
+count = 5; // طلاب الشهادات
+} else if (grade.includes("روضة") || grade.includes("تمهيدي") || grade.includes("رياض")) {
+count = 3; // رياض الأطفال
+}
+
+for (let i = 1; i <= count; i++) {
+let val = `مسدد القسط ${getArabicOrdinal(i)}`;
+options += `<option value="${val}" ${selectedValue === val ? 'selected' : ''}>${val} ✅</option>`;
+}
+// خيار إضافي للمسدد بالكامل
+options += `<option value="مسدد بالكامل" ${selectedValue === "مسدد بالكامل" ? 'selected' : ''}>مسدد بالكامل 🏆</option>`;
+select.innerHTML = options;
+}
+
+function getArabicOrdinal(n) {
+const ordinals = ["", "الأول", "الثاني", "الثالث", "الرابع", "الخامس"];
+return ordinals[n];
+}
+
 window.onload = async function() {
 const targetID = localStorage.getItem('targetID');
-if (targetID) {
-document.getElementById('sID').value = targetID;
+if (!targetID) { window.location.href = "students_section.html"; return; }
+
 try {
 const docRef = doc(db, "students", targetID);
 const docSnap = await getDoc(docRef);
+
 if (docSnap.exists()) {
 const data = docSnap.data();
+document.getElementById('sID').value = targetID;
 document.getElementById('sName').value = data.studentName || data.fullName || "";
 document.getElementById('sGrade').value = data.class || data.currentGrade || "";
-document.getElementById('sFees').value = data.paymentStatus || "غير مسدد";
+// تحديث القائمة المنسدلة بناءً على الصف والبيانات المخزنة
+updateInstallmentOptions(data.paymentStatus);
+
 document.getElementById('sNotes').value = data.adminNotes || "";
+document.getElementById('loadingMsg').style.display = "none";
+document.getElementById('editForm').style.display = "block";
 }
-} catch (error) { console.error(error); }
-}
+} catch (e) { console.error(e); }
 };
 
 document.getElementById('saveBtn').addEventListener('click', async () => {
-const id = document.getElementById('sID').value;
 const btn = document.getElementById('saveBtn');
 btn.disabled = true;
 btn.innerText = "جاري الحفظ...";
 
 try {
-// نستخدم setDoc مع merge: true لضمان الكتابة فوق البيانات القديمة
-await setDoc(doc(db, "students", id), {
+await setDoc(doc(db, "students", document.getElementById('sID').value), {
 studentName: document.getElementById('sName').value,
 class: document.getElementById('sGrade').value,
 paymentStatus: document.getElementById('sFees').value,
@@ -95,13 +129,11 @@ adminNotes: document.getElementById('sNotes').value,
 lastUpdate: serverTimestamp()
 }, { merge: true });
 
-alert("تم التحديث بنجاح! ✅");
+alert("تم تحديث الأقساط بنجاح! ✅");
 window.location.href = "students_section.html";
 } catch (e) {
-console.error(e);
-alert("فشل التحديث. تأكد من أنك ضغطت Publish في Firebase Rules");
+alert("خطأ في الحفظ");
 btn.disabled = false;
-btn.innerText = "حفظ التعديلات الآن";
 }
 });
 </script>

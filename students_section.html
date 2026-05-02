@@ -6,14 +6,14 @@
 <title>لوحة التحكم - طلاب جيل الإبداع</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-:root { --primary: #2c3e50; --gold: #f39c12; --bg: #f4f7f6; }
+:root { --primary: #2c3e50; --gold: #f39c12; --bg: #f4f7f6; --green: #27ae60; --red: #c0392b; }
 body { font-family: 'Tajawal', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
 .dashboard-header { background: var(--primary); color: white; padding: 20px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px; }
 .stat-box { background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid var(--gold); }
 .stat-box h3 { margin: 0; font-size: 0.9rem; color: #777; }
 .stat-box p { margin: 10px 0 0; font-size: 1.8rem; font-weight: 900; color: var(--primary); }
-.search-bar { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 20px; font-size: 1rem; }
+.search-bar { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 20px; font-size: 1rem; outline: none; }
 .table-container { background: white; border-radius: 15px; overflow-x: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
 table { width: 100%; border-collapse: collapse; text-align: right; }
 th { background: #f8f9fa; padding: 15px; color: var(--primary); border-bottom: 2px solid #eee; }
@@ -21,7 +21,8 @@ td { padding: 15px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
 .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
 .status-paid { background: #e8f5e9; color: #2e7d32; }
 .status-unpaid { background: #ffebee; color: #c62828; }
-.btn-back { background: var(--gold); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; text-decoration: none; font-weight: bold; }
+.btn-action { background: var(--gold); color: white; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 0.8rem; }
+.btn-exit { background: var(--red); color: white; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -29,14 +30,14 @@ td { padding: 15px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
 <div class="dashboard-header">
 <div>
 <h2 style="margin:0;">لوحة تحكم المالك</h2>
-<p style="margin:5px 0 0; font-size:0.8rem; opacity:0.8;">مرحباً بك في نظام أجيال الإبداع</p>
+<p style="margin:5px 0 0; opacity:0.8;">مدرسة جيل الإبداع الأهلية</p>
 </div>
-<a href="index.html" class="btn-back">خروج</a>
+<a href="index.html" class="btn-exit">خروج</a>
 </div>
 
 <div class="stats-container">
 <div class="stat-box">
-<h3>إجمالي الطلاب</h3>
+<h3>إجمالي الطلاب المسجلين</h3>
 <p id="totalStudents">0</p>
 </div>
 <div class="stat-box">
@@ -45,22 +46,22 @@ td { padding: 15px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
 </div>
 </div>
 
-<input type="text" id="searchInput" class="search-bar" placeholder="ابحث عن طالب بالاسم أو رقم الهوية...">
+<input type="text" id="searchInput" class="search-bar" placeholder="ابحث باسم الطالب أو رقم الهوية...">
 
 <div class="table-container">
-<table id="studentsTable">
+<table>
 <thead>
 <tr>
-<th>اسم الطالب</th>
+<th>الاسم</th>
 <th>الصف</th>
-<th>رقم الهوية</th>
-<th>حالة الرسوم</th>
+<th>الهوية</th>
+<th>الحالة</th>
 <th>التاريخ</th>
+<th>إجراء</th>
 </tr>
 </thead>
 <tbody id="tableBody">
-<!-- البيانات ستظهر هنا برمجياً -->
-<tr><td colspan="5" style="text-align:center;">جاري تحميل البيانات...</td></tr>
+<tr><td colspan="6" style="text-align:center;">جاري جلب البيانات...</td></tr>
 </tbody>
 </table>
 </div>
@@ -82,44 +83,48 @@ measurementId: "G-TSG3J0BCSE"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// دالة جلب البيانات وعرضها بشكل حي (Real-time)
+// جلب البيانات وعرضها
 const q = query(collection(db, "students"), orderBy("timestamp", "desc"));
 onSnapshot(q, (snapshot) => {
 const tableBody = document.getElementById('tableBody');
-const totalCount = document.getElementById('totalStudents');
+document.getElementById('totalStudents').innerText = snapshot.size;
 let rows = "";
-
-totalCount.innerText = snapshot.size;
 
 snapshot.forEach((doc) => {
 const data = doc.data();
-const date = data.timestamp ? data.timestamp.toDate().toLocaleDateString('ar-EG') : "غير متوفر";
+const studentID = data.nationalID || doc.id;
 const statusClass = data.paymentStatus === "مسدد" ? "status-paid" : "status-unpaid";
+const date = data.timestamp ? data.timestamp.toDate().toLocaleDateString('ar-EG') : "-";
 
 rows += `
 <tr>
 <td><b>${data.studentName || data.fullName || "غير مسجل"}</b></td>
 <td>${data.class || data.currentGrade || "-"}</td>
-<td>${data.nationalID || doc.id}</td>
+<td>${studentID}</td>
 <td><span class="status-badge ${statusClass}">${data.paymentStatus || "غير محدد"}</span></td>
 <td>${date}</td>
+<td><button onclick="goToEdit('${studentID}')" class="btn-action">تحديث ⚙️</button></td>
 </tr>
 `;
 });
 tableBody.innerHTML = rows;
 });
 
-// نظام البحث في الجدول
+// وظيفة التحديث: تحفظ المعرف وتنتقل لصفحة البحث
+window.goToEdit = function(id) {
+localStorage.setItem('targetID', id);
+window.location.href = "search.html";
+};
+
+// البحث السريع في الجدول
 document.getElementById('searchInput').addEventListener('keyup', function() {
 let filter = this.value.toLowerCase();
-let rows = document.querySelector("#tableBody").rows;
-for (let i = 0; i < rows.length; i++) {
-let text = rows[i].textContent.toLowerCase();
-rows[i].style.display = text.includes(filter) ? "" : "none";
+let rows = document.getElementById("tableBody").rows;
+for (let row of rows) {
+row.style.display = row.textContent.toLowerCase().includes(filter) ? "" : "none";
 }
 });
 </script>
-
 </body>
 </html>
 

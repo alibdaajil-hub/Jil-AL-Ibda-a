@@ -28,14 +28,13 @@ input:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 5px rgba(
 
 <div class="app-container">
 <header>
-<!-- سيظهر اللوجو هنا تلقائياً بمجرد وضعه في المجلد باسم logo.png -->
 <img src="logo.png" alt="شعار المدرسة" class="logo-small" onerror="this.style.display='none'">
 <h2>استمارة تسجيل طالب</h2>
 <p>مدرسة جيل الإبداع الأهلية</p>
 </header>
 
-<!-- تم دمج رابط Formspree الخاص بك هنا بنجاح -->
-<form class="form-body" action="https://formspree.io/f/xgodedgy" method="POST">
+<!-- قمت بإضافة ID للنموذج للتحكم به برمجياً -->
+<form id="registrationForm" class="form-body" action="https://formspree.io/f/xgodedgy" method="POST">
 
 <div class="section-title">البيانات الدراسية</div>
 <div class="input-group">
@@ -58,49 +57,92 @@ input:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 5px rgba(
 <div class="section-title">بيانات الطالب الشخصية</div>
 <div class="input-group">
 <label>اسم الطالب الرباعي</label>
-<input type="text" name="اسم الطالب" placeholder="كما هو في الهوية" required>
+<input type="text" id="studentName" name="اسم الطالب" placeholder="كما هو في الهوية" required>
 </div>
 <div class="input-group">
 <label>رقم هوية الطالب / الإقامة</label>
-<input type="number" name="رقم الهوية" placeholder="10 أرقام" required>
+<input type="number" id="studentID" name="رقم الهوية" placeholder="10 أرقام" required>
 </div>
 <div class="input-group">
 <label>المدرسة السابقة</label>
-<input type="text" name="المدرسة السابقة" placeholder="اسم آخر مدرسة (إن وجد)">
+<input type="text" id="prevSchool" name="المدرسة السابقة" placeholder="اسم آخر مدرسة (إن وجد)">
 </div>
 
 <div class="section-title">بيانات التواصل والسكن</div>
 <div class="input-group">
 <label>رقم هاتف ولي الأمر (واتساب)</label>
-<input type="tel" name="هاتف ولي الأمر" placeholder="05xxxxxxxx" required>
+<input type="tel" id="parentPhone" name="هاتف ولي الأمر" placeholder="05xxxxxxxx" required>
 </div>
 <div class="input-group">
 <label>عنوان السكن</label>
-<input type="text" name="السكن" placeholder="الحي - الشارع" required>
+<input type="text" id="address" name="السكن" placeholder="الحي - الشارع" required>
 </div>
 <div class="input-group">
 <label>جهة عمل ولي الأمر</label>
-<input type="text" name="جهة العمل" placeholder="اختياري">
+<input type="text" id="workPlace" name="جهة العمل" placeholder="اختياري">
 </div>
 
 <div class="section-title">معلومات إضافية</div>
 <div class="input-group">
 <label>رقم الحافلة / الترحيل</label>
-<input type="text" name="رقم الترحيل" placeholder="إذا كان الطالب مشتركاً في الباص">
+<input type="text" id="busNumber" name="رقم الترحيل" placeholder="إذا كان الطالب مشتركاً في الباص">
 </div>
 <div class="input-group">
 <label>الحالة الصحية</label>
-<textarea name="الحالة الصحية" rows="2" placeholder="اذكر أي أمراض أو حساسية إن وجدت"></textarea>
+<textarea id="healthStatus" name="الحالة الصحية" rows="2" placeholder="اذكر أي أمراض أو حساسية إن وجدت"></textarea>
 </div>
 
-<!-- حقل خفي لإرسال نسخة لبريد ولي الأمر إذا أدخل إيميله (اختياري) -->
 <input type="hidden" name="_subject" value="تسجيل طالب جديد - جيل الإبداع">
 
 <button type="submit" class="btn-submit">تأكيد وإرسال البيانات</button>
 </form>
 </div>
 
+<!-- كود Firebase المدمج -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
+authDomain: "jil-al-ibda-a.firebaseapp.com",
+projectId: "jil-al-ibda-a",
+storageBucket: "jil-al-ibda-a.firebasestorage.app",
+messagingSenderId: "1057703586286",
+appId: "1:1057703586286:web:e581aa576eef32930746ff",
+measurementId: "G-TSG3J0BCSE"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const form = document.getElementById('registrationForm');
+form.addEventListener('submit', async (e) => {
+// سنقوم بحفظ البيانات في Firestore أولاً قبل إرسال Formspree
+try {
+await addDoc(collection(db, "students"), {
+stage: document.getElementById('stage').value,
+class: document.getElementById('classSelect').value,
+studentName: document.getElementById('studentName').value,
+nationalID: document.getElementById('studentID').value,
+previousSchool: document.getElementById('prevSchool').value,
+parentPhone: document.getElementById('parentPhone').value,
+address: document.getElementById('address').value,
+workPlace: document.getElementById('workPlace').value,
+busNumber: document.getElementById('busNumber').value,
+healthStatus: document.getElementById('healthStatus').value,
+timestamp: new Date()
+});
+console.log("تمت بنجاح مزامنة البيانات مع Firestore");
+} catch (error) {
+console.error("خطأ في المزامنة: ", error);
+}
+// بعد محاولة الحفظ، سيستمر النموذج في الإرسال لـ Formspree تلقائياً
+});
+</script>
+
 <script>
+// الأكواد الوظيفية الخاصة بك (تحديث الصفوف وتنبيه الرسوم)
 const classData = {
 kg: ["مستوى أول", "مستوى ثاني"],
 primary: ["الأول", "الثاني", "الثالث", "الرابع", "الخامس", "السادس (شهادة)"],
@@ -123,7 +165,6 @@ classSelect.appendChild(opt);
 function checkSpecialFees() {
 const val = document.getElementById('classSelect').value;
 const alert = document.getElementById('feeAlert');
-// إظهار تنبيه الرسوم للصف السادس والثالث متوسط
 alert.style.display = val.includes("(شهادة)") ? "block" : "none";
 }
 </script>

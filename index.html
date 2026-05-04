@@ -45,7 +45,7 @@ box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
 header {
-background: #f8f9fa; /* لون فاتح خلف النص ليبرز التصميم */
+background: #f8f9fa;
 padding: 40px 20px;
 text-align: center;
 border-bottom-left-radius: 40px;
@@ -54,19 +54,25 @@ border-bottom: 2px solid #ddd;
 }
 
 .logo-area {
-width: 85px;
-height: 85px;
+width: 100px; /* تم تكبير الدائرة قليلاً لتناسب اللوجو */
+height: 100px;
 background: white;
 border-radius: 50%;
 margin: 0 auto 15px;
 display: flex;
 align-items: center;
 justify-content: center;
-border: 3px solid #f1f1f1;
+border: 3px solid #f39c12; /* تغيير اللون للذهبي ليتناسق مع اسم المدرسة */
 overflow: hidden;
+box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* تصميم اسم المدرسة المماثل للافتة */
+.logo-area img {
+width: 100%;
+height: 100%;
+object-fit: contain; /* يضمن عدم طمس أو قص أجزاء من اللوجو */
+}
+
 .school-banner-title {
 font-size: 2.2rem;
 font-weight: 900;
@@ -74,7 +80,6 @@ color: #ffffff;
 letter-spacing: 1px;
 display: inline-block;
 padding: 5px 15px;
-/* إنشاء الحدود السوداء السميكة كما في الصورة */
 text-shadow:
 -2px -2px 0 #000,
 2px -2px 0 #000,
@@ -125,7 +130,6 @@ font-size: 1.3rem; background-color: #f0f2f5;
 .btn-contact { border-right: 6px solid var(--contact-color); }
 .btn-admin { margin-top: 20px; border: 2px dashed var(--admin-color); color: var(--admin-color); }
 
-/* نافذة الإعلانات المنبثقة */
 .overlay {
 position: absolute; top: 0; left: 0; width: 100%; height: 100%;
 background: rgba(0,0,0,0.7); z-index: 1000;
@@ -224,3 +228,6 @@ function closeNotif() { document.getElementById('promoOverlay').classList.remove
 </body>
 </html>
 
+Compose:
+New Message
+MinimizePop-outClose

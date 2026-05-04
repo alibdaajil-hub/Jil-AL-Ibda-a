@@ -46,7 +46,7 @@ box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 
 header {
 background: #f8f9fa;
-padding: 40px 20px;
+padding: 40px 20px 60px; /* مساحة إضافية لتأثير الانعكاس */
 text-align: center;
 border-bottom-left-radius: 40px;
 border-bottom-right-radius: 40px;
@@ -54,7 +54,7 @@ border-bottom: 2px solid #ddd;
 }
 
 .logo-area {
-width: 100px; /* تم تكبير الدائرة قليلاً لتناسب اللوجو */
+width: 100px;
 height: 100px;
 background: white;
 border-radius: 50%;
@@ -62,7 +62,7 @@ margin: 0 auto 15px;
 display: flex;
 align-items: center;
 justify-content: center;
-border: 3px solid #f39c12; /* تغيير اللون للذهبي ليتناسق مع اسم المدرسة */
+border: 3px solid #d4af37; /* لون ذهبي يتناسب مع العنوان */
 overflow: hidden;
 box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
@@ -70,26 +70,23 @@ box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 .logo-area img {
 width: 100%;
 height: 100%;
-object-fit: contain; /* يضمن عدم طمس أو قص أجزاء من اللوجو */
+object-fit: contain;
 }
 
+/* تصميم العنوان باللون الأسود، الحواف الذهبية، وتأثير المرآة */
 .school-banner-title {
 font-size: 2.2rem;
 font-weight: 900;
-color: #ffffff;
-letter-spacing: 1px;
+color: #000000; /* لون أسود ملكي */
 display: inline-block;
 padding: 5px 15px;
-text-shadow:
--2px -2px 0 #000,
-2px -2px 0 #000,
--2px 2px 0 #000,
-2px 2px 0 #000,
-4px 4px 0px rgba(0,0,0,0.2);
-background: linear-gradient(to bottom, #ffffff 0%, #e0e0e0 100%);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-margin-bottom: 5px;
+position: relative;
+/* حواف ذهبية دقيقة */
+-webkit-text-stroke: 1px #d4af37;
+text-shadow: 0px 2px 4px rgba(0,0,0,0.2);
+/* تأثير الانعكاس المرآتي */
+-webkit-box-reflect: below -12px linear-gradient(transparent, rgba(0,0,0,0.15));
+margin-bottom: 10px;
 }
 
 header p { font-size: 0.9rem; font-weight: bold; color: #2c3e50; margin-top: 5px; }
@@ -181,11 +178,12 @@ display: block;
 
 <header>
 <div class="logo-area">
+<!-- تم تعديل الاسم ليتوافق مع الملف المرفوع logo.png.jpeg -->
 <img src="logo.png.jpeg" alt="Logo">
 </div>
 <h1 class="school-banner-title">مدارس جيل الإبداع</h1>
 <p>رياض - ابتدائي - متوسط</p>
-<p style="font-size: 0.8rem; opacity: 0.8;">لأبناء الجالية السودانية بالمملكة العربية السعودية</p>
+<p style="font-size: 0.8rem; opacity: 0.8; margin-top: 15px;">لأبناء الجالية السودانية بالمملكة العربية السعودية</p>
 </header>
 
 <main class="menu-section">
@@ -228,6 +226,3 @@ function closeNotif() { document.getElementById('promoOverlay').classList.remove
 </body>
 </html>
 
-Compose:
-New Message
-MinimizePop-outClose

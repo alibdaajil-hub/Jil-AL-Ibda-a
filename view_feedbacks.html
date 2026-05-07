@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إدارة البلاغات - جيل الإبداع</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Tajawal', sans-serif; background: #f0f2f5; padding: 20px; }
+.admin-container { max-width: 800px; margin: 0 auto; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; }
+.card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 15px; border-right: 8px solid #e67e22; position: relative; }
+.card.read { border-right-color: #bdc3c7; opacity: 0.8; }
+.sender-info { font-weight: bold; color: #2c3e50; font-size: 1.1rem; }
+.msg-type { font-size: 0.8rem; background: #ffe0b2; color: #e67e22; padding: 3px 10px; border-radius: 5px; margin-right: 10px; }
+.msg-content { margin-top: 10px; color: #555; line-height: 1.6; background: #f9f9f9; padding: 10px; border-radius: 8px; }
+.msg-date { font-size: 0.75rem; color: #999; margin-top: 10px; text-align: left; }
+.delete-btn { position: absolute; left: 15px; top: 15px; background: #c0392b; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
+.empty-state { text-align: center; margin-top: 50px; color: #7f8c8d; }
+</style>
+</head>
+<body>
+
+<div class="admin-container">
+<div class="header">
+<h2>📥 بريد الشكاوى والمقترحات</h2>
+<a href="admin_dashboard.html" style="text-decoration: none; color: #2980b9;">⬅️ عودة للوحة التحكم</a>
+</div>
+
+<div id="feedbacksList">
+<p class="empty-state">جاري تحميل الرسائل...</p>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, query, orderBy, onSnapshot, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
+authDomain: "jil-al-ibda-a.firebaseapp.com",
+projectId: "jil-al-ibda-a",
+storageBucket: "jil-al-ibda-a.firebasestorage.app",
+messagingSenderId: "1057703586286",
+appId: "1:1057703586286:web:e581aa576eef32930746ff"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const feedbacksList = document.getElementById('feedbacksList');
+
+// استدعاء البيانات بشكل مباشر (Real-time)
+const q = query(collection(db, "feedbacks"), orderBy("date", "desc"));
+
+onSnapshot(q, (snapshot) => {
+feedbacksList.innerHTML = '';
+if (snapshot.empty) {
+feedbacksList.innerHTML = '<p class="empty-state">لا توجد رسائل أو شكاوى حالياً.</p>';
+return;
+}
+
+snapshot.forEach((docSnap) => {
+const data = docSnap.data();
+const date = data.date ? data.date.toDate().toLocaleString('ar-EG') : 'جاري التحميل...';
+
+const card = document.createElement('div');
+card.className = 'card';
+card.innerHTML = `
+<button class="delete-btn" onclick="deleteMsg('${docSnap.id}')">حذف</button>
+<div class="sender-info">
+${data.senderName}
+<span class="msg-type">${data.type}</span>
+</div>
+<div style="font-size: 0.8rem; color: #7f8c8d;">رقم الحدود: ${data.senderID}</div>
+<div class="msg-content">${data.content}</div>
+<div class="msg-date">${date}</div>
+`;
+feedbacksList.appendChild(card);
+});
+});
+
+// دالة حذف الرسالة
+window.deleteMsg = async (id) => {
+if(confirm("هل أنت متأكد من حذف هذه الرسالة؟")) {
+await deleteDoc(doc(db, "feedbacks", id));
+}
+}
+</script>
+
+</body>
+</html>
+

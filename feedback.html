@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صندوق صوتك مسموع - جيل الإبداع</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --primary: #2c3e50; --accent: #e67e22; --bg: #f4f7f6; }
+body { font-family: 'Tajawal', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; margin: 0; }
+
+/* تصميم النافذة المنبثقة */
+.modal-overlay {
+position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background: rgba(0,0,0,0.8); z-index: 2000;
+display: flex; justify-content: center; align-items: center;
+visibility: visible; opacity: 1; transition: 0.3s;
+}
+.modal-box {
+width: 90%; max-width: 400px; background: white; padding: 25px;
+border-radius: 20px; text-align: center; border-top: 6px solid #c0392b;
+}
+.modal-box h3 { color: #c0392b; margin-top: 0; }
+.modal-box p { color: #333; line-height: 1.6; font-weight: bold; }
+.close-modal-btn {
+background: var(--primary); color: white; border: none;
+padding: 10px 25px; border-radius: 10px; cursor: pointer; font-family: 'Tajawal';
+}
+
+/* تصميم البطاقة الرئيسية */
+.feedback-card { width: 100%; max-width: 500px; background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 8px solid var(--accent); position: relative; }
+h2 { text-align: center; color: var(--primary); margin-bottom: 10px; }
+.info-note { text-align: center; background: #fff3e0; padding: 10px; border-radius: 10px; color: #e67e22; font-size: 0.85rem; margin-bottom: 20px; border: 1px solid #ffe0b2; }
+label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); font-size: 0.9rem; }
+input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; margin-bottom: 15px; font-family: 'Tajawal'; font-size: 1rem; box-sizing: border-box; }
+textarea { resize: none; }
+.btn-send { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
+.btn-send:hover { opacity: 0.9; transform: translateY(-2px); }
+.back-link { display: block; text-align: center; margin-top: 15px; color: #999; text-decoration: none; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<div class="modal-overlay" id="privacyModal">
+<div class="modal-box">
+<h3>🛡️ سياسة الخصوصية والسرية</h3>
+<p>نطمئنكم بأن جميع الملاحظات والشكاوى الواردة هنا يتم برمجتها لتصل إلى **إدارة المدرسة فقط**.</p>
+<p style="color: #c0392b;">لا يمكن لأي معلم أو موظف الاطلاع على شكواك نهائياً.</p>
+<button class="close-modal-btn" onclick="closeModal()">فهمت ذلك، استمرار</button>
+</div>
+</div>
+
+<div class="feedback-card">
+<h2>صوتك مسموع 📥</h2>
+<div class="info-note">يتم التحقق من رقم الحدود لضمان جدية البلاغ ومتابعته.</div>
+
+<label>رقم الحدود / الهوية للتحقق</label>
+<input type="number" id="studentID" placeholder="أدخل رقم الهوية المسجل لدينا..." required>
+
+<label>نوع الملاحظة</label>
+<select id="msgType">
+<option value="شكوى ضد معلم">شكوى ضد معلم ⚠️</option>
+<option value="اقتراح">اقتراح تطويري ✨</option>
+<option value="بلاغ إداري">بلاغ إداري 📝</option>
+</select>
+
+<label>تفاصيل الملاحظة (بكل صراحة)</label>
+<textarea id="msgContent" rows="5" placeholder="اكتب ملاحظتك هنا..."></textarea>
+
+<button class="btn-send" id="sendBtn">إرسال للإدارة (بسرية)</button>
+<a href="index.html" class="back-link">العودة للرئيسية</a>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
+authDomain: "jil-al-ibda-a.firebaseapp.com",
+projectId: "jil-al-ibda-a",
+storageBucket: "jil-al-ibda-a.firebasestorage.app",
+messagingSenderId: "1057703586286",
+appId: "1:1057703586286:web:e581aa576eef32930746ff"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// دالة إغلاق النافذة المنبثقة
+window.closeModal = function() {
+document.getElementById('privacyModal').style.visibility = 'hidden';
+document.getElementById('privacyModal').style.opacity = '0';
+}
+
+document.getElementById('sendBtn').addEventListener('click', async () => {
+const studentID = document.getElementById('studentID').value.trim();
+const type = document.getElementById('msgType').value;
+const content = document.getElementById('msgContent').value.trim();
+const btn = document.getElementById('sendBtn');
+
+if (!studentID) { alert("يرجى إدخال رقم الحدود"); return; }
+if (!content) { alert("يرجى كتابة نص الملاحظة"); return; }
+
+btn.disabled = true;
+btn.innerText = "جاري التحقق والإرسال بخصوصية...";
+
+try {
+const q = query(collection(db, "students"), where("nationalID", "==", studentID));
+const querySnapshot = await getDocs(q);
+
+if (querySnapshot.empty) {
+alert("رقم الحدود غير موجود. يرجى التأكد من الرقم المسجل بالمدرسة.");
+btn.disabled = false;
+btn.innerText = "إرسال للإدارة (بسرية)";
+return;
+}
+
+const studentData = querySnapshot.docs[0].data();
+await addDoc(collection(db, "feedbacks"), {
+senderID: studentID,
+senderName: studentData.studentName,
+type: type,
+content: content,
+date: serverTimestamp(),
+status: "لم يقرأ"
+});
+
+alert("تم إرسال بلاغك بنجاح وسوف يتم التعامل معه بسرية تامة من قبل الإدارة. ✅");
+window.location.href = "index.html";
+} catch (e) {
+alert("حدث خطأ، حاول مرة أخرى.");
+btn.disabled = false;
+}
+});
+</script>
+</body>
+</html>
+

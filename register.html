@@ -6,102 +6,75 @@
 <title>تسجيل طالب جديد - جيل الإبداع</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-:root { --primary: #2c3e50; --green: #27ae60; --gold: #f39c12; }
-* { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
-body { background: #d1d1d1; display: flex; justify-content: center; padding: 20px 0; }
-.app-container { width: 100%; max-width: 480px; background: white; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-header { background: var(--primary); color: white; padding: 20px; text-align: center; }
-.logo-small { width: 60px; margin-bottom: 10px; border-radius: 50%; }
-.form-body { padding: 20px; }
-.section-title { background: #f8f9fa; padding: 8px; border-right: 4px solid var(--gold); margin: 15px 0; font-weight: bold; color: var(--primary); }
-.input-group { margin-bottom: 12px; }
-label { display: block; font-size: 0.85rem; margin-bottom: 5px; font-weight: bold; }
-input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9rem; outline: none; transition: 0.3s; }
-input:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 5px rgba(243, 156, 18, 0.2); }
-.fee-alert { display: none; background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; margin-top: 5px; font-size: 0.85rem; border: 1px solid #ffeeba; border-right: 4px solid #f39c12; }
-.btn-submit { width: 100%; background: var(--green); color: white; border: none; padding: 15px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
-.btn-submit:hover { background: #219150; }
-.btn-submit:active { transform: scale(0.95); }
+:root { --primary: #2c3e50; --accent: #27ae60; --bg: #f4f7f6; --error: #c0392b; }
+body { font-family: 'Tajawal', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; }
+
+.register-card { width: 100%; max-width: 500px; background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 8px solid var(--accent); }
+h2 { text-align: center; color: var(--primary); margin-bottom: 25px; }
+
+.form-group { margin-bottom: 15px; }
+label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
+input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-family: 'Tajawal'; font-size: 1rem; box-sizing: border-box; }
+
+.btn-submit { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+.btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+
+/* تصميم نافذة التنبيه للتكرار */
+.error-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; display: none; justify-content: center; align-items: center; }
+.error-box { background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 400px; width: 90%; border-top: 8px solid var(--error); animation: slideDown 0.3s ease; }
+@keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.btn-go-search { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-family: 'Tajawal'; font-weight: bold; margin-top: 15px; }
+.back-link { display: block; text-align: center; margin-top: 20px; color: #7f8c8d; text-decoration: none; }
 </style>
 </head>
 <body>
 
-<div class="app-container">
-<header>
-<img src="logo.png" alt="شعار المدرسة" class="logo-small" onerror="this.style.display='none'">
-<h2>استمارة تسجيل طالب</h2>
-<p>مدرسة جيل الإبداع الأهلية</p>
-</header>
-
-<!-- قمت بإضافة ID للنموذج للتحكم به برمجياً -->
-<form id="registrationForm" class="form-body" action="https://formspree.io/f/xgodedgy" method="POST">
-
-<div class="section-title">البيانات الدراسية</div>
-<div class="input-group">
-<label>المرحلة الدراسية</label>
-<select id="stage" name="المرحلة" onchange="updateClasses()" required>
-<option value="">اختر المرحلة</option>
-<option value="kg">رياض أطفال</option>
-<option value="primary">ابتدائي</option>
-<option value="middle">متوسط</option>
-</select>
+<div class="error-popup" id="duplicatePopup">
+<div class="error-box">
+<h3 style="color: var(--error);">عفواً.. الطالب مسجل مسبقاً! ⚠️</h3>
+<p>لقد وجدنا أن رقم الهوية/الحدود هذا مرتبط بطالب مسجل لدينا بالفعل. يمكنك الاستعلام عن حالته مباشرة.</p>
+<button class="btn-go-search" onclick="window.location.href='search.html'">الذهاب لقسم الاستعلام 🔍</button>
+<button onclick="closeError()" style="background:none; border:none; color:#999; cursor:pointer; display:block; margin: 15px auto 0;">إغلاق</button>
 </div>
-<div class="input-group">
-<label>الصف الدراسي</label>
-<select id="classSelect" name="الصف" onchange="checkSpecialFees()" required>
-<option value="">اختر المرحلة أولاً</option>
-</select>
-<div id="feeAlert" class="fee-alert">💡 ملاحظة: رسوم هذا الصف (شهادة) هي 2500 ريال.</div>
 </div>
 
-<div class="section-title">بيانات الطالب الشخصية</div>
-<div class="input-group">
+<div class="register-card">
+<h2>استمارة تسجيل طالب 📝</h2>
+<form id="registrationForm">
+<div class="form-group">
 <label>اسم الطالب الرباعي</label>
-<input type="text" id="studentName" name="اسم الطالب" placeholder="كما هو في الهوية" required>
-</div>
-<div class="input-group">
-<label>رقم حدود الطالب / الإقامة</label>
-<input type="number" id="studentID" name="رقم الحدود" placeholder="10 أرقام" required>
-</div>
-<div class="input-group">
-<label>المدرسة السابقة</label>
-<input type="text" id="prevSchool" name="المدرسة السابقة" placeholder="اسم آخر مدرسة (إن وجد)">
+<input type="text" id="studentName" required placeholder="أدخل الاسم كاملاً">
 </div>
 
-<div class="section-title">بيانات التواصل والسكن</div>
-<div class="input-group">
-<label>رقم هاتف ولي الأمر (واتساب)</label>
-<input type="tel" id="parentPhone" name="هاتف ولي الأمر" placeholder="05xxxxxxxx" required>
-</div>
-<div class="input-group">
-<label>عنوان السكن</label>
-<input type="text" id="address" name="السكن" placeholder="الحي - الشارع" required>
-</div>
-<div class="input-group">
-<label>جهة عمل ولي الأمر</label>
-<input type="text" id="workPlace" name="جهة العمل" placeholder="اختياري">
+<div class="form-group">
+<label>رقم الهوية أو الحدود (10 أرقام)</label>
+<input type="number" id="nationalID" required placeholder="رقم الهوية هو مفتاح التسجيل">
 </div>
 
-<div class="section-title">معلومات إضافية</div>
-<div class="input-group">
-<label>رقم الحافلة / الترحيل</label>
-<input type="text" id="busNumber" name="رقم الترحيل" placeholder="إذا لم يكن الطالب مشتركاً في الباص">
-</div>
-<div class="input-group">
-<label>الحالة الصحية</label>
-<textarea id="healthStatus" name="الحالة الصحية" rows="2" placeholder="اذكر أي أمراض أو حساسية إن وجدت"></textarea>
+<div class="form-group">
+<label>المرحلة الدراسية</label>
+<select id="currentGrade" required>
+<option value="">اختر المرحلة...</option>
+<option value="تمهيدي">تمهيدي</option>
+<option value="ابتدائي">ابتدائي</option>
+<option value="متوسط">متوسط</option>
+</select>
 </div>
 
-<input type="hidden" name="_subject" value="تسجيل طالب جديد - جيل الإبداع">
+<div class="form-group">
+<label>رقم جوال ولي الأمر</label>
+<input type="tel" id="parentPhone" required placeholder="05xxxxxxxx">
+</div>
 
-<button type="submit" class="btn-submit">تأكيد وإرسال البيانات</button>
+<button type="submit" class="btn-submit" id="submitBtn">إرسال طلب التسجيل</button>
+<a href="index.html" class="back-link">العودة للرئيسية</a>
 </form>
 </div>
 
-<!-- كود Firebase المدمج -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
@@ -109,64 +82,59 @@ authDomain: "jil-al-ibda-a.firebaseapp.com",
 projectId: "jil-al-ibda-a",
 storageBucket: "jil-al-ibda-a.firebasestorage.app",
 messagingSenderId: "1057703586286",
-appId: "1:1057703586286:web:e581aa576eef32930746ff",
-measurementId: "G-TSG3J0BCSE"
+appId: "1:1057703586286:web:e581aa576eef32930746ff"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const form = document.getElementById('registrationForm');
-form.addEventListener('submit', async (e) => {
-// سنقوم بحفظ البيانات في Firestore أولاً قبل إرسال Formspree
+window.closeError = () => { document.getElementById('duplicatePopup').style.display = 'none'; };
+
+document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+e.preventDefault();
+
+const nID = document.getElementById('nationalID').value.trim();
+const sName = document.getElementById('studentName').value.trim();
+const sGrade = document.getElementById('currentGrade').value;
+const pPhone = document.getElementById('parentPhone').value.trim();
+const btn = document.getElementById('submitBtn');
+
+btn.disabled = true;
+btn.innerText = "جاري التحقق من السجلات...";
+
 try {
+// الخطوة الأهم: فحص التكرار بناءً على رقم الهوية
+const q = query(collection(db, "students"), where("nationalID", "==", nID));
+const querySnapshot = await getDocs(q);
+
+if (!querySnapshot.empty) {
+// إذا وجدنا الطالب، أظهر النافذة المنبثقة
+document.getElementById('duplicatePopup').style.display = 'flex';
+btn.disabled = false;
+btn.innerText = "إرسال طلب التسجيل";
+return;
+}
+
+// إذا لم يكن مسجلاً، قم بالحفظ
 await addDoc(collection(db, "students"), {
-stage: document.getElementById('stage').value,
-class: document.getElementById('classSelect').value,
-studentName: document.getElementById('studentName').value,
-nationalID: document.getElementById('studentID').value,
-previousSchool: document.getElementById('prevSchool').value,
-parentPhone: document.getElementById('parentPhone').value,
-address: document.getElementById('address').value,
-workPlace: document.getElementById('workPlace').value,
-busNumber: document.getElementById('busNumber').value,
-healthStatus: document.getElementById('healthStatus').value,
-timestamp: new Date()
+studentName: sName,
+nationalID: nID,
+class: sGrade,
+parentPhone: pPhone,
+paymentStatus: "غير مسدد",
+timestamp: serverTimestamp()
 });
-console.log("تمت بنجاح مزامنة البيانات مع Firestore");
+
+alert("تم تسجيل الطالب بنجاح! سيتم توجيهك للرئيسية.");
+window.location.href = "index.html";
+
 } catch (error) {
-console.error("خطأ في المزامنة: ", error);
+console.error(error);
+alert("حدث خطأ تقني، يرجى المحاولة لاحقاً.");
+btn.disabled = false;
+btn.innerText = "إرسال طلب التسجيل";
 }
-// بعد محاولة الحفظ، سيستمر النموذج في الإرسال لـ Formspree تلقائياً
 });
-</script>
-
-<script>
-// الأكواد الوظيفية الخاصة بك (تحديث الصفوف وتنبيه الرسوم)
-const classData = {
-kg: ["مستوى أول", "مستوى ثاني"],
-primary: ["الأول", "الثاني", "الثالث", "الرابع", "الخامس", "السادس (شهادة)"],
-middle: ["الأول متوسط", "الثاني متوسط", "الثالث متوسط (شهادة)"]
-};
-
-function updateClasses() {
-const stage = document.getElementById('stage').value;
-const classSelect = document.getElementById('classSelect');
-classSelect.innerHTML = '<option value="">اختر الصف</option>';
-if (stage) {
-classData[stage].forEach(c => {
-let opt = document.createElement('option');
-opt.value = c; opt.innerText = c;
-classSelect.appendChild(opt);
-});
-}
-}
-
-function checkSpecialFees() {
-const val = document.getElementById('classSelect').value;
-const alert = document.getElementById('feeAlert');
-alert.style.display = val.includes("(شهادة)") ? "block" : "none";
-}
 </script>
 
 </body>

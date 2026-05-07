@@ -6,13 +6,23 @@
 <title>لوحة التحكم - طلاب جيل الإبداع</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-:root { --primary: #2c3e50; --gold: #f39c12; --bg: #f4f7f6; --green: #27ae60; --red: #c0392b; }
+:root { --primary: #2c3e50; --gold: #f39c12; --bg: #f4f7f6; --green: #27ae60; --red: #c0392b; --orange: #e67e22; }
 body { font-family: 'Tajawal', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
 .dashboard-header { background: var(--primary); color: white; padding: 20px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+
+/* قسم الأزرار العلوية الجديد */
+.top-actions { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.btn-nav { flex: 1; min-width: 200px; display: flex; align-items: center; justify-content: center; padding: 15px; border-radius: 12px; text-decoration: none; font-weight: bold; transition: 0.3s; color: white; }
+.btn-feedback-nav { background: var(--orange); border-bottom: 4px solid #d35400; }
+.btn-feedback-nav:hover { background: #d35400; transform: translateY(-2px); }
+
 .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px; }
-.stat-box { background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid var(--gold); }
+.stat-box { background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid var(--gold); position: relative; }
 .stat-box h3 { margin: 0; font-size: 0.9rem; color: #777; }
 .stat-box p { margin: 10px 0 0; font-size: 1.8rem; font-weight: 900; color: var(--primary); }
+
+.badge-new { position: absolute; top: 10px; left: 10px; background: var(--red); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; display: none; }
+
 .search-bar { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 20px; font-size: 1rem; outline: none; box-sizing: border-box; }
 .table-container { background: white; border-radius: 15px; overflow-x: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
 table { width: 100%; border-collapse: collapse; text-align: right; }
@@ -35,10 +45,21 @@ td { padding: 15px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
 <a href="index.html" class="btn-exit" onclick="localStorage.removeItem('isLoggedIn')">خروج</a>
 </div>
 
+<div class="top-actions">
+<a href="view_feedbacks.html" class="btn-nav btn-feedback-nav">
+<span>📥 بريد الشكاوى والمقترحات (صوتك مسموع)</span>
+</a>
+</div>
+
 <div class="stats-container">
 <div class="stat-box">
 <h3>إجمالي الطلاب المسجلين</h3>
 <p id="totalStudents">0</p>
+</div>
+<div class="stat-box">
+<div id="newFeedbackBadge" class="badge-new">جديد</div>
+<h3>رسائل الشكاوى الجديدة</h3>
+<p id="feedbackCount">0</p>
 </div>
 <div class="stat-box">
 <h3>المراحل الدراسية</h3>
@@ -68,9 +89,8 @@ td { padding: 15px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// إعدادات Firebase الخاصة بمشروعك
 const firebaseConfig = {
 apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
 authDomain: "jil-al-ibda-a.firebaseapp.com",
@@ -84,9 +104,9 @@ measurementId: "G-TSG3J0BCSE"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// جلب وعرض البيانات بشكل حي
-const q = query(collection(db, "students"), orderBy("timestamp", "desc"));
-onSnapshot(q, (snapshot) => {
+// 1. جلب بيانات الطلاب (الجدول القديم كما هو)
+const qStudents = query(collection(db, "students"), orderBy("timestamp", "desc"));
+onSnapshot(qStudents, (snapshot) => {
 const tableBody = document.getElementById('tableBody');
 document.getElementById('totalStudents').innerText = snapshot.size;
 let rows = "";
@@ -111,13 +131,24 @@ rows += `
 tableBody.innerHTML = rows;
 });
 
-// وظيفة الزر: السطر الذي طلبته للتحويل إلى صفحة التعديل
+// 2. مراقبة بريد الشكاوى الجديد لتحديث الإحصائيات
+const qFeedbacks = query(collection(db, "feedbacks"), where("status", "==", "لم يقرأ"));
+onSnapshot(qFeedbacks, (snapshot) => {
+const count = snapshot.size;
+document.getElementById('feedbackCount').innerText = count;
+const badge = document.getElementById('newFeedbackBadge');
+if(count > 0) {
+badge.style.display = 'block';
+} else {
+badge.style.display = 'none';
+}
+});
+
 window.goToEdit = function(id) {
-localStorage.setItem('targetID', id); // حفظ الرقم لاستخدامه في صفحة التعديل
-window.location.href = "edit_student.html"; // السطر المحدث
+localStorage.setItem('targetID', id);
+window.location.href = "edit_student.html";
 };
 
-// البحث داخل الجدول
 document.getElementById('searchInput').addEventListener('keyup', function() {
 let filter = this.value.toLowerCase();
 let rows = document.getElementById("tableBody").rows;
@@ -128,4 +159,3 @@ row.style.display = row.textContent.toLowerCase().includes(filter) ? "" : "none"
 </script>
 </body>
 </html>
-

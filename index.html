@@ -2,206 +2,51 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مدرسة جيل الإبداع - الواجهة الرئيسية</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;800;900&display=swap" rel="stylesheet">
+<title>استعلام الموظفين</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root {
---primary-bg: #2c3e50;
---register-color: #27ae60;
---search-color: #f39c12;
---privacy-color: #7f8c8d;
---contact-color: #2980b9;
---feedback-color: #e67e22; /* اللون الجديد للصندوق */
---admin-color: #c0392b;
---text-main: #333;
-}
-
-* {
-box-sizing: border-box;
-margin: 0;
-padding: 0;
-font-family: 'Tajawal', sans-serif;
--webkit-tap-highlight-color: transparent;
-}
-
-body {
-background-color: #d1d1d1;
-display: flex;
-justify-content: center;
-min-height: 100vh;
-}
-
-.app-container {
-width: 100%;
-max-width: 450px;
-background-color: #ffffff;
-background-image: linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.92)), url('main-bg.jpg');
-background-size: cover;
-background-position: center;
-position: relative;
-display: flex;
-flex-direction: column;
-box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-header {
-background: #f8f9fa;
-padding: 40px 20px 60px;
-text-align: center;
-border-bottom-left-radius: 40px;
-border-bottom-right-radius: 40px;
-border-bottom: 2px solid #ddd;
-}
-
-.logo-area {
-width: 100px;
-height: 100px;
-background: white;
-border-radius: 50%;
-margin: 0 auto 15px;
-display: flex; align-items: center; justify-content: center;
-border: 3px solid #d4af37;
-overflow: hidden;
-box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.logo-area img { width: 100%; height: 100%; object-fit: contain; }
-
-.school-banner-title {
-font-size: 2.2rem; font-weight: 900; color: #000000;
-display: inline-block; padding: 5px 15px; position: relative;
--webkit-text-stroke: 1px #d4af37;
-text-shadow: 0px 2px 4px rgba(0,0,0,0.2);
--webkit-box-reflect: below -12px linear-gradient(transparent, rgba(0,0,0,0.15));
-margin-bottom: 10px;
-}
-
-header p { font-size: 0.9rem; font-weight: bold; color: #2c3e50; margin-top: 5px; }
-
-.menu-section {
-padding: 25px 20px;
-display: flex; flex-direction: column;
-gap: 12px; flex-grow: 1;
-}
-
-.app-card {
-display: flex; align-items: center; padding: 20px;
-background: #ffffff; border-radius: 18px;
-text-decoration: none; color: var(--text-main); font-weight: 700;
-box-shadow: 0 3px 6px rgba(0,0,0,0.05);
-border: 1px solid #eee; transition: 0.2s;
-}
-
-.app-card:active { transform: scale(0.97); }
-
-.icon-circle {
-width: 42px; height: 42px; border-radius: 12px; margin-left: 15px;
-display: flex; align-items: center; justify-content: center;
-font-size: 1.3rem; background-color: #f0f2f5;
-}
-
-.btn-register { border-right: 6px solid var(--register-color); }
-.btn-query { border-right: 6px solid var(--search-color); }
-.btn-privacy { border-right: 6px solid var(--privacy-color); }
-.btn-contact { border-right: 6px solid var(--contact-color); }
-.btn-feedback { border-right: 6px solid var(--feedback-color); }
-.btn-admin { margin-top: 20px; border: 2px dashed var(--admin-color); color: var(--admin-color); }
-
-.overlay {
-position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-background: rgba(0,0,0,0.7); z-index: 1000;
-display: flex; justify-content: center; align-items: center;
-visibility: hidden; opacity: 0; transition: 0.4s;
-}
-.overlay.show { visibility: visible; opacity: 1; }
-.notification-box {
-width: 85%; background: white; border-radius: 25px; padding: 25px;
-text-align: center; transform: translateY(50px); transition: 0.4s;
-}
-.overlay.show .notification-box { transform: translateY(0); }
-.close-notif {
-margin-top: 15px; background: var(--primary-bg); color: white;
-border: none; padding: 10px 30px; border-radius: 10px; font-weight: bold; cursor: pointer;
-}
-
-footer {
-padding: 20px; text-align: center; font-size: 0.85rem;
-color: #555; background: #f1f1f1; border-top: 1px solid #ddd;
-}
-.license-text { color: #c0392b; font-weight: bold; margin-top: 5px; display: block; }
+body { font-family: 'Tajawal', sans-serif; background: #eceff1; padding: 20px; text-align: center; }
+.query-box { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 12px; }
+.result-card { display: none; margin-top: 20px; padding: 15px; background: #fff; border-right: 5px solid #27ae60; text-align: right; }
 </style>
 </head>
 <body>
-
-<div class="app-container">
-<div class="overlay" id="promoOverlay">
-<div class="notification-box">
-<h3 style="margin-bottom:15px; color:#f39c12;">📢 إعلانات هامة</h3>
-<div style="background:#f9f9f9; padding:10px; border-radius:10px; margin-bottom:10px; text-align:right;">
-🕌 تحفيظ القرآن الكريم خلال الإجازات والعطل.
-</div>
-<div style="background:#f9f9f9; padding:10px; border-radius:10px; margin-bottom:10px; text-align:right;">
-🇬🇧 كورس تأسيس لغة إنجليزية مكثف.
-</div>
-<button class="close-notif" onclick="closeNotif()">موافق</button>
-</div>
+<div class="query-box">
+<h3>استعلام بيانات الموظف 🔍</h3>
+<input type="number" id="qID" placeholder="أدخل رقم هويتك" style="width:80%; padding:10px; margin-bottom:10px;">
+<button onclick="checkStaff()" id="qBtn" style="padding:10px 20px; cursor:pointer;">استعلام</button>
 </div>
 
-<header>
-<div class="logo-area">
-<img src="logo.png.jpeg" alt="Logo">
-</div>
-<h1 class="school-banner-title">مدارس جيل الإبداع</h1>
-<p>رياض - ابتدائي - متوسط</p>
-<p style="font-size: 0.8rem; opacity: 0.8; margin-top: 15px;">لأبناء الجالية السودانية بالمملكة العربية السعودية</p>
-</header>
-
-<main class="menu-section">
-<a href="register.html" class="app-card btn-register">
-<div class="icon-circle">📝</div>
-<span>تسجيل طالب جديد</span>
-</a>
-<a href="search.html" class="app-card btn-query">
-<div class="icon-circle">🔍</div>
-<span>استعلام عن طالب مسجل</span>
-</a>
-
-<a href="feedback.html" class="app-card btn-feedback">
-<div class="icon-circle">📥</div>
-<div>
-<span style="display: block;">صندوق المقترحات والبلاغات</span>
-<small style="font-size: 0.7rem; color: #7f8c8d; font-weight: normal;">رأيك يصل للإدارة بكل سرية</small>
-</div>
-</a>
-
-<a href="privacy.html" class="app-card btn-privacy">
-<div class="icon-circle">🛡️</div>
-<span>سياسة الخصوصية</span>
-</a>
-<a href="contact.html" class="app-card btn-contact">
-<div class="icon-circle">📞</div>
-<span>تواصل بنا</span>
-</a>
-<a href="login.html" class="app-card btn-admin">
-<div class="icon-circle">⚙️</div>
-<span>قسم الطلاب (المالك)</span>
-</a>
-</main>
-
-<footer>
-<p>جميع الحقوق محفوظة &copy; 2026 - مدرسة جيل الإبداع</p>
-<span class="license-text">رقم الترخيص: 7029913659</span>
-</footer>
+<div id="result" class="result-card">
+<p><b>الاسم:</b> <span id="resName"></span></p>
+<p><b>الوظيفة:</b> <span id="resTitle"></span></p>
+<p><b>تاريخ المباشرة:</b> <span id="resDate"></span></p>
 </div>
 
-<script>
-window.onload = function() {
-setTimeout(() => { document.getElementById('promoOverlay').classList.add('show'); }, 800);
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = { /* ضع إعدادات مشروعك هنا */ };
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.checkStaff = async () => {
+const id = document.getElementById('qID').value;
+const q = query(collection(db, "staff"), where("idNumber", "==", id));
+const snap = await getDocs(q);
+
+if(!snap.empty) {
+const data = snap.docs[0].data();
+document.getElementById('resName').innerText = data.name;
+document.getElementById('resTitle').innerText = data.title;
+document.getElementById('resDate').innerText = data.joinDate;
+document.getElementById('result').style.display = 'block';
+} else {
+alert("عفواً، لا يوجد موظف مسجل بهذا الرقم");
 }
-function closeNotif() { document.getElementById('promoOverlay').classList.remove('show'); }
+};
 </script>
-
 </body>
 </html>
 

@@ -3,18 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة التحكم - طلاب جيل الإبداع</title>
+<title>لوحة التحكم الشاملة - جيل الإبداع</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-:root { --primary: #2c3e50; --gold: #f39c12; --bg: #f4f7f6; --green: #27ae60; --red: #c0392b; --orange: #e67e22; }
+:root { --primary: #2c3e50; --gold: #f39c12; --bg: #f4f7f6; --green: #27ae60; --red: #c0392b; --orange: #e67e22; --blue: #3498db; }
 body { font-family: 'Tajawal', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+
 .dashboard-header { background: var(--primary); color: white; padding: 20px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 
-/* قسم الأزرار العلوية الجديد */
-.top-actions { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-.btn-nav { flex: 1; min-width: 200px; display: flex; align-items: center; justify-content: center; padding: 15px; border-radius: 12px; text-decoration: none; font-weight: bold; transition: 0.3s; color: white; }
-.btn-feedback-nav { background: var(--orange); border-bottom: 4px solid #d35400; }
-.btn-feedback-nav:hover { background: #d35400; transform: translateY(-2px); }
+/* قسم أزرار التحكم - للمالك فقط */
+.admin-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+.btn-nav { display: flex; align-items: center; justify-content: center; padding: 15px; border-radius: 12px; text-decoration: none; font-weight: bold; color: white; transition: 0.3s; text-align: center; border: none; cursor: pointer; }
+.btn-staff { background: var(--blue); border-bottom: 4px solid #2980b9; }
+.btn-feedback { background: var(--orange); border-bottom: 4px solid #d35400; position: relative; }
+.btn-exit { background: var(--red); color: white; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-weight: bold; }
 
 .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px; }
 .stat-box { background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid var(--gold); position: relative; }
@@ -23,66 +25,72 @@ body { font-family: 'Tajawal', sans-serif; background: var(--bg); margin: 0; pad
 
 .badge-new { position: absolute; top: 10px; left: 10px; background: var(--red); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; display: none; }
 
-.search-bar { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 20px; font-size: 1rem; outline: none; box-sizing: border-box; }
+.search-bar { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 20px; font-size: 1rem; outline: none; box-sizing: border-box; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
+
 .table-container { background: white; border-radius: 15px; overflow-x: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
 table { width: 100%; border-collapse: collapse; text-align: right; }
 th { background: #f8f9fa; padding: 15px; color: var(--primary); border-bottom: 2px solid #eee; }
 td { padding: 15px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+
 .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
 .status-paid { background: #e8f5e9; color: #2e7d32; }
-.status-unpaid { background: #ffebee; color: #c62828; }
+.status-waiting { background: #fff3e0; color: #e67e22; }
+
 .btn-action { background: var(--gold); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; font-size: 0.8rem; }
-.btn-exit { background: var(--red); color: white; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 0.9rem; }
 </style>
 </head>
 <body>
 
 <div class="dashboard-header">
 <div>
-<h2 style="margin:0;">لوحة تحكم المالك</h2>
-<p style="margin:5px 0 0; opacity:0.8;">إدارة بيانات مدرسة جيل الإبداع</p>
+<h2 style="margin:0;">لوحة إدارة المالك 👑</h2>
+<p style="margin:5px 0 0; opacity:0.8;">مدرسة جيل الإبداع - الإدارة العامة</p>
 </div>
-<a href="index.html" class="btn-exit" onclick="localStorage.removeItem('isLoggedIn')">خروج</a>
+<a href="index.html" class="btn-exit" onclick="localStorage.removeItem('isLoggedIn')">تسجيل الخروج</a>
 </div>
 
-<div class="top-actions">
-<a href="view_feedbacks.html" class="btn-nav btn-feedback-nav">
-<span>📥 بريد الشكاوى والمقترحات (صوتك مسموع)</span>
+<div class="admin-actions">
+<a href="register_staff.html" class="btn-nav btn-staff">
+<span>👨‍🏫 إدارة شؤون الموظفين (إضافة معلم)</span>
+</a>
+<a href="view_feedbacks.html" class="btn-nav btn-feedback">
+<span>📥 بريد الشكاوى والمقترحات</span>
+<div id="feedbackBadgeMain" class="badge-new" style="top:-5px; left:-5px; display:none;">جديد</div>
 </a>
 </div>
 
 <div class="stats-container">
 <div class="stat-box">
-<h3>إجمالي الطلاب المسجلين</h3>
+<h3>إجمالي الطلاب</h3>
 <p id="totalStudents">0</p>
 </div>
 <div class="stat-box">
 <div id="newFeedbackBadge" class="badge-new">جديد</div>
-<h3>رسائل الشكاوى الجديدة</h3>
+<h3>شكاوى لم تقرأ</h3>
 <p id="feedbackCount">0</p>
 </div>
 <div class="stat-box">
-<h3>المراحل الدراسية</h3>
-<p>3</p>
+<h3>طاقم العمل</h3>
+<p id="staffCount">0</p>
 </div>
 </div>
 
-<input type="text" id="searchInput" class="search-bar" placeholder="ابحث باسم الطالب أو رقم الهوية لإيجاده في الجدول...">
+<input type="text" id="searchInput" class="search-bar" placeholder="ابحث عن طالب (بالاسم أو رقم الحدود)...">
 
 <div class="table-container">
 <table>
 <thead>
 <tr>
-<th>الاسم</th>
+<th>اسم الطالب</th>
 <th>الصف</th>
-<th>رقم الهوية / الحدود</th>
-<th>حالة الرسوم</th>
+<th>رقم الحدود</th>
+<th>الحالة المالية</th>
 <th>تاريخ التسجيل</th>
-<th>التحكم</th>
+<th>الإجراء</th>
 </tr>
 </thead>
 <tbody id="tableBody">
-<tr><td colspan="6" style="text-align:center;">جاري جلب بيانات الطلاب...</td></tr>
+<tr><td colspan="6" style="text-align:center;">جاري تحميل بيانات الطلاب...</td></tr>
 </tbody>
 </table>
 </div>
@@ -104,7 +112,7 @@ measurementId: "G-TSG3J0BCSE"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 1. جلب بيانات الطلاب (الجدول القديم كما هو)
+// 1. مراقبة الطلاب وعرضهم في الجدول
 const qStudents = query(collection(db, "students"), orderBy("timestamp", "desc"));
 onSnapshot(qStudents, (snapshot) => {
 const tableBody = document.getElementById('tableBody');
@@ -114,41 +122,51 @@ let rows = "";
 snapshot.forEach((doc) => {
 const data = doc.data();
 const studentID = data.nationalID || doc.id;
-const statusClass = data.paymentStatus === "مسدد" ? "status-paid" : "status-unpaid";
-const date = data.timestamp ? data.timestamp.toDate().toLocaleDateString('ar-EG') : "-";
+const statusLabel = data.paymentStatus || "غير محدد";
+const statusClass = (statusLabel === "مسدد") ? "status-paid" : "status-waiting";
+const date = data.timestamp ? data.timestamp.toDate().toLocaleDateString('ar-SA') : "-";
 
 rows += `
 <tr>
-<td><b>${data.studentName || data.fullName || "غير مسجل"}</b></td>
-<td>${data.class || data.currentGrade || "-"}</td>
+<td><b>${data.studentName || "غير مسجل"}</b></td>
+<td>${data.class || "-"}</td>
 <td>${studentID}</td>
-<td><span class="status-badge ${statusClass}">${data.paymentStatus || "غير محدد"}</span></td>
+<td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
 <td>${date}</td>
-<td><button onclick="goToEdit('${studentID}')" class="btn-action">تحديث وتعديل ⚙️</button></td>
+<td><button onclick="goToEdit('${studentID}')" class="btn-action">تعديل ⚙️</button></td>
 </tr>
 `;
 });
 tableBody.innerHTML = rows;
 });
 
-// 2. مراقبة بريد الشكاوى الجديد لتحديث الإحصائيات
+// 2. تحديث عدد الموظفين
+onSnapshot(collection(db, "staff"), (snapshot) => {
+document.getElementById('staffCount').innerText = snapshot.size;
+});
+
+// 3. مراقبة الشكاوى الجديدة
 const qFeedbacks = query(collection(db, "feedbacks"), where("status", "==", "لم يقرأ"));
 onSnapshot(qFeedbacks, (snapshot) => {
 const count = snapshot.size;
 document.getElementById('feedbackCount').innerText = count;
-const badge = document.getElementById('newFeedbackBadge');
+const badge1 = document.getElementById('newFeedbackBadge');
+const badge2 = document.getElementById('feedbackBadgeMain');
+
 if(count > 0) {
-badge.style.display = 'block';
+badge1.style.display = badge2.style.display = 'block';
 } else {
-badge.style.display = 'none';
+badge1.style.display = badge2.style.display = 'none';
 }
 });
 
+// وظيفة التعديل
 window.goToEdit = function(id) {
 localStorage.setItem('targetID', id);
 window.location.href = "edit_student.html";
 };
 
+// البحث السريع
 document.getElementById('searchInput').addEventListener('keyup', function() {
 let filter = this.value.toLowerCase();
 let rows = document.getElementById("tableBody").rows;
@@ -159,3 +177,4 @@ row.style.display = row.textContent.toLowerCase().includes(filter) ? "" : "none"
 </script>
 </body>
 </html>
+

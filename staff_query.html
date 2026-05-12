@@ -2,38 +2,70 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>استعلام الموظفين</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>استعلام الموظفين - جيل الإبداع</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-body { font-family: 'Tajawal', sans-serif; background: #eceff1; padding: 20px; text-align: center; }
-.query-box { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 12px; }
-.result-card { display: none; margin-top: 20px; padding: 15px; background: #fff; border-right: 5px solid #27ae60; text-align: right; }
+:root { --primary: #2c3e50; --gold: #D4AF37; --bg: #f4f7f6; }
+body { font-family: 'Tajawal', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
+.query-card { width: 100%; max-width: 450px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+input { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 12px; margin-bottom: 15px; font-family: 'Tajawal'; font-size: 1rem; box-sizing: border-box; }
+.btn-query { width: 100%; padding: 15px; background: var(--gold); color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
+.btn-query:hover { background: var(--primary); }
+
+.result-box { display: none; margin-top: 25px; padding: 20px; background: #fffdf5; border-right: 6px solid var(--gold); border-radius: 10px; text-align: right; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+.result-item { margin-bottom: 10px; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
+.label { font-weight: bold; color: var(--primary); }
 </style>
 </head>
 <body>
-<div class="query-box">
-<h3>استعلام بيانات الموظف 🔍</h3>
-<input type="number" id="qID" placeholder="أدخل رقم هويتك" style="width:80%; padding:10px; margin-bottom:10px;">
-<button onclick="checkStaff()" id="qBtn" style="padding:10px 20px; cursor:pointer;">استعلام</button>
+
+<div class="query-card">
+<h2 style="color: var(--primary);">استعلام بيانات الموظف 🔍</h2>
+<p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">يرجى إدخال رقم الهوية لرؤية بياناتك الوظيفية</p>
+
+<input type="number" id="qID" placeholder="أدخل رقم الهوية">
+<button class="btn-query" id="qBtn" onclick="checkStaff()">ابدأ الاستعلام</button>
+
+<div id="result" class="result-box">
+<div class="result-item"><span class="label">الاسم:</span> <span id="resName"></span></div>
+<div class="result-item"><span class="label">المسمى الوظيفي:</span> <span id="resTitle"></span></div>
+<div class="result-item"><span class="label">تاريخ المباشرة:</span> <span id="resDate"></span></div>
+<p style="font-size: 0.8rem; color: #e67e22; margin-top: 15px;">* لمراجعة تفاصيل الراتب يرجى مراجعة الإدارة المالية.</p>
+</div>
 </div>
 
-<div id="result" class="result-card">
-<p><b>الاسم:</b> <span id="resName"></span></p>
-<p><b>الوظيفة:</b> <span id="resTitle"></span></p>
-<p><b>تاريخ المباشرة:</b> <span id="resDate"></span></p>
-</div>
+<a href="index.html" style="margin-top: 20px; color: var(--primary); text-decoration: none;">العودة للرئيسية</a>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const firebaseConfig = { /* ضع إعدادات مشروعك هنا */ };
+const firebaseConfig = {
+apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
+authDomain: "jil-al-ibda-a.firebaseapp.com",
+projectId: "jil-al-ibda-a",
+storageBucket: "jil-al-ibda-a.firebasestorage.app",
+messagingSenderId: "1057703586286",
+appId: "1:1057703586286:web:e581aa576eef32930746ff"
+};
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 window.checkStaff = async () => {
-const id = document.getElementById('qID').value;
-const q = query(collection(db, "staff"), where("idNumber", "==", id));
+const idInput = document.getElementById('qID').value.trim();
+const resultDiv = document.getElementById('result');
+const btn = document.getElementById('qBtn');
+
+if(!idInput) { alert("يرجى إدخال رقم الهوية"); return; }
+
+btn.disabled = true;
+btn.innerText = "جاري البحث...";
+
+try {
+// حل مشكلة البحث: نبحث عن الرقم كـ "نص" وكـ "رقم" لضمان النتيجة
+const q = query(collection(db, "staff"), where("idNumber", "in", [idInput, Number(idInput)]));
 const snap = await getDocs(q);
 
 if(!snap.empty) {
@@ -41,10 +73,16 @@ const data = snap.docs[0].data();
 document.getElementById('resName').innerText = data.name;
 document.getElementById('resTitle').innerText = data.title;
 document.getElementById('resDate').innerText = data.joinDate;
-document.getElementById('result').style.display = 'block';
+resultDiv.style.display = 'block';
 } else {
-alert("عفواً، لا يوجد موظف مسجل بهذا الرقم");
+alert("عفواً، لا يوجد موظف مسجل بهذا الرقم.");
+resultDiv.style.display = 'none';
 }
+} catch (error) {
+alert("حدث خطأ في الاتصال بقاعدة البيانات");
+}
+btn.disabled = false;
+btn.innerText = "ابدأ الاستعلام";
 };
 </script>
 </body>

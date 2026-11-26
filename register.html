@@ -1,232 +1,139 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تسجيل طالب جديد - جيل الإبداع</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>استمارة قبول وتسجيل طالب - مؤسسة جيل الإبداع والتميز</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
 <style>
-:root { --primary: #2c3e50; --accent: #27ae60; --bg: #f4f7f6; --error: #c0392b; --warning: #f39c12; --blue: #3498db; }
-body { font-family: 'Tajawal', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; margin: 0; }
-
-.register-card { width: 100%; max-width: 600px; background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 8px solid var(--accent); }
-h2 { text-align: center; color: var(--primary); margin-bottom: 10px; }
-.sub-title { text-align: center; color: #7f8c8d; font-size: 0.9rem; margin-bottom: 25px; }
-
-/* تنبيه مالي جديد */
-.finance-notice { background: #e3f2fd; border: 1px solid var(--blue); padding: 15px; border-radius: 12px; color: #0d47a1; margin-bottom: 20px; font-size: 0.9rem; line-height: 1.6; }
-
-.form-section { border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
-.form-section-title { font-weight: 900; color: var(--primary); margin-bottom: 15px; display: block; border-right: 4px solid var(--accent); padding-right: 10px; }
-
-.form-group { margin-bottom: 15px; }
-label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); font-size: 0.9rem; }
-input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-family: 'Tajawal'; font-size: 1rem; box-sizing: border-box; }
-
-.transport-options { display: none; background: #fff9c4; padding: 15px; border-radius: 12px; margin-top: 10px; border: 1px solid #fbc02d; }
-
-.summary-box { background: var(--primary); color: white; padding: 20px; border-radius: 15px; margin-top: 20px; }
-.summary-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
-.highlight-yellow { color: var(--warning); font-weight: bold; }
-.total-pay-now { font-size: 1.3rem; font-weight: 900; color: #2ecc71; text-align: center; margin-top: 15px; border: 2px dashed #2ecc71; padding: 10px; border-radius: 10px; }
-
-.btn-submit { width: 100%; padding: 18px; background: var(--accent); color: white; border: none; border-radius: 12px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 20px; }
-
-.error-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; display: none; justify-content: center; align-items: center; }
-.error-box { background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 400px; width: 90%; border-top: 8px solid var(--error); }
-</style>
-</head>
-<body>
-
-<div class="error-popup" id="duplicatePopup">
-<div class="error-box">
-<h3 style="color: var(--error);">عفواً.. الطالب مسجل مسبقاً! ⚠️</h3>
-<p>رقم الحدود هذا مسجل لدينا بالفعل. يرجى مراجعة الإدارة أو الاستعلام عن حالة الطالب.</p>
-<button onclick="window.location.href='search.html'" style="background:var(--primary); color:white; padding:10px 20px; border-radius:8px; border:none; cursor:pointer;">الذهاب للاستعلام</button>
-</div>
-</div>
-
-<div class="register-card">
-<h2>جيل الإبداع 🎓</h2>
-<p class="sub-title">استمارة تسجيل طالب جديد</p>
-
-<div class="finance-notice">
-<b>📌 النظام المالي للمدرسة:</b><br>
-1. الدراسة بالتقسيط (دفعة أولى 500 ريال عند التسجيل).<br>
-2. رسوم التسجيل والكتب (200 ريال) تُدفع عند انطلاقة الدراسة.<br>
-3. رسوم الترحيل تُدفع في نهاية كل شهر ميلادي.
-</div>
-
-<form id="regForm">
-<div class="form-section">
-<span class="form-section-title">بيانات الطالب</span>
-<div class="form-group">
-<label>اسم الطالب رباعي</label>
-<input type="text" id="studentName" required placeholder="أدخل الاسم الرباعي">
-</div>
-<div class="form-group">
-<label>رقم الحدود</label>
-<input type="number" id="nationalID" required placeholder="10 أرقام">
-</div>
-<div class="form-group">
-<label>رقم جوال ولي الأمر</label>
-<input type="tel" id="parentPhone" required placeholder="05xxxxxxxx">
-</div>
-<div class="form-group">
-<label>اسم المدرسة السابقة</label>
-<input type="text" id="prevSchool">
-</div>
-</div>
-
-<div class="form-section">
-<span class="form-section-title">المرحلة والدراسة</span>
-<div class="form-group">
-<label>المرحلة</label>
-<select id="stage" onchange="updateGrades()" required>
-<option value="">اختر المرحلة...</option>
-<option value="رياض">رياض أطفال</option>
-<option value="ابتدائي">ابتدائي</option>
-<option value="متوسط">متوسط</option>
-</select>
-</div>
-<div class="form-group">
-<label>الصف الدراسي</label>
-<select id="grade" onchange="calculateFees()" required>
-<option value="">اختر المرحلة أولاً</option>
-</select>
-</div>
-</div>
-
-<div class="form-section">
-<span class="form-section-title">المواصلات (اختياري)</span>
-<div class="form-group">
-<label>هل ترغب في خدمة الترحيل؟</label>
-<select id="wantsTransport" onchange="toggleTransport()">
-<option value="no">لا، بوسائل خاصة</option>
-<option value="yes">نعم، أرغب في ترحيل المدرسة</option>
-</select>
-</div>
-<div id="transportSection" class="transport-options">
-<label>اختر الحي (الدفع نهاية الشهر)</label>
-<select id="neighborhood" onchange="calculateFees()">
-<option value="200">حي ديحمة / المسارحة / أبو حجر (200 ريال)</option>
-<option value="150">حي صامطة / الجرادية (150 ريال)</option>
-</select>
-</div>
-</div>
-
-<div class="form-section">
-<span class="form-section-title">ملاحظات إضافية</span>
-<div class="form-group">
-<label>الحالة الصحية والنفسية</label>
-<textarea id="healthStatus" rows="2"></textarea>
-</div>
-<div class="form-group">
-<label>نقاط الضعف</label>
-<textarea id="weakPoints" rows="2"></textarea>
-</div>
-</div>
-
-<div class="summary-box">
-<div class="summary-item"><span>إجمالي الرسوم الدراسية:</span> <span id="studyFee">0</span> ريال</div>
-<div class="summary-item"><span>رسوم الكتب (عند الانطلاقة):</span> <span>200 ريال</span></div>
-<div class="summary-item highlight-yellow" id="transSummary" style="display:none;">
-<span>رسوم الترحيل (نهاية الشهر):</span> <span id="transportFee">0</span> ريال
-</div>
-<div class="total-pay-now">الدفعة الأولى المطلوبة الآن: 500 ريال</div>
-<p style="font-size: 0.7rem; text-align: center; margin-top: 10px; opacity: 0.8;">
-* المتبقي من الرسوم الدراسية يُدفع كأقساط شهرية يتم تنسيقها مع الإدارة.
-</p>
-</div>
-
-<button type="submit" class="btn-submit" id="submitBtn">تأكيد وإرسال طلب التسجيل</button>
-</form>
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-const firebaseConfig = {
-apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
-authDomain: "jil-al-ibda-a.firebaseapp.com",
-projectId: "jil-al-ibda-a",
-storageBucket: "jil-al-ibda-a.firebasestorage.app",
-messagingSenderId: "1057703586286",
-appId: "1:1057703586286:web:e581aa576eef32930746ff"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-window.updateGrades = function() {
-const stage = document.getElementById('stage').value;
-const gradeSelect = document.getElementById('grade');
-gradeSelect.innerHTML = '<option value="">اختر الصف...</option>';
-if(stage === "رياض") {
-gradeSelect.innerHTML += '<option value="مستوى أول">مستوى أول</option><option value="مستوى ثاني">مستوى ثاني</option>';
-} else if(stage === "ابتدائي") {
-for(let i=1; i<=6; i++) gradeSelect.innerHTML += `<option value="الصف ${i} ابتدائي">الصف ${i} ابتدائي</option>`;
-} else if(stage === "متوسط") {
-for(let i=1; i<=3; i++) gradeSelect.innerHTML += `<option value="الصف ${i} متوسط">الصف ${i} متوسط</option>`;
-}
-calculateFees();
+:root {
+--navy: #0f2c59;
+--navy-dark: #091c3a;
+--navy-light: #e8eef7;
+--border-color: #b8c4d4;
+--label-bg: #f4f7fb;
+--text-dark: #1e293b;
+--muted: #64748b;
+--warn-bg: #fffbeb;
+--warn-border: #f59e0b;
+--warn-text: #92400e;
+--success-bg: #ecfdf5;
+--success-text: #065f46;
 }
 
-window.toggleTransport = function() {
-const wants = document.getElementById('wantsTransport').value;
-document.getElementById('transportSection').style.display = (wants === "yes") ? "block" : "none";
-document.getElementById('transSummary').style.display = (wants === "yes") ? "flex" : "none";
-calculateFees();
+* {
+box-sizing: border-box;
+font-family: "Tajawal", "Segoe UI", Tahoma, Arial, sans-serif;
 }
 
-window.calculateFees = function() {
-const stage = document.getElementById('stage').value;
-const grade = document.getElementById('grade').value;
-const wantsTrans = document.getElementById('wantsTransport').value;
-const transPrice = (wantsTrans === "yes") ? parseInt(document.getElementById('neighborhood').value) : 0;
-
-let studyFee = 0;
-if(stage === "رياض") studyFee = 1500;
-else if(grade.includes("6") || grade.includes("3 متوسط")) studyFee = 2500;
-else if(stage === "ابتدائي" || stage === "متوسط") studyFee = 2000;
-
-document.getElementById('studyFee').innerText = studyFee;
-document.getElementById('transportFee').innerText = transPrice;
+body {
+margin: 0;
+background-color: #eef2f6;
+color: var(--text-dark);
+padding: 20px 12px 40px;
 }
 
-document.getElementById('regForm').addEventListener('submit', async (e) => {
-e.preventDefault();
-const btn = document.getElementById('submitBtn');
-btn.disabled = true;
-btn.innerText = "جاري الحفظ...";
-
-try {
-const q = query(collection(db, "students"), where("nationalID", "==", document.getElementById('nationalID').value));
-const snap = await getDocs(q);
-if(!snap.empty) {
-document.getElementById('duplicatePopup').style.display = 'flex';
-btn.disabled = false; return;
+.paper-sheet {
+max-width: 860px;
+margin: 0 auto;
+background: #ffffff;
+padding: 24px 28px;
+border-radius: 8px;
+box-shadow: 0 10px 30px rgba(15, 44, 89, 0.12);
+border: 1px solid #d1d9e6;
 }
 
-await addDoc(collection(db, "students"), {
-studentName: document.getElementById('studentName').value,
-nationalID: document.getElementById('nationalID').value,
-parentPhone: document.getElementById('parentPhone').value,
-class: document.getElementById('grade').value,
-wantsTransport: document.getElementById('wantsTransport').value,
-transportPriceMonthly: document.getElementById('transportFee').innerText,
-fullStudyFee: document.getElementById('studyFee').innerText,
-firstPayment: 500,
-registrationBooksFee: 200,
-paymentStatus: "بانتظار الدفعة الأولى",
-timestamp: serverTimestamp()
-});
+/* الترويسة العلوية */
+.form-header {
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+gap: 14px;
+padding-bottom: 12px;
+font-size: 0.86rem;
+line-height: 1.65;
+}
 
-alert("تم التسجيل! بانتظاركم في المدرسة لسداد الدفعة الأولى (500 ريال).");
-window.location.href = "index.html";
-} catch (e) { btn.disabled = false; alert("خطأ في الاتصال"); }
-});
-</script>
-</body>
-</html>
+.header-right {
+text-align: right;
+font-weight: 700;
+color: var(--navy);
+min-width: 155px;
+}
+
+.brand-logo {
+max-height: 52px;
+width: auto;
+object-fit: contain;
+margin-bottom: 6px;
+display: block;
+}
+
+.header-center {
+text-align: center;
+flex: 1;
+}
+
+.header-center h1 {
+margin: 0;
+font-size: 1.38rem;
+color: var(--navy);
+font-weight: 800;
+}
+
+.header-center .sub-title {
+font-size: 1.06rem;
+font-weight: 700;
+color: #2b4c7e;
+margin: 3px 0;
+}
+
+.header-center .stages-line {
+font-size: 0.8rem;
+color: #475569;
+font-weight: 600;
+}
+
+.header-left {
+text-align: right;
+font-size: 0.83rem;
+font-weight: 600;
+color: #334155;
+min-width: 205px;
+}
+
+.header-left > div {
+margin-bottom: 4px;
+}
+
+.header-left input {
+border: none;
+border-bottom: 1px dotted #64748b;
+background: transparent;
+font-size: 0.83rem;
+color: var(--navy);
+font-weight: 700;
+padding: 1px 4px;
+text-align: center;
+}
+
+/* الشريط الأزرق الرئيسي */
+.main-banner {
+background-color: var(--navy);
+color: #ffffff;
+text-align: center;
+font-weight: 700;
+font-size: 1.05rem;
+padding: 8px 12px;
+border-radius: 5px;
+margin-bottom: 14px;
+}
+
+/* عناوين الأقسام */
+.section-header {
+background-color: var(--navy-light);
+color: var(--navy);
+font-weight: 800;
+font-size

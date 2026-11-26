@@ -3,416 +3,351 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة التحكم والحسابات الشاملة - مدارس جيل الإبداع</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<title>لوحة التحكم والحسابات - مدارس جيل الإبداع</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root {
---primary: #0f2c59;
---primary-dark: #091b38;
---gold: #d4af37;
---bg: #f1f5f9;
---card: #ffffff;
---border: #cbd5e1;
---green: #15803d;
---green-bg: #dcfce7;
---red: #b91c1c;
---red-bg: #fee2e2;
---orange: #c2410c;
---orange-bg: #ffedd5;
---blue: #1d4ed8;
-}
-
 * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+body { margin: 0; background: #f1f5f9; color: #0f172a; padding: 16px 10px 40px; }
+.wrap { max-width: 1150px; margin: 0 auto; }
+.hdr { background: #0f2c59; color: #fff; padding: 18px 22px; border-radius: 14px; border-bottom: 4px solid #d4af37; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+.hdr h1 { margin: 0; font-size: 1.35rem; }
+.tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin-bottom: 16px; }
+.tab-btn { padding: 11px; border: 1px solid #cbd5e1; background: #fff; color: #0f2c59; border-radius: 10px; font-weight: 800; cursor: pointer; }
+.tab-btn.active { background: #0f2c59; color: #fff; }
+.panel { display: none; background: #fff; padding: 18px; border-radius: 14px; border: 1px solid #e2e8f0; margin-bottom: 16px; }
+.panel.active { display: block; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.stat { background: #fff; padding: 14px; border-radius: 12px; text-align: center; border-bottom: 3px solid #d4af37; }
+.stat b { display: block; font-size: 1.45rem; color: #0f2c59; margin-top: 6px; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { border: 1px solid #e2e8f0; padding: 9px; font-size: 0.86rem; text-align: right; }
+th { background: #f8fafc; color: #0f2c59; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+input, select { width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 4px; }
+.lbl { display: block; font-size: 0.84rem; font-weight: 700; margin-bottom: 10px; }
+.btn { border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; margin: 2px; }
+.btn-g { background: #15803d; color: #fff; }
+.btn-n { background: #0f2c59; color: #fff; }
+.btn-r { background: #b91c1c; color: #fff; }
+.btn-y { background: #d4af37; color: #0f172a; }
+.voucher { max-width: 740px; margin: 14px auto; background: #fef9c3; border: 2px solid #0f2c59; border-radius: 10px; padding: 18px; }
+.v-top { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f2c59; padding-bottom: 8px; margin-bottom: 10px; }
+.v-line { display: flex; justify-content: space-between; border-bottom: 1px dotted #0f2c59; padding: 6px 0; margin-bottom: 6px; font-size: 0.92rem; }
+.v-sigs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; padding-top: 8px; border-top: 2px solid #0f2c59; text-align: center; font-weight: 800; font-size: 0.85rem; }
+#loginBox { max-width: 400px; margin: 60px auto; background: #fff; padding: 24px; border-radius: 14px; border-top: 4px solid #d4af37; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+#appBox { display: none; }
+@media print { .no-print { display: none !important; } body { background: #fff; } }
+</style>
+</head>
+<body>
 
-body {
-margin: 0;
-background: var(--bg);
-color: #0f172a;
-padding: 18px 12px 50px;
+<div id="loginBox">
+<h2 style="margin:0 0 12px; color:#0f2c59; text-align:center;">دخول المالك والحسابات</h2>
+<form id="ownerLoginForm">
+<label class="lbl">البريد الإلكتروني للمالك
+<input type="email" id="loginEmail" required placeholder="owner@example.com">
+</label>
+<label class="lbl">كلمة المرور
+<input type="password" id="loginPass" required placeholder="••••••••">
+</label>
+<button type="submit" class="btn btn-n" style="width:100%; padding:11px;">تسجيل الدخول</button>
+<div id="loginMsg" style="color:#b91c1c; font-weight:700; margin-top:10px; text-align:center;"></div>
+</form>
+</div>
+
+<div class="wrap" id="appBox">
+<div class="hdr no-print">
+<div>
+<h1>لوحة الإدارة والحسابات – مدارس جيل الإبداع (صامطة)</h1>
+<small id="userTag"></small>
+</div>
+<button type="button" class="btn btn-r" id="logoutBtn">خروج</button>
+</div>
+
+<div class="stats no-print">
+<div class="stat"><span>عدد الطلاب</span><b id="stCount">0</b></div>
+<div class="stat"><span>الأقساط المحصلة</span><b id="stPaidSum">0 ر.س</b></div>
+<div class="stat"><span>المنصرفات</span><b id="stExpSum">0 ر.س</b></div>
+<div class="stat"><span>المرتبات</span><b id="stPaySum">0 ر.س</b></div>
+</div>
+
+<div class="tabs no-print">
+<button type="button" class="tab-btn active" data-p="p1">الطلاب والأقساط</button>
+<button type="button" class="tab-btn" data-p="p2">الإيصالات والاستعلام</button>
+<button type="button" class="tab-btn" data-p="p3">المنصرفات</button>
+<button type="button" class="tab-btn" data-p="p4">المرتبات والموظفين</button>
+</div>
+
+<div class="panel active" id="p1">
+<div id="reminderBanner" style="background:#fff7ed; border:1px solid #fdba74; padding:10px; border-radius:8px; margin-bottom:12px; font-size:0.88rem;"></div>
+<input type="text" id="searchSt" placeholder="بحث باسم الطالب أو الهوية أو الصف...">
+<table>
+<thead>
+<tr>
+<th>الطالب</th>
+<th>الصف</th>
+<th>الهوية/الجواز</th>
+<th>الأقساط (500 ر.س)</th>
+<th>المتبقي</th>
+<th>التذكير</th>
+<th class="no-print">إجراء</th>
+</tr>
+</thead>
+<tbody id="studentsRows"></tbody>
+</table>
+</div>
+
+<div class="panel" id="p2">
+<h3>استعلام عن إيصال إلكتروني بالرقم التسلسلي (0001 - 9999)</h3>
+<div class="no-print" style="display:flex; gap:8px; max-width:360px;">
+<input type="text" id="serialSearchInput" maxlength="4" placeholder="مثال: 0001">
+<button type="button" class="btn btn-n" id="btnFindSerial">استعلام</button>
+</div>
+<div id="voucherArea"></div>
+<h3 style="margin-top:20px;">سجل الإيصالات</h3>
+<table>
+<thead><tr><th>الرقم</th><th>الاسم</th><th>البيان</th><th>المبلغ</th><th>التاريخ</th><th class="no-print">عرض</th></tr></thead>
+<tbody id="receiptsRows"></tbody>
+</table>
+</div>
+
+<div class="panel" id="p3">
+<h3>نافذة المنصرفات</h3>
+<form id="expForm" class="no-print">
+<div class="grid2">
+<label class="lbl">البند
+<select id="expCat">
+<option>أدوات تنظيف</option>
+<option>فاتورة الكهرباء</option>
+<option>إيجار الموقع</option>
+<option>أدوات دراسة (أقلام وقرطاسيات)</option>
+<option>مصروفات أخرى</option>
+</select>
+</label>
+<label class="lbl">المبلغ (ر.س)<input type="number" id="expAmt" step="0.01" required></label>
+<label class="lbl">التاريخ<input type="date" id="expDt" required></label>
+<label class="lbl">التفاصيل<input type="text" id="expDet" required></label>
+</div>
+<button type="submit" class="btn btn-g">حفظ المنصرف</button>
+</form>
+<table>
+<thead><tr><th>التاريخ</th><th>البند</th><th>التفاصيل</th><th>المبلغ</th><th class="no-print">حذف</th></tr></thead>
+<tbody id="expRows"></tbody>
+</table>
+</div>
+
+<div class="panel" id="p4">
+<h3>المرتبات والموظفين</h3>
+<div class="no-print" style="display:flex; gap:8px; max-width:340px; margin-bottom:14px;">
+<input type="number" id="staffNumInput" min="0" placeholder="عدد الموظفين يدوياً">
+<button type="button" class="btn btn-n" id="saveStaffNumBtn">حفظ العدد</button>
+</div>
+<form id="payForm" class="no-print">
+<div class="grid2">
+<label class="lbl">اسم الموظف<input type="text" id="payName" required></label>
+<label class="lbl">الراتب الأساسي<input type="number" id="payBase" step="0.01" required></label>
+<label class="lbl">حوافز (+)<input type="number" id="payBonus" step="0.01" value="0"></label>
+<label class="lbl">خصومات (-)<input type="number" id="payDed" step="0.01" value="0"></label>
+<label class="lbl">التاريخ<input type="date" id="payDt" required></label>
+<label class="lbl">ملاحظات<input type="text" id="payNote"></label>
+</div>
+<button type="submit" class="btn btn-g">تأكيد التسليم وإصدار إيصال</button>
+</form>
+<table>
+<thead><tr><th>الاسم</th><th>الأساسي</th><th>حوافز</th><th>خصومات</th><th>الصافي</th><th>التاريخ</th><th class="no-print">إيصال</th></tr></thead>
+<tbody id="payRows"></tbody>
+</table>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
+authDomain: "jil-al-ibda-a.firebaseapp.com",
+projectId: "jil-al-ibda-a",
+storageBucket: "jil-al-ibda-a.firebasestorage.app",
+messagingSenderId: "1057703586286",
+appId: "1:1057703586286:web:e581aa576eef32930746ff",
+measurementId: "G-TSG3J0BCSE"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const loginBox = document.getElementById("loginBox");
+const appBox = document.getElementById("appBox");
+const today = new Date().toISOString().split("T")[0];
+document.getElementById("expDt").value = today;
+document.getElementById("payDt").value = today;
+
+document.getElementById("ownerLoginForm").addEventListener("submit", async (e) => {
+e.preventDefault();
+const msg = document.getElementById("loginMsg");
+msg.textContent = "";
+try {
+await signInWithEmailAndPassword(auth, document.getElementById("loginEmail").value.trim(), document.getElementById("loginPass").value);
+} catch (err) {
+msg.textContent = "بيانات الدخول غير صحيحة أو الحساب غير مفعل في Firebase Auth.";
+}
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => signOut(auth));
+
+let started = false;
+onAuthStateChanged(auth, (user) => {
+if (user) {
+loginBox.style.display = "none";
+appBox.style.display = "block";
+document.getElementById("userTag").textContent = "مسجل باسم: " + (user.email || "المالك");
+if (!started) { started = true; runApp(); }
+} else {
+loginBox.style.display = "block";
+appBox.style.display = "none";
+}
+});
+
+document.querySelectorAll(".tab-btn").forEach((b) => {
+b.addEventListener("click", () => {
+document.querySelectorAll(".tab-btn").forEach((x) => x.classList.remove("active"));
+document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+b.classList.add("active");
+document.getElementById(b.dataset.p).classList.add("active");
+});
+});
+
+function remText(n) {
+if (n <= 0) return "مسدد بالكامل";
+if (n === 1) return "متبقي قسط واحد";
+if (n === 2) return "متبقي قسطين";
+return `متبقي ${n} أقساط`;
 }
 
-/* شاشة التحقق برمز التأكيد */
-#otpGate {
-position: fixed;
-inset: 0;
-background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-color: #ffffff;
-display: flex;
-align-items: center;
-justify-content: center;
-z-index: 100000;
-padding: 16px;
+function instTotal(st) {
+const s = `${st.class || ""} ${st.stage || ""} ${st.nextGrade || ""}`;
+return (s.includes("سادس") || s.includes("متوسط")) ? 5 : 4;
 }
 
-.otp-card {
-max-width: 440px;
-width: 100%;
-background: #ffffff;
-color: #0f172a;
-border-radius: 16px;
-padding: 24px;
-border-top: 5px solid var(--gold);
-box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-text-align: center;
+function renderVoucher(r) {
+const amt = Number(r.amount || 0);
+const riy = Math.floor(amt);
+const hal = String(Math.round((amt - riy) * 100)).padStart(2, "0");
+document.getElementById("voucherArea").innerHTML = `
+<div class="voucher">
+<div class="v-top">
+<div><b>مدارس جيل الإبداع فرع صامطة</b><br><small>Receipt Voucher</small></div>
+<div style="text-align:center;"><b style="font-size:1.3rem; text-decoration:underline;">سند قبض</b><br><span style="color:#991b1b; font-weight:800;">إيصال إلكتروني</span></div>
+<div style="background:#fff; border:2px solid #0f2c59; padding:4px 12px; border-radius:6px; text-align:center;"><small>رقم متسلسل</small><br><b style="color:#b91c1c; font-size:1.25rem;">${r.serialNumber}</b></div>
+</div>
+<div style="display:flex; justify-content:space-between; border-bottom:2px solid #0f2c59; padding-bottom:8px; margin-bottom:8px;">
+<span><b>التاريخ:</b> ${r.date}</span>
+<span><b>ريال:</b> ${riy} | <b>هـ:</b> ${hal}</span>
+</div>
+<div class="v-line"><span><b>استلمت من المكرم /</b> ${r.receivedFrom}</span><span>Received From</span></div>
+<div class="v-line"><span><b>مبلغاً وقدره /</b> ${amt} ريال سعودي</span><span>The Amount Of</span></div>
+<div class="v-line"><span><b>نقداً / بشيك /</b> ${r.paymentMethod || "نقداً"}</span><span>The Bank</span></div>
+<div class="v-line"><span><b>وذلك عن /</b> ${r.against}</span><span>Against</span></div>
+<div class="v-sigs"><div>المستلم: ${r.receiverName || ""}</div><div>أمين الصندوق</div><div>المحاسب</div></div>
+<div class="no-print" style="margin-top:12px; text-align:center;">
+<button type="button" class="btn btn-n" onclick="window.print()">طباعة</button>
+<button type="button" class="btn btn-g" onclick='shareTextVoucher(${JSON.stringify(r)})'>مشاركة</button>
+</div>
+</div>
+`;
 }
 
-.otp-card h2 { margin: 0 0 8px; color: var(--primary); font-size: 1.25rem; font-weight: 900; }
-.otp-email-pill {
-display: inline-block;
-background: #eff6ff;
-color: var(--primary);
-border: 1px solid #bfdbfe;
-padding: 5px 12px;
-border-radius: 20px;
-font-weight: 800;
-font-size: 0.88rem;
-margin-bottom: 14px;
-direction: ltr;
+window.shareTextVoucher = async function(r) {
+const txt = `إيصال إلكتروني رقم ${r.serialNumber}\nمدارس جيل الإبداع - فرع صامطة\nالاسم: ${r.receivedFrom}\nالمبلغ: ${r.amount} ر.س\nالبيان: ${r.against}\nالتاريخ: ${r.date}`;
+if (navigator.share) { try { await navigator.share({ text: txt }); } catch (_) {} }
+else { window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank"); }
+};
+
+async function nextSerial() {
+const ref = doc(db, "counters", "receipts");
+const n = await runTransaction(db, async (tx) => {
+const s = await tx.get(ref);
+let cur = s.exists() ? (s.data().lastNumber || 0) : 0;
+cur = cur >= 9999 ? 1 : cur + 1;
+tx.set(ref, { lastNumber: cur }, { merge: true });
+return cur;
+});
+return String(n).padStart(4, "0");
 }
 
-.otp-input {
-width: 100%;
-padding: 13px;
-border: 2px solid var(--border);
-border-radius: 10px;
-font-size: 1.35rem;
-font-weight: 900;
-text-align: center;
-letter-spacing: 8px;
-margin: 10px 0 12px;
-outline: none;
+async function createReceipt(obj) {
+const serialNumber = await nextSerial();
+const rec = { ...obj, serialNumber, timestamp: serverTimestamp() };
+await setDoc(doc(db, "receipts", serialNumber), rec);
+return rec;
 }
 
-.otp-input:focus { border-color: var(--primary); }
+function runApp() {
+let studentsMap = {};
+onSnapshot(collection(db, "students"), (snap) => {
+document.getElementById("stCount").textContent = snap.size;
+let paidSum = 0, html = "", late = [];
+studentsMap = {};
+const startStudy = new Date("2026-11-01");
+const now = new Date();
+const monthsElapsed = (now.getFullYear() - startStudy.getFullYear()) * 12 + (now.getMonth() - startStudy.getMonth()) + 1;
 
-.otp-btn {
-width: 100%;
-border: none;
-padding: 12px;
-border-radius: 10px;
-font-weight: 800;
-font-size: 0.95rem;
-cursor: pointer;
-margin-top: 6px;
-}
+snap.forEach((d) => {
+const st = d.data();
+const total = instTotal(st);
+const paid = Number(st.paidInstallmentsCount || 0);
+const rem = Math.max(0, total - paid);
+paidSum += paid * 500;
+studentsMap[d.id] = { id: d.id, ...st, total, paid, rem };
 
-.otp-btn-send { background: var(--gold); color: #0f172a; }
-.otp-btn-verify { background: var(--primary); color: #ffffff; }
-.otp-btn-mail { background: #e2e8f0; color: #0f172a; }
+const expectedDue = Math.max(0, Math.min(total, monthsElapsed - 1));
+const isLate = rem > 0 && paid < expectedDue;
+if (isLate) late.push(`${st.studentName} (${remText(rem)})`);
 
-#otpStatusMsg {
-margin-top: 12px;
-font-size: 0.88rem;
-font-weight: 700;
-min-height: 22px;
-line-height: 1.5;
-}
+html += `<tr>
+<td><b>${st.studentName || ""}</b></td>
+<td>${st.class || ""}</td>
+<td>${st.nationalID || d.id}</td>
+<td>${paid} / ${total} (${paid * 500} ر.س)</td>
+<td>${remText(rem)}</td>
+<td>${isLate ? '<span style="color:#b91c1c;font-weight:800;">تذكير متأخر</span>' : '<span style="color:#15803d;font-weight:700;">منتظم</span>'}</td>
+<td class="no-print"><button type="button" class="btn btn-g" onclick="payInst('${d.id}')">سداد قسط</button></td>
+</tr>`;
+});
 
-.container {
-max-width: 1180px;
-margin: 0 auto;
-display: none;
-}
+document.getElementById("stPaidSum").textContent = paidSum.toLocaleString("ar-SA") + " ر.س";
+document.getElementById("studentsRows").innerHTML = html || '<tr><td colspan="7" style="text-align:center;">لا يوجد طلاب</td></tr>';
+document.getElementById("reminderBanner").innerHTML = late.length ? "<b>تنبيه تأخر:</b> " + late.join(" | ") : "لا يوجد طلاب متأخرون خارج فترة السماح حالياً.";
+});
 
-.container.authorized { display: block; }
+window.payInst = async function(id) {
+const st = studentsMap[id];
+if (!st) return;
+const nextPaid = Math.min(st.total, st.paid + 1);
+const rem = Math.max(0, st.total - nextPaid);
+await updateDoc(doc(db, "students", id), { paidInstallmentsCount: nextPaid, paymentStatus: remText(rem) });
+const r = await createReceipt({
+receivedFrom: st.studentName || "ولي الأمر",
+amount: 500,
+date: today,
+paymentMethod: "نقداً",
+against: `سداد القسط رقم ${nextPaid} (${remText(rem)})`,
+receiverName: st.studentName || ""
+});
+document.querySelector('[data-p="p2"]').click();
+renderVoucher(r);
+};
 
-.dashboard-header {
-background: linear-gradient(135deg, var(--primary), #1e3a8a);
-color: #fff;
-padding: 20px 24px;
-border-radius: 16px;
-display: flex;
-justify-content: space-between;
-align-items: center;
-flex-wrap: wrap;
-gap: 14px;
-border-bottom: 4px solid var(--gold);
-margin-bottom: 18px;
-}
+onSnapshot(collection(db, "receipts"), (snap) => {
+const list = [];
+snap.forEach((d) => list.push(d.data()));
+list.sort((a, b) => String(b.serialNumber).localeCompare(String(a.serialNumber)));
+document.getElementById("receiptsRows").innerHTML = list.map((r) => `<tr>
+<td><b>${r.serialNumber}</b></td><td>${r.receivedFrom}</td><td>${r.against}</td><td>${r.amount} ر.س</td><td>${r.date}</td>
+<td class="no-print"><button type="button" class="btn btn-n" onclick="showSerial('${r.serialNumber}')">عرض</button></td>
+</tr>`).join("") || '<tr><td colspan="6" style="text-align:center;">لا توجد إيصالات</td></tr>';
+});
 
-.dashboard-header h1 { margin: 0; font-size: 1.45rem; font-weight: 900; }
-.dashboard-header p { margin: 4px 0 0; opacity: 0.9; font-size: 0.9rem; }
-
-.header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-
-.btn-exit {
-background: var(--red);
-color: #fff;
-padding: 9px 16px;
-border-radius: 10px;
-text-decoration: none;
-font-weight: 700;
-font-size: 0.9rem;
-border: none;
-cursor: pointer;
-}
-
-.btn-home {
-background: rgba(255,255,255,0.15);
-color: #fff;
-padding: 9px 16px;
-border-radius: 10px;
-text-decoration: none;
-font-weight: 700;
-font-size: 0.9rem;
-}
-
-.tabs-nav {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-gap: 10px;
-margin-bottom: 20px;
-}
-
-.tab-btn {
-background: #fff;
-color: var(--primary);
-border: 1.5px solid var(--border);
-padding: 13px 14px;
-border-radius: 12px;
-font-weight: 800;
-font-size: 0.95rem;
-cursor: pointer;
-transition: 0.2s;
-text-align: center;
-}
-
-.tab-btn.active {
-background: var(--primary);
-color: #fff;
-border-color: var(--primary);
-box-shadow: 0 6px 16px rgba(15, 44, 89, 0.2);
-}
-
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
-
-.admin-actions {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-gap: 14px;
-margin-bottom: 20px;
-}
-
-.btn-nav {
-display: flex;
-align-items: center;
-justify-content: center;
-padding: 14px;
-border-radius: 12px;
-text-decoration: none;
-font-weight: 800;
-color: #fff;
-}
-
-.btn-staff { background: var(--blue); }
-.btn-feedback { background: #d97706; }
-
-.stats-container {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-gap: 14px;
-margin-bottom: 20px;
-}
-
-.stat-box {
-background: var(--card);
-padding: 18px;
-border-radius: 14px;
-text-align: center;
-box-shadow: 0 4px 10px rgba(0,0,0,0.04);
-border-bottom: 4px solid var(--gold);
-}
-
-.stat-box h3 { margin: 0; font-size: 0.88rem; color: #64748b; }
-.stat-box p { margin: 8px 0 0; font-size: 1.65rem; font-weight: 900; color: var(--primary); }
-
-.card-box {
-background: var(--card);
-border-radius: 14px;
-padding: 20px;
-box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-border: 1px solid #e2e8f0;
-margin-bottom: 20px;
-}
-
-.card-box h2, .card-box h3 {
-margin: 0 0 14px;
-color: var(--primary);
-font-weight: 900;
-}
-
-.search-bar {
-width: 100%;
-padding: 13px 16px;
-border-radius: 12px;
-border: 1.5px solid var(--border);
-margin-bottom: 16px;
-font-size: 0.98rem;
-outline: none;
-background: #fff;
-}
-
-.table-container {
-background: #fff;
-border-radius: 12px;
-overflow-x: auto;
-border: 1px solid #e2e8f0;
-}
-
-table { width: 100%; border-collapse: collapse; text-align: right; }
-th { background: #f8fafc; padding: 13px 12px; color: var(--primary); border-bottom: 2px solid #e2e8f0; font-size: 0.88rem; white-space: nowrap; }
-td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.88rem; vertical-align: middle; }
-
-.badge {
-display: inline-block;
-padding: 4px 10px;
-border-radius: 20px;
-font-size: 0.78rem;
-font-weight: 800;
-}
-
-.badge-ok { background: var(--green-bg); color: var(--green); }
-.badge-warn { background: var(--orange-bg); color: var(--orange); }
-.badge-late { background: var(--red-bg); color: var(--red); }
-
-.btn-sm {
-border: none;
-padding: 7px 12px;
-border-radius: 8px;
-font-weight: 700;
-font-size: 0.8rem;
-cursor: pointer;
-margin: 2px;
-}
-
-.btn-gold { background: var(--gold); color: #0f172a; }
-.btn-navy { background: var(--primary); color: #fff; }
-.btn-green { background: var(--green); color: #fff; }
-.btn-red { background: var(--red); color: #fff; }
-
-.grid-2 {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-gap: 12px;
-}
-
-.field-group { margin-bottom: 12px; }
-.field-group label { display: block; font-weight: 700; font-size: 0.86rem; color: #334155; margin-bottom: 5px; }
-.field-group input, .field-group select, .field-group textarea {
-width: 100%;
-padding: 10px 12px;
-border: 1.5px solid var(--border);
-border-radius: 9px;
-font-size: 0.92rem;
-background: #fff;
-}
-
-.receipt-wrapper {
-max-width: 780px;
-margin: 0 auto;
-background: #fef9c3;
-background-image: linear-gradient(180deg, #fefce8 0%, #fef08a 100%);
-border: 2px solid #0f2c59;
-border-radius: 10px;
-padding: 20px 24px;
-color: #0f172a;
-box-shadow: 0 12px 30px rgba(15, 44, 89, 0.16);
-}
-
-.voucher-top {
-display: flex;
-justify-content: space-between;
-align-items: center;
-border-bottom: 2.5px solid #0f2c59;
-padding-bottom: 10px;
-margin-bottom: 12px;
-gap: 10px;
-}
-
-.voucher-school { font-weight: 900; font-size: 1.05rem; color: #0f2c59; }
-.voucher-center { text-align: center; }
-.voucher-title {
-font-size: 1.45rem;
-font-weight: 900;
-color: #0f2c59;
-text-decoration: underline;
-line-height: 1.2;
-}
-.voucher-sub { font-size: 0.85rem; font-weight: 800; color: #991b1b; margin-top: 3px; }
-.voucher-en { font-size: 0.88rem; font-weight: 800; color: #0f2c59; direction: ltr; }
-
-.serial-box {
-background: #fff;
-border: 2px solid #0f2c59;
-border-radius: 8px;
-padding: 6px 14px;
-text-align: center;
-}
-.serial-label { font-size: 0.75rem; font-weight: 700; color: #475569; }
-.serial-num { font-size: 1.35rem; font-weight: 900; color: #b91c1c; letter-spacing: 2px; font-family: monospace; }
-
-.voucher-money-row {
-display: flex;
-justify-content: space-between;
-align-items: center;
-flex-wrap: wrap;
-gap: 12px;
-border-bottom: 2px solid #0f2c59;
-padding-bottom: 10px;
-margin-bottom: 12px;
-}
-
-.halala-riyal-boxes {
-display: flex;
-border: 2px solid #0f2c59;
-background: #fff;
-}
-
-.money-cell {
-padding: 6px 14px;
-min-width: 90px;
-text-align: center;
-font-weight: 900;
-font-size: 1rem;
-border-left: 2px solid #0f2c59;
-}
-.money-cell:last-child { border-left: none; }
-.money-head { font-size: 0.75rem; color: #0f2c59; border-bottom: 1px solid #cbd5e1; padding-bottom: 2px; margin-bottom: 3px; }
-
-.voucher-line {
-display: flex;
-justify-content: space-between;
-align-items: baseline;
-border-bottom: 1.5px dotted #0f2c59;
-padding: 7px 4px;
-margin-bottom: 8px;
-font-size: 0.95rem;
-gap: 10px;
-}
-
-.voucher-line .ar-lbl { font-weight: 800; color: #0f2c59; white-space: nowrap; }
-.voucher-line .val-txt { font-weight: 800; color: #0f172a; flex: 1; text-align: center; }
-.voucher-line .en-lbl { font-weight: 700; color: #334155; font-size: 0.82rem; direction: ltr; white-space: nowrap; }
-
-.voucher-sigs {
-display: grid;
-grid-template-columns: repeat(3, 1fr);
-gap: 12px;
-margin-top: 18px;
-padding-top: 10px;
-border-top: 2px solid #0f2c59;
-font-size: 0.88rem;
-font-weight: 800;
-color: #0f2c59;
-text-align: center;
-}
-
-.modal-backdrop {
-position: fixed;
-inset: 0;
-background: rgba(15, 23, 42, 0.65);
-display: none;
-align-items: center;
-justify-content: center;
-padding: 14px

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -379,7 +380,6 @@ padding: 20px 10px;
 </section>
 </main>
 
-<!-- نافذة التحقق قبل فتح صفحة الإدارة -->
 <div class="modal-backdrop" id="adminAuthModal" aria-hidden="true">
 <div class="modal-card">
 <h3>دخول صفحة الإدارة</h3>
@@ -437,7 +437,7 @@ passInput.value = "";
 errMsg.textContent = "";
 modal.classList.add("show");
 modal.setAttribute("aria-hidden", "false");
-userInput.focus();
+setTimeout(() => userInput.focus(), 50);
 });
 
 closeBtn.addEventListener("click", () => {
@@ -458,11 +458,13 @@ const u = userInput.value.trim();
 const p = passInput.value;
 
 if (u === ADMIN_USER && p === ADMIN_PASS) {
-sessionStorage.setItem("adminCodeSession", JSON.stringify({
+const sessionObj = {
 ok: true,
 exp: Date.now() + 12 * 60 * 60 * 1000
-}));
-window.location.href = "students_section.html";
+};
+localStorage.setItem("jilAdminAuth", JSON.stringify(sessionObj));
+sessionStorage.setItem("adminCodeSession", JSON.stringify(sessionObj));
+window.location.assign("./students_section.html");
 } else {
 errMsg.textContent = "اسم المستخدم أو كلمة المرور غير صحيحة.";
 }
@@ -474,4 +476,27 @@ const posts = [];
 snap.forEach((d) => posts.push({ id: d.id, ...d.data() }));
 posts.sort((a, b) => (b.timestamp?.toMillis ? b.timestamp.toMillis() : 0) - (a.timestamp?.toMillis ? a.timestamp.toMillis() : 0));
 
-const top3 =
+const top3 = posts.slice(0, 3);
+if (!top3.length) {
+box.innerHTML = `<div class="mini-post"><div class="title">لا توجد منشورات بعد</div><div class="meta">النشاطات المنشورة تظهر هنا.</div></div>`;
+return;
+}
+
+box.innerHTML = top3.map((p) => {
+const mediaHtml = p.mediaType === "video" && p.mediaUrl
+? `<video src="${p.mediaUrl}" controls preload="metadata"></video>`
+: (p.mediaUrl ? `<img src="${p.mediaUrl}" alt="${p.title || "منشور"}">` : "");
+
+return `
+<div class="mini-post">
+${mediaHtml}
+<div class="title">${p.title || "منشور"}</div>
+<p style="margin:0 0 8px; font-size:0.86rem; color:#334155;">${p.description || ""}</p>
+<div class="meta">${p.dateText || ""} • <a href="activities.html" style="color:#0f2c59; font-weight:800; text-decoration:none;">عرض المنشور ←</a></div>
+</div>
+`;
+}).join("");
+}, () => {});
+</script>
+</body>
+</html>

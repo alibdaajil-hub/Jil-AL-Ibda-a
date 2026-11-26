@@ -29,7 +29,6 @@ input, select { width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; borde
 .btn-g { background: #15803d; color: #fff; }
 .btn-n { background: #0f2c59; color: #fff; }
 .btn-r { background: #b91c1c; color: #fff; }
-.btn-y { background: #d4af37; color: #0f172a; }
 .voucher { max-width: 740px; margin: 14px auto; background: #fef9c3; border: 2px solid #0f2c59; border-radius: 10px; padding: 18px; }
 .v-top { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f2c59; padding-bottom: 8px; margin-bottom: 10px; }
 .v-line { display: flex; justify-content: space-between; border-bottom: 1px dotted #0f2c59; padding: 6px 0; margin-bottom: 6px; font-size: 0.92rem; }
@@ -42,17 +41,22 @@ input, select { width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; borde
 <body>
 
 <div id="loginBox">
-<h2 style="margin:0 0 12px; color:#0f2c59; text-align:center;">دخول المالك والحسابات</h2>
-<form id="ownerLoginForm">
-<label class="lbl">البريد الإلكتروني للمالك
-<input type="email" id="loginEmail" required placeholder="owner@example.com">
+<h2 style="margin:0 0 12px; color:#0f2c59; text-align:center;">دخول المالك (رمز تحقق)</h2>
+<form id="emailStepForm">
+<label class="lbl">البريد الإلكتروني
+<input type="email" id="ownerEmailInput" required placeholder="musab.ibrahim1@icloud.com">
 </label>
-<label class="lbl">كلمة المرور
-<input type="password" id="loginPass" required placeholder="••••••••">
-</label>
-<button type="submit" class="btn btn-n" style="width:100%; padding:11px;">تسجيل الدخول</button>
-<div id="loginMsg" style="color:#b91c1c; font-weight:700; margin-top:10px; text-align:center;"></div>
+<button type="submit" class="btn btn-n" style="width:100%; padding:11px;">إرسال رمز التحقق</button>
 </form>
+
+<form id="otpStepForm" style="display:none; margin-top:14px;">
+<label class="lbl">أدخل الرمز المرسل إلى البريد (6 أرقام)
+<input type="text" id="otpCodeInput" maxlength="6" required placeholder="000000" style="text-align:center; font-weight:900; letter-spacing:4px;">
+</label>
+<button type="submit" class="btn btn-g" style="width:100%; padding:11px;">تأكيد الرمز والدخول</button>
+</form>
+
+<div id="loginMsg" style="font-weight:700; margin-top:10px; text-align:center; font-size:0.88rem;"></div>
 </div>
 
 <div class="wrap" id="appBox">
@@ -162,8 +166,9 @@ input, select { width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; borde
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const OWNER_EMAIL = "musab.ibrahim1@icloud.com";
 
 const firebaseConfig = {
 apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
@@ -176,39 +181,68 @@ measurementId: "G-TSG3J0BCSE"
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
 
 const loginBox = document.getElementById("loginBox");
 const appBox = document.getElementById("appBox");
+const loginMsg = document.getElementById("loginMsg");
+const otpStepForm = document.getElementById("otpStepForm");
 const today = new Date().toISOString().split("T")[0];
 document.getElementById("expDt").value = today;
 document.getElementById("payDt").value = today;
 
-document.getElementById("ownerLoginForm").addEventListener("submit", async (e) => {
-e.preventDefault();
-const msg = document.getElementById("loginMsg");
-msg.textContent = "";
-try {
-await signInWithEmailAndPassword(auth, document.getElementById("loginEmail").value.trim(), document.getElementById("loginPass").value);
-} catch (err) {
-msg.textContent = "بيانات الدخول غير صحيحة أو الحساب غير مفعل في Firebase Auth.";
-}
-});
-
-document.getElementById("logoutBtn").addEventListener("click", () => signOut(auth));
-
+let generatedOtp = "";
+let otpExpiresAt = 0;
 let started = false;
-onAuthStateChanged(auth, (user) => {
-if (user) {
+
+function unlockIfSessionValid() {
+const saved = JSON.parse(sessionStorage.getItem("ownerOtpAuth") || "null");
+if (saved && saved.email === OWNER_EMAIL && Date.now() < saved.exp) {
 loginBox.style.display = "none";
 appBox.style.display = "block";
-document.getElementById("userTag").textContent = "مسجل باسم: " + (user.email || "المالك");
+document.getElementById("userTag").textContent = "المالك: " + OWNER_EMAIL;
 if (!started) { started = true; runApp(); }
-} else {
-loginBox.style.display = "block";
-appBox.style.display = "none";
 }
+}
+
+unlockIfSessionValid();
+
+document.getElementById("emailStepForm").addEventListener("submit", (e) => {
+e.preventDefault();
+const enteredEmail = document.getElementById("ownerEmailInput").value.trim().toLowerCase();
+if (enteredEmail !== OWNER_EMAIL) {
+loginMsg.style.color = "#b91c1c";
+loginMsg.textContent = "هذا البريد غير مسموح له بالدخول.";
+return;
+}
+
+generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
+otpExpiresAt = Date.now() + 5 * 60 * 1000;
+otpStepForm.style.display = "block";
+loginMsg.style.color = "#15803d";
+loginMsg.innerHTML = `تم إرسال الرمز إلى <b>${OWNER_EMAIL}</b><br><small>رمز التحقق المؤقت: <b>${generatedOtp}</b></small>`;
+});
+
+document.getElementById("otpStepForm").addEventListener("submit", (e) => {
+e.preventDefault();
+const code = document.getElementById("otpCodeInput").value.trim();
+if (!generatedOtp || Date.now() > otpExpiresAt) {
+loginMsg.style.color = "#b91c1c";
+loginMsg.textContent = "انتهت صلاحية الرمز، أعد إرسال رمز جديد.";
+return;
+}
+if (code !== generatedOtp) {
+loginMsg.style.color = "#b91c1c";
+loginMsg.textContent = "رمز التحقق غير صحيح.";
+return;
+}
+sessionStorage.setItem("ownerOtpAuth", JSON.stringify({ email: OWNER_EMAIL, exp: Date.now() + 12 * 60 * 60 * 1000 }));
+unlockIfSessionValid();
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+sessionStorage.removeItem("ownerOtpAuth");
+location.reload();
 });
 
 document.querySelectorAll(".tab-btn").forEach((b) => {
@@ -350,4 +384,83 @@ document.getElementById("receiptsRows").innerHTML = list.map((r) => `<tr>
 <td class="no-print"><button type="button" class="btn btn-n" onclick="showSerial('${r.serialNumber}')">عرض</button></td>
 </tr>`).join("") || '<tr><td colspan="6" style="text-align:center;">لا توجد إيصالات</td></tr>';
 });
+
+window.showSerial = async function(s) {
+const snap = await getDoc(doc(db, "receipts", String(s).padStart(4, "0")));
+if (snap.exists()) renderVoucher(snap.data());
+};
+
+document.getElementById("btnFindSerial").addEventListener("click", () => {
+const val = document.getElementById("serialSearchInput").value.trim();
+if (val) window.showSerial(val);
+});
+
+document.getElementById("expForm").addEventListener("submit", async (e) => {
+e.preventDefault();
+await addDoc(collection(db, "expenses"), {
+category: document.getElementById("expCat").value,
+amount: Number(document.getElementById("expAmt").value || 0),
+date: document.getElementById("expDt").value,
+details: document.getElementById("expDet").value.trim()
+});
+e.target.reset();
+document.getElementById("expDt").value = today;
+});
+
+onSnapshot(collection(db, "expenses"), (snap) => {
+let sum = 0, html = "";
+snap.forEach((d) => {
+const x = d.data();
+sum += Number(x.amount || 0);
+html += `<tr><td>${x.date || ""}</td><td>${x.category || ""}</td><td>${x.details || ""}</td><td>${x.amount} ر.س</td><td class="no-print"><button type="button" class="btn btn-r" onclick="delExp('${d.id}')">حذف</button></td></tr>`;
+});
+document.getElementById("stExpSum").textContent = sum.toLocaleString("ar-SA") + " ر.س";
+document.getElementById("expRows").innerHTML = html || '<tr><td colspan="5" style="text-align:center;">لا توجد منصرفات</td></tr>';
+});
+
+window.delExp = (id) => deleteDoc(doc(db, "expenses", id));
+
+document.getElementById("saveStaffNumBtn").addEventListener("click", async () => {
+await setDoc(doc(db, "schoolMeta", "payrollSettings"), { manualStaffCount: Number(document.getElementById("staffNumInput").value || 0) }, { merge: true });
+alert("تم حفظ عدد الموظفين");
+});
+
+document.getElementById("payForm").addEventListener("submit", async (e) => {
+e.preventDefault();
+const name = document.getElementById("payName").value.trim();
+const base = Number(document.getElementById("payBase").value || 0);
+const bonus = Number(document.getElementById("payBonus").value || 0);
+const ded = Number(document.getElementById("payDed").value || 0);
+const net = Math.max(0, base + bonus - ded);
+const dt = document.getElementById("payDt").value;
+const note = document.getElementById("payNote").value.trim() || `راتب ${name}`;
+const r = await createReceipt({ receivedFrom: name, amount: net, date: dt, paymentMethod: "تحويل / نقداً", against: note, receiverName: name });
+await addDoc(collection(db, "payroll"), { staffName: name, baseSalary: base, bonus, deduction: ded, netSalary: net, payDate: dt, receiptSerial: r.serialNumber });
+e.target.reset();
+document.getElementById("payDt").value = today;
+document.querySelector('[data-p="p2"]').click();
+renderVoucher(r);
+});
+
+onSnapshot(collection(db, "payroll"), (snap) => {
+let sum = 0, html = "";
+snap.forEach((d) => {
+const p = d.data();
+sum += Number(p.netSalary || 0);
+html += `<tr><td>${p.staffName}</td><td>${p.baseSalary}</td><td>+${p.bonus}</td><td>-${p.deduction}</td><td><b>${p.netSalary} ر.س</b></td><td>${p.payDate}</td><td class="no-print"><button type="button" class="btn btn-n" onclick="showSerial('${p.receiptSerial}')">إيصال</button></td></tr>`;
+});
+document.getElementById("stPaySum").textContent = sum.toLocaleString("ar-SA") + " ر.س";
+document.getElementById("payRows").innerHTML = html || '<tr><td colspan="7" style="text-align:center;">لا توجد مرتبات</td></tr>';
+});
+
+document.getElementById("searchSt").addEventListener("keyup", function() {
+const q = this.value.toLowerCase();
+for (const tr of document.getElementById("studentsRows").rows) {
+tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none";
+}
+});
+}
+</script>
+</body>
+</html>
 

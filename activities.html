@@ -29,7 +29,7 @@ padding-bottom: 50px;
 .header {
 background: linear-gradient(135deg, var(--navy), #1e3a8a);
 color: #fff;
-padding: 16px 20px;
+padding: 14px 20px;
 border-bottom: 4px solid var(--gold);
 position: sticky;
 top: 0;
@@ -48,34 +48,28 @@ gap: 10px;
 
 .header h1 {
 margin: 0;
-font-size: 1.25rem;
+font-size: 1.2rem;
 font-weight: 900;
-}
-
-.header small {
-display: block;
-opacity: 0.88;
-font-size: 0.8rem;
 }
 
 .back-btn {
 text-decoration: none;
 background: rgba(255, 255, 255, 0.16);
 color: #fff;
-padding: 8px 14px;
+padding: 7px 14px;
 border-radius: 10px;
 font-weight: 800;
-font-size: 0.88rem;
+font-size: 0.86rem;
 border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .feed {
 max-width: 760px;
-margin: 20px auto;
+margin: 18px auto;
 padding: 0 12px;
 display: flex;
 flex-direction: column;
-gap: 18px;
+gap: 16px;
 }
 
 .post-card {
@@ -94,8 +88,8 @@ padding: 14px 16px 10px;
 }
 
 .avatar {
-width: 44px;
-height: 44px;
+width: 42px;
+height: 42px;
 border-radius: 50%;
 background: var(--navy);
 color: var(--gold);
@@ -111,7 +105,7 @@ flex-shrink: 0;
 .post-author {
 font-weight: 900;
 color: var(--navy);
-font-size: 0.98rem;
+font-size: 0.96rem;
 }
 
 .post-time {
@@ -125,7 +119,7 @@ padding: 0 16px 12px;
 
 .post-title {
 margin: 0 0 6px;
-font-size: 1.08rem;
+font-size: 1.06rem;
 font-weight: 900;
 color: #0f172a;
 }
@@ -185,7 +179,6 @@ display: flex;
 align-items: center;
 justify-content: center;
 gap: 6px;
-transition: 0.15s;
 }
 
 .act-btn:hover {
@@ -271,7 +264,7 @@ margin-top: 4px;
 .empty-state {
 background: #fff;
 border-radius: 14px;
-padding: 32px 20px;
+padding: 28px 20px;
 text-align: center;
 border: 1px solid var(--border);
 color: var(--muted);
@@ -282,16 +275,13 @@ color: var(--muted);
 
 <header class="header">
 <div class="header-inner">
-<div>
-<h1>🎉 نشاطات المدرسة</h1>
-<small>صور وفيديوهات وفعاليات مدارس جيل الإبداع – فرع صامطة</small>
-</div>
-<a href="index.html" class="back-btn">🏠 الرئيسية</a>
+<h1>🎉 النشاطات</h1>
+<a href="index.html" class="back-btn">الرئيسية</a>
 </div>
 </header>
 
 <main class="feed" id="activitiesFeed">
-<div class="empty-state">جاري تحميل النشاطات والصور والفيديوهات...</div>
+<div class="empty-state">جاري تحميل المنشورات...</div>
 </main>
 
 <script type="module">
@@ -334,7 +324,7 @@ snap.forEach((d) => posts.push({ id: d.id, ...d.data() }));
 posts.sort((a, b) => (b.timestamp?.toMillis ? b.timestamp.toMillis() : 0) - (a.timestamp?.toMillis ? a.timestamp.toMillis() : 0));
 
 if (!posts.length) {
-feedEl.innerHTML = `<div class="empty-state">لا توجد نشاطات منشورة حتى الآن.</div>`;
+feedEl.innerHTML = `<div class="empty-state">لا توجد منشورات حالياً.</div>`;
 return;
 }
 
@@ -350,7 +340,7 @@ if (p.mediaUrl) {
 if (p.mediaType === "video") {
 mediaTag = `<div class="post-media"><video src="${p.mediaUrl}" controls playsinline preload="metadata"></video></div>`;
 } else {
-mediaTag = `<div class="post-media"><img src="${p.mediaUrl}" alt="${p.title || "نشاط مدرسي"}"></div>`;
+mediaTag = `<div class="post-media"><img src="${p.mediaUrl}" alt="${p.title || "منشور"}"></div>`;
 }
 }
 
@@ -387,8 +377,8 @@ ${mediaTag}
 
 <div class="comments-box" id="comments-box-${p.id}">
 <form class="comment-form" onsubmit="submitComment(event, '${p.id}')">
-<input type="text" id="cname-${p.id}" placeholder="اسمك (مثال: ولي أمر الطالب / أحمد)" required>
-<textarea id="ctext-${p.id}" placeholder="اكتب تعليقك هنا..." required></textarea>
+<input type="text" id="cname-${p.id}" placeholder="الاسم" required>
+<textarea id="ctext-${p.id}" placeholder="اكتب تعليقك..." required></textarea>
 <button type="submit" class="comment-submit">نشر التعليق</button>
 </form>
 <div id="comments-list-${p.id}">جاري تحميل التعليقات...</div>
@@ -432,13 +422,13 @@ snap.forEach((d) => items.push(d.data()));
 items.sort((a, b) => (a.timestamp?.toMillis ? a.timestamp.toMillis() : 0) - (b.timestamp?.toMillis ? b.timestamp.toMillis() : 0));
 
 if (!items.length) {
-listEl.innerHTML = `<div style="color:#64748b; font-size:0.86rem;">لا توجد تعليقات بعد، كن أول من يعلق.</div>`;
+listEl.innerHTML = `<div style="color:#64748b; font-size:0.86rem;">لا توجد تعليقات بعد.</div>`;
 return;
 }
 
 listEl.innerHTML = items.map((c) => `
 <div class="comment-item">
-<div class="comment-author">${c.authorName || "زائر"}</div>
+<div class="comment-author">${c.authorName || "مستخدم"}</div>
 <div class="comment-text">${c.commentText || ""}</div>
 <div class="comment-date">${c.dateText || ""}</div>
 </div>
@@ -472,3 +462,4 @@ textInput.value = "";
 </script>
 </body>
 </html>
+

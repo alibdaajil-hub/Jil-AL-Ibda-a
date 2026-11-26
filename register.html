@@ -4,17 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>استمارة قبول وتسجيل طالب - مؤسسة جيل الإبداع والتميز</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
 --navy: #0f2c59;
+--navy-dark: #091c3a;
 --navy-light: #e8eef7;
 --border: #b8c4d4;
 --label-bg: #f4f7fb;
 --gold: #D4AF37;
+--gold-soft: #fffdf5;
 --warn-bg: #fffbeb;
 --warn-border: #f59e0b;
 --warn-text: #92400e;
+--green: #15803d;
+--green-bg: #f0fdf4;
 }
 
 * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
@@ -23,444 +27,130 @@ body {
 margin: 0;
 background: #eef2f6;
 color: #1e293b;
-padding: 18px 10px 40px;
+padding: 18px 10px 45px;
 }
 
 .top-nav {
 max-width: 860px;
-margin: 0 auto 10px;
+margin: 0 auto 12px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 10px;
 }
 
-.back-link {
-display: inline-block;
+.nav-btn {
+display: inline-flex;
+align-items: center;
+gap: 6px;
 background: #fff;
 color: var(--navy);
 text-decoration: none;
 font-weight: 700;
-padding: 7px 14px;
+padding: 8px 14px;
 border-radius: 8px;
 border: 1px solid var(--border);
-font-size: 0.9rem;
+font-size: 0.88rem;
+cursor: pointer;
+}
+
+.nav-btn:hover { background: var(--navy-light); }
+
+.nav-btn-gold {
+background: var(--gold-soft);
+border-color: var(--gold);
+color: #78350f;
 }
 
 .sheet {
 max-width: 860px;
 margin: 0 auto;
 background: #fff;
-padding: 22px 24px;
-border-radius: 8px;
+padding: 24px 26px;
+border-radius: 10px;
 border: 1px solid #cfd8e3;
-border-top: 4px solid var(--gold);
-box-shadow: 0 8px 24px rgba(15, 44, 89, 0.1);
+border-top: 5px solid var(--gold);
+box-shadow: 0 10px 28px rgba(15, 44, 89, 0.1);
 }
 
+/* الترويسة بعد حذف التاريخ ورقم التسجيل */
 .header-top {
 display: flex;
 justify-content: space-between;
-align-items: flex-start;
-gap: 12px;
-font-size: 0.85rem;
-line-height: 1.65;
-margin-bottom: 10px;
+align-items: center;
+gap: 16px;
+padding-bottom: 12px;
+border-bottom: 1px solid #e2e8f0;
+margin-bottom: 12px;
 }
 
-.h-right { font-weight: 700; color: var(--navy); }
-.h-center { text-align: center; flex: 1; }
-.h-center h1 { margin: 0; font-size: 1.35rem; color: var(--navy); font-weight: 900; }
-.h-center .sub { font-size: 1.05rem; font-weight: 700; color: #2b4c7e; }
-.h-center .stages { font-size: 0.78rem; color: #475569; font-weight: 600; }
-.h-left { font-size: 0.82rem; font-weight: 600; color: #334155; }
-.h-left input {
-border: none;
-border-bottom: 1px dotted #64748b;
+.h-right {
 font-weight: 700;
 color: var(--navy);
+font-size: 0.85rem;
+line-height: 1.65;
+text-align: right;
+}
+
+.h-center {
 text-align: center;
-background: transparent;
+flex: 1;
+}
+
+.h-center h1 {
+margin: 0;
+font-size: 1.45rem;
+color: var(--navy);
+font-weight: 900;
+}
+
+.h-center .sub {
+font-size: 1.08rem;
+font-weight: 700;
+color: #2b4c7e;
+margin: 3px 0;
+}
+
+.h-center .stages {
+font-size: 0.8rem;
+color: #475569;
+font-weight: 600;
+}
+
+.h-logo img {
+max-height: 68px;
+width: auto;
+object-fit: contain;
 }
 
 .banner {
-background: var(--navy);
+background: linear-gradient(135deg, var(--navy), #1e40af);
 color: #fff;
 text-align: center;
-font-weight: 700;
-padding: 8px;
-border-radius: 5px;
-margin-bottom: 12px;
+font-weight: 800;
+font-size: 1.04rem;
+padding: 9px 12px;
+border-radius: 6px;
+margin-bottom: 14px;
 }
 
 .sec-title {
 background: var(--navy-light);
 color: var(--navy);
 font-weight: 800;
-font-size: 0.94rem;
-padding: 6px 12px;
+font-size: 0.95rem;
+padding: 7px 12px;
 border-right: 4px solid var(--navy);
-margin: 12px 0 6px;
+border-radius: 4px;
+margin: 14px 0 7px;
 }
 
 table.form-tbl {
 width: 100%;
 border-collapse: collapse;
-font-size: 0.88rem;
+font-size: 0.89rem;
 margin-bottom: 8px;
 }
 
-table.form-tbl td {
-border: 1px solid var(--border);
-padding: 7px 9px;
-vertical-align: middle;
-}
+table
 
-.lbl {
-background: var(--label-bg);
-font-weight: 700;
-color: var(--navy);
-width: 22%;
-}
-
-.inp { width: 28%; }
-
-.inp input[type="text"],
-.inp input[type="tel"] {
-width: 100%;
-border: none;
-outline: none;
-font-size: 0.9rem;
-padding: 3px 4px;
-background: transparent;
-}
-
-.doc-choices {
-display: flex;
-flex-wrap: wrap;
-gap: 8px;
-margin-bottom: 7px;
-}
-
-.doc-btn {
-border: 1px solid var(--border);
-background: #f8fafc;
-color: var(--navy);
-padding: 5px 11px;
-border-radius: 6px;
-font-size: 0.82rem;
-font-weight: 700;
-cursor: pointer;
-}
-
-.doc-btn.active {
-background: var(--navy);
-color: #fff;
-border-color: var(--navy);
-}
-
-#studentIdInput {
-border: 1px dashed #94a3b8;
-border-radius: 5px;
-padding: 6px 9px;
-background: #fcfdff;
-font-weight: 700;
-}
-
-.hint-txt {
-font-size: 0.78rem;
-color: #64748b;
-margin-top: 4px;
-}
-
-.opts-row {
-display: flex;
-flex-wrap: wrap;
-gap: 12px;
-align-items: center;
-}
-
-.opts-2x2 {
-display: grid;
-grid-template-columns: repeat(2, 1fr);
-gap: 6px 12px;
-}
-
-.chk-lbl {
-display: inline-flex;
-align-items: center;
-gap: 6px;
-font-size: 0.85rem;
-font-weight: 600;
-cursor: pointer;
-}
-
-.box-panel {
-border: 1px solid var(--border);
-background: #fafcff;
-padding: 10px 12px;
-font-size: 0.88rem;
-line-height: 1.8;
-margin-bottom: 8px;
-}
-
-.dotted-inp {
-border: none;
-border-bottom: 1.5px dotted var(--navy);
-width: 135px;
-text-align: center;
-font-weight: 800;
-color: var(--navy);
-background: transparent;
-outline: none;
-}
-
-.attach-panel {
-border: 1px solid var(--border);
-padding: 10px 12px;
-display: flex;
-flex-wrap: wrap;
-justify-content: space-between;
-gap: 10px;
-margin-bottom: 12px;
-}
-
-.footer-bar {
-border-top: 1.5px solid var(--border);
-padding-top: 8px;
-margin-top: 12px;
-display: flex;
-justify-content: space-between;
-font-size: 0.82rem;
-font-weight: 700;
-color: var(--navy);
-}
-
-.actions {
-display: flex;
-gap: 10px;
-justify-content: center;
-margin-top: 16px;
-}
-
-.btn-main {
-background: var(--navy);
-color: #fff;
-border: none;
-padding: 10px 24px;
-border-radius: 6px;
-font-weight: 700;
-font-size: 0.95rem;
-cursor: pointer;
-}
-
-.btn-print {
-background: #e2e8f0;
-color: #0f172a;
-border: none;
-padding: 10px 20px;
-border-radius: 6px;
-font-weight: 700;
-font-size: 0.95rem;
-cursor: pointer;
-}
-
-#msgBox {
-text-align: center;
-font-weight: 700;
-margin-top: 12px;
-font-size: 0.92rem;
-}
-
-/* الإشعار المنبثق */
-.popup-overlay {
-position: fixed;
-inset: 0;
-background: rgba(15, 23, 42, 0.55);
-display: none;
-align-items: center;
-justify-content: center;
-padding: 16px;
-z-index: 9999;
-}
-
-.popup-overlay.show { display: flex; }
-
-.popup-box {
-max-width: 420px;
-width: 100%;
-background: #fff;
-border-radius: 12px;
-padding: 20px;
-border-top: 5px solid var(--warn-border);
-box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
-}
-
-.popup-box h3 {
-margin: 0 0 10px;
-color: var(--warn-text);
-font-size: 1.05rem;
-}
-
-.popup-box .warn-text {
-background: var(--warn-bg);
-border: 1px solid #fde68a;
-color: var(--warn-text);
-padding: 12px;
-border-radius: 8px;
-font-size: 0.92rem;
-line-height: 1.65;
-margin-bottom: 14px;
-}
-
-.popup-box button {
-width: 100%;
-background: var(--navy);
-color: #fff;
-border: none;
-padding: 10px;
-border-radius: 8px;
-font-weight: 700;
-cursor: pointer;
-}
-
-@media print {
-body { background: #fff; padding: 0; }
-.top-nav, .actions, .doc-choices, #msgBox { display: none !important; }
-.sheet { box-shadow: none; border: none; padding: 8px; }
-}
-
-@media (max-width: 680px) {
-.header-top { flex-direction: column; text-align: center; }
-table.form-tbl, table.form-tbl tbody, table.form-tbl tr, table.form-tbl td { display: block; width: 100%; }
-}
-</style>
-</head>
-<body>
-
-<div class="top-nav">
-<a href="index.html" class="back-link">🏠 العودة للرئيسية</a>
-</div>
-
-<form class="sheet" id="regForm">
-<div class="header-top">
-<div class="h-right">
-<div>المملكة العربية السعودية</div>
-<div>وزارة التعليم</div>
-<div>مؤسسة جيل الإبداع والتميز</div>
-<div>فرع صامطة</div>
-</div>
-
-<div class="h-center">
-<h1>مؤسسة جيل الإبداع والتميز</h1>
-<div class="sub">استمارة قبول وتسجيل طالب</div>
-<div class="stages">رياض الأطفال – المرحلة الابتدائية – المرحلة المتوسطة – المرحلة الثانوية</div>
-</div>
-
-<div class="h-left">
-<div>العام الدراسي: <input type="text" id="academicYear" value="2026 / 2027 م" style="width:105px;"></div>
-<div>رقم التسجيل: <input type="text" id="regNo" placeholder="............" style="width:105px;"></div>
-<div>التاريخ: <input type="text" id="regDay" placeholder=".." style="width:26px;"> / <input type="text" id="regMonth" placeholder=".." style="width:26px;"> / 2026 م</div>
-</div>
-</div>
-
-<div class="banner">طلب قبول وتسجيل طالب جديد (الصفحة 1 من 2)</div>
-
-<div class="sec-title">أولاً: البيانات الأساسية والأكاديمية للطالب</div>
-<table class="form-tbl">
-<tr>
-<td class="lbl">اسم الطالب الكامل:</td>
-<td class="inp" colspan="3">
-<input type="text" id="studentName" placeholder="اكتب اسم الطالب كاملاً" autocomplete="name" required>
-</td>
-</tr>
-
-<tr>
-<td class="lbl" id="docLabel">رقم هوية الطالب:</td>
-<td class="inp" colspan="3">
-<div class="doc-choices">
-<button type="button" class="doc-btn active" data-type="رقم هوية الطالب" data-ph="أدخل رقم هوية الطالب (حروف وأرقام)">رقم هوية الطالب</button>
-<button type="button" class="doc-btn" data-type="جواز سفر الطالب" data-ph="أدخل رقم جواز سفر الطالب (حروف وأرقام)">جواز سفر الطالب</button>
-<button type="button" class="doc-btn" data-type="رقم حدود الطالب" data-ph="أدخل رقم حدود الطالب (حروف وأرقام)">رقم حدود الطالب</button>
-</div>
-<input type="hidden" id="docType" value="رقم هوية الطالب">
-<input type="text" id="studentIdInput" placeholder="أدخل رقم هوية الطالب (حروف وأرقام)" autocomplete="on" autocapitalize="characters" spellcheck="false" required>
-<div class="hint-txt">يدعم الحروف والأرقام وملء الفراغ التلقائي — يُسجل رقم هوية أو جواز الطالب نفسه وليس ولي الأمر.</div>
-</td>
-</tr>
-
-<tr>
-<td class="lbl">جنسية الطالب:</td>
-<td class="inp"><input type="text" id="nationality" placeholder="الجنسية" required></td>
-<td class="lbl">المرحلة الدراسية:</td>
-<td class="inp">
-<div class="opts-2x2">
-<label class="chk-lbl"><input type="radio" name="stage" value="رياض الأطفال" required> رياض الأطفال</label>
-<label class="chk-lbl"><input type="radio" name="stage" value="الابتدائي"> الابتدائي</label>
-<label class="chk-lbl"><input type="radio" name="stage" value="المتوسط"> المتوسط</label>
-<label class="chk-lbl"><input type="radio" name="stage" value="الثانوي"> الثانوي</label>
-</div>
-</td>
-</tr>
-
-<tr>
-<td class="lbl">المدرسة السابقة للطالب:</td>
-<td class="inp"><input type="text" id="prevSchool" placeholder="المدرسة السابقة"></td>
-<td class="lbl">الفصل الدراسي التالي للطالب:</td>
-<td class="inp"><input type="text" id="nextGrade" placeholder="الصف / الفصل الدراسي" required></td>
-</tr>
-
-<tr>
-<td class="lbl">المستوى الأكاديمي (التقدير والنسبة):</td>
-<td class="inp"><input type="text" id="academicLevel" placeholder="مثال: ممتاز / 98%"></td>
-<td class="lbl">الحالة الدراسية:</td>
-<td class="inp">
-<div class="opts-row">
-<label class="chk-lbl"><input type="radio" name="acadStatus" value="ناجح"> ناجح</label>
-<label class="chk-lbl"><input type="radio" name="acadStatus" value="راسب"> راسب</label>
-</div>
-</td>
-</tr>
-</table>
-
-<div class="sec-title">ثانياً: بيانات أولياء الأمور ووسائل الاتصال الرسمي</div>
-<table class="form-tbl">
-<tr>
-<td class="lbl">اسم ولي الأمر:</td>
-<td class="inp"><input type="text" id="guardianName" placeholder="اسم ولي الأمر" required></td>
-<td class="lbl">رقم ولي الأمر (مكالمات + واتساب):</td>
-<td class="inp"><input type="tel" id="guardianPhone" placeholder="05xxxxxxxx" required></td>
-</tr>
-<tr>
-<td class="lbl">اسم الأم:</td>
-<td class="inp"><input type="text" id="motherName" placeholder="اسم الأم"></td>
-<td class="lbl">رقم الأم (مكالمات + واتساب):</td>
-<td class="inp"><input type="tel" id="motherPhone" placeholder="05xxxxxxxx"></td>
-</tr>
-</table>
-
-<div class="sec-title">ثالثاً: الحالة الصحية للطالب</div>
-<table class="form-tbl">
-<tr>
-<td class="lbl">الحالة الصحية للطالب:</td>
-<td class="inp" colspan="3">
-<div class="opts-row">
-<label class="chk-lbl"><input type="radio" name="healthStatus" value="سليم ولا يعاني من أمراض" checked> سليم ولا يعاني من أمراض</label>
-<label class="chk-lbl"><input type="radio" name="healthStatus" value="يعاني من أمراض أو حالة صحية خاصة"> يعاني من أمراض أو حالة صحية خاصة</label>
-</div>
-</td>
-</tr>
-<tr>
-<td class="lbl">تفاصيل المرض الذي يعاني منه:</td>
-<td class="inp" colspan="3"><input type="text" id="illnessDetails" placeholder="تفاصيل الحالة الصحية إن وجدت"></td>
-</tr>
-</table>
-
-<div class="sec-title">رابعاً: بيانات وإقرار الشخص المرحّل للطالب</div>
-<table class="form-tbl">
-<tr>
-<td class="lbl">اسم الشخص المرحّل للطالب:</td>
-<td class="inp"><input type="text" id="driverName" placeholder="اسم الشخص المرحّل"></td>
-<td class="lbl">رقم هاتف الشخص المرحّل:</td>
-<td class="inp"><input type="tel" id="driverPhone" placeholder="05xxxxxxxx"></td>
-</tr>
-<tr>
-<td class="lbl">تعهد وانضباط المرحّل:</td>
-<td class="inp" colspan="3" style="font-size:0.84rem; color:#334155;">
-يتعهد الشخص المرحّل بالتزام المواعيد المحددة لبدء وانتهاء اليوم الدراسي، ولا يجوز نهائياً التأخير عن نهاية الدوام الرسمي للمدرسة تحت أي ظرف

@@ -183,14 +183,24 @@ font-weight: 800;
 .badge-warn { background: var(--orange-bg); color: var(--orange); }
 .badge-late { background: var(--red-bg); color: var(--red); }
 
+/* تصميم سند القبض بخلفيه بيضاء ونصوص ثابته سوداء ومتغيره زرقاء */
 .voucher {
-max-width: 760px;
+max-width: 820px;
 margin: 16px auto;
 background: #ffffff;
 border: 2px solid #0f172a;
 border-radius: 10px;
-padding: 18px 22px;
+padding: 20px 26px;
 color: #0f172a;
+}
+
+.voucher.landscape-export {
+width: 820px !important;
+min-width: 820px !important;
+max-width: 820px !important;
+margin: 0 !important;
+padding: 24px 30px !important;
+background: #ffffff !important;
 }
 
 .v-top {
@@ -200,24 +210,25 @@ align-items: center;
 border-bottom: 2.5px solid #0f172a;
 padding-bottom: 10px;
 margin-bottom: 12px;
-gap: 10px;
-flex-wrap: wrap;
+gap: 12px;
+flex-wrap: nowrap;
 }
 
 .serial-box {
 background: #ffffff;
 border: 2px solid #0f172a;
-padding: 6px 14px;
+padding: 6px 16px;
 border-radius: 8px;
 text-align: center;
+flex-shrink: 0;
 }
 
 .v-money {
 display: flex;
 justify-content: space-between;
 align-items: center;
-flex-wrap: wrap;
-gap: 10px;
+flex-wrap: nowrap;
+gap: 12px;
 border-bottom: 2px solid #0f172a;
 padding-bottom: 10px;
 margin-bottom: 10px;
@@ -227,11 +238,12 @@ margin-bottom: 10px;
 display: flex;
 border: 2px solid #0f172a;
 background: #ffffff;
+flex-shrink: 0;
 }
 
 .money-cell {
-padding: 5px 14px;
-min-width: 85px;
+padding: 5px 16px;
+min-width: 90px;
 text-align: center;
 font-weight: 900;
 border-left: 2px solid #0f172a;
@@ -242,11 +254,12 @@ border-left: 2px solid #0f172a;
 .v-line {
 display: flex;
 justify-content: space-between;
-gap: 10px;
+align-items: center;
+gap: 12px;
 border-bottom: 1.5px dotted #0f172a;
-padding: 7px 4px;
-margin-bottom: 7px;
-font-size: 0.95rem;
+padding: 8px 4px;
+margin-bottom: 8px;
+font-size: 0.96rem;
 }
 
 .v-fixed-lbl {
@@ -263,13 +276,13 @@ font-weight: 800;
 display: flex;
 justify-content: space-between;
 align-items: center;
-gap: 16px;
-flex-wrap: wrap;
-margin-top: 16px;
-padding-top: 12px;
+gap: 20px;
+flex-wrap: nowrap;
+margin-top: 18px;
+padding-top: 14px;
 border-top: 2px solid #0f172a;
 font-weight: 800;
-font-size: 0.92rem;
+font-size: 0.95rem;
 }
 
 .v-accountant-right {
@@ -285,14 +298,14 @@ font-weight: 900;
 .v-sig-center {
 display: flex;
 align-items: center;
-gap: 8px;
+gap: 10px;
 color: #0f172a;
 font-weight: 900;
 }
 
 .owner-sig-img {
-max-height: 46px;
-max-width: 140px;
+max-height: 48px;
+max-width: 145px;
 object-fit: contain;
 display: inline-block;
 filter: contrast(145%) brightness(105%);
@@ -696,16 +709,13 @@ const s = `${st.class || ""} ${st.stage || ""} ${st.nextGrade || ""}`;
 return (s.includes("سادس") || s.includes("متوسط")) ? 5 : 4;
 }
 
-function renderVoucher(r) {
-currentVoucherData = r;
-document.getElementById("voucherActionStatus").textContent = "";
+function buildVoucherInnerHtml(r, includeActions = true) {
 const amt = Number(r.amount || 0);
 const riy = Math.floor(amt);
 const hal = String(Math.round((amt - riy) * 100)).padStart(2, "0");
 const amountWords = r.amountWords || amountToArabicWords(amt);
 
-document.getElementById("voucherArea").innerHTML = `
-<div id="printableVoucherOnly" class="voucher">
+return `
 <div class="v-top">
 <div>
 <b class="v-fixed-lbl" style="font-size:1.05rem;">مدارس جيل الإبداع فرع صامطة</b><br>
@@ -760,11 +770,22 @@ document.getElementById("voucherArea").innerHTML = `
 </div>
 </div>
 
+${includeActions ? `
 <div class="no-print" style="margin-top:16px; text-align:center;">
 <button type="button" class="btn btn-n" id="btnPrintVoucher">طباعة / PDF</button>
 <button type="button" class="btn btn-g" id="btnShareVoucher">مشاركة صورة (واتساب)</button>
 <button type="button" class="btn btn-b" id="btnSaveVoucher">حفظ صورة</button>
 </div>
+` : ""}
+`;
+}
+
+function renderVoucher(r) {
+currentVoucherData = r;
+document.getElementById("voucherActionStatus").textContent = "";
+document.getElementById("voucherArea").innerHTML = `
+<div id="printableVoucherOnly" class="voucher">
+${buildVoucherInnerHtml(r, true)}
 </div>
 `;
 
@@ -773,11 +794,45 @@ document.getElementById("btnShareVoucher")?.addEventListener("click", shareVouch
 document.getElementById("btnSaveVoucher")?.addEventListener("click", downloadVoucherImage);
 }
 
-async function generateVoucherBlob() {
-const el = document.getElementById("printableVoucherOnly");
-if (!el || typeof html2canvas !== "function") return null;
-const canvas = await html2canvas(el, { scale: 2, backgroundColor: "#ffffff", useCORS: true });
+async function generateLandscapeVoucherBlob() {
+if (!currentVoucherData || typeof html2canvas !== "function") return null;
+
+const tempHolder = document.createElement("div");
+tempHolder.style.position = "fixed";
+tempHolder.style.top = "-99999px";
+tempHolder.style.left = "-99999px";
+tempHolder.style.width = "840px";
+tempHolder.style.background = "#ffffff";
+tempHolder.style.padding = "10px";
+tempHolder.dir = "rtl";
+
+const exportCard = document.createElement("div");
+exportCard.className = "voucher landscape-export";
+exportCard.innerHTML = buildVoucherInnerHtml(currentVoucherData, false);
+tempHolder.appendChild(exportCard);
+document.body.appendChild(tempHolder);
+
+try {
+const sigImg = exportCard.querySelector("img");
+if (sigImg && !sigImg.complete) {
+await new Promise((res) => {
+sigImg.onload = res;
+sigImg.onerror = res;
+});
+}
+
+const canvas = await html2canvas(exportCard, {
+scale: 2,
+width: 820,
+windowWidth: 1200,
+backgroundColor: "#ffffff",
+useCORS: true
+});
+
 return await new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), "image/png"));
+} finally {
+tempHolder.remove();
+}
 }
 
 async function printVoucherNow() {
@@ -788,7 +843,7 @@ window.print();
 
 const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 if (isMobile) {
-const blob = await generateVoucherBlob();
+const blob = await generateLandscapeVoucherBlob();
 if (blob && navigator.canShare) {
 const file = new File([blob], `receipt-${currentVoucherData?.serialNumber || "voucher"}.png`, { type: "image/png" });
 if (navigator.canShare({ files: [file] })) {
@@ -804,16 +859,16 @@ const a = document.createElement("a");
 a.href = url;
 a.download = `receipt-${currentVoucherData?.serialNumber || "voucher"}.png`;
 a.click();
-statusEl.textContent = "تم حفظ نسخة صورة من الإيصال لطباعتها أو تحويلها إلى PDF بسهولة.";
+statusEl.textContent = "تم حفظ نسخة عرضية من الإيصال لطباعتها أو تحويلها إلى PDF بسهولة.";
 }
 }
 }
 
 async function shareVoucherImage() {
 const statusEl = document.getElementById("voucherActionStatus");
-statusEl.textContent = "جاري تجهيز صورة الإيصال...";
+statusEl.textContent = "جاري تجهيز صورة الإيصال بالعرض...";
 const serial = currentVoucherData?.serialNumber || "voucher";
-const blob = await generateVoucherBlob();
+const blob = await generateLandscapeVoucherBlob();
 
 if (blob) {
 const file = new File([blob], `receipt-${serial}.png`, { type: "image/png" });
@@ -823,7 +878,7 @@ await navigator.share({
 files: [file],
 title: `إيصال إلكتروني رقم ${serial}`
 });
-statusEl.textContent = "تم فتح نافذة المشاركة بالصورة.";
+statusEl.textContent = "تم تجهيز الصورة بالعرض وإرسالها إلى نافذة المشاركة.";
 return;
 } catch (_) {}
 }
@@ -833,7 +888,7 @@ const a = document.createElement("a");
 a.href = url;
 a.download = `receipt-${serial}.png`;
 a.click();
-statusEl.textContent = "تم تحميل صورة الإيصال على جهازك؛ أرفقها مباشرة في واتساب.";
+statusEl.textContent = "تم تحميل صورة الإيصال بالعرض على جهازك؛ أرفقها مباشرة في واتساب.";
 window.open("https://web.whatsapp.com/", "_blank");
 } else {
 statusEl.textContent = "تعذر توليد صورة الإيصال حالياً.";
@@ -843,14 +898,14 @@ statusEl.textContent = "تعذر توليد صورة الإيصال حالياً
 async function downloadVoucherImage() {
 const statusEl = document.getElementById("voucherActionStatus");
 const serial = currentVoucherData?.serialNumber || "voucher";
-const blob = await generateVoucherBlob();
+const blob = await generateLandscapeVoucherBlob();
 if (!blob) return;
 const url = URL.createObjectURL(blob);
 const a = document.createElement("a");
 a.href = url;
 a.download = `receipt-${serial}.png`;
 a.click();
-statusEl.textContent = `تم حفظ صورة الإيصال رقم ${serial}.`;
+statusEl.textContent = `تم حفظ صورة الإيصال رقم ${serial} بالعرض.`;
 }
 
 async function nextSerial() {

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>لوحة التحكم والحسابات الشاملة - مدارس جيل الإبداع</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
 :root {
 --primary: #0f2c59;
@@ -164,6 +165,7 @@ display: inline-block;
 .btn-n { background: var(--primary); color: #fff; }
 .btn-r { background: var(--red); color: #fff; }
 .btn-y { background: var(--gold); color: #0f172a; }
+.btn-b { background: var(--blue); color: #fff; }
 
 .table-wrap { overflow-x: auto; margin-top: 10px; }
 table { width: 100%; border-collapse: collapse; }
@@ -276,9 +278,18 @@ margin-top: 10px;
 }
 
 @media print {
+body * { visibility: hidden !important; }
+#printableVoucherOnly, #printableVoucherOnly * { visibility: visible !important; }
+#printableVoucherOnly {
+position: fixed !important;
+top: 0 !important;
+left: 0 !important;
+width: 100% !important;
+margin: 0 !important;
+padding: 16px !important;
+background: #fff !important;
+}
 .no-print { display: none !important; }
-body { background: #fff; padding: 0; }
-.voucher { box-shadow: none; }
 }
 </style>
 </head>
@@ -326,7 +337,6 @@ body { background: #fff; padding: 0; }
 <button type="button" class="tab-btn" data-p="p5">رفع النشاطات</button>
 </div>
 
-<!-- 1. الطلاب والأقساط -->
 <div class="panel active" id="p1">
 <div id="reminderBanner" style="background:#fff7ed; border:1px solid #fdba74; padding:11px; border-radius:10px; margin-bottom:12px; font-size:0.88rem;"></div>
 <input type="text" id="searchSt" placeholder="بحث باسم الطالب أو الهوية أو الصف...">
@@ -350,7 +360,6 @@ body { background: #fff; padding: 0; }
 </div>
 </div>
 
-<!-- 2. الإيصالات الإلكترونية والاستعلام التسلسلي (0001 - 9999) -->
 <div class="panel" id="p2">
 <h3>استعلام عن بيان إيصال إلكتروني بالرقم التسلسلي (0001 - 9999)</h3>
 <div class="no-print" style="display:flex; gap:8px; max-width:380px;">
@@ -358,6 +367,7 @@ body { background: #fff; padding: 0; }
 <button type="button" class="btn btn-n" id="btnFindSerial">استعلام</button>
 </div>
 <div id="voucherArea"></div>
+<div id="voucherActionStatus" class="no-print" style="text-align:center; font-weight:800; font-size:0.86rem; color:#0f2c59; margin-top:6px;"></div>
 
 <h3 style="margin-top:22px;">سجل الإيصالات الإلكترونية الصادرة</h3>
 <div class="table-wrap">
@@ -379,7 +389,6 @@ body { background: #fff; padding: 0; }
 </div>
 </div>
 
-<!-- 3. نافذة المنصرفات -->
 <div class="panel" id="p3">
 <h3>نافذة المنصرفات والمصروفات</h3>
 <form id="expForm" class="no-print">
@@ -424,7 +433,6 @@ body { background: #fff; padding: 0; }
 </div>
 </div>
 
-<!-- 4. المرتبات والموظفين -->
 <div class="panel" id="p4">
 <h3>المرتبات والموظفين</h3>
 <div class="no-print" style="display:flex; gap:8px; max-width:360px; margin-bottom:14px;">
@@ -476,7 +484,6 @@ body { background: #fff; padding: 0; }
 </div>
 </div>
 
-<!-- 5. رفع النشاطات (صور وفيديوهات من الجوال أو الحاسوب) -->
 <div class="panel" id="p5">
 <h3>نشر نشاط جديد (صورة أو فيديو أو منشور)</h3>
 <form id="activityUploadForm" class="no-print">
@@ -560,6 +567,7 @@ document.getElementById("expDt").value = today;
 document.getElementById("payDt").value = today;
 
 let started = false;
+let currentVoucherData = null;
 
 function openDashboardView() {
 loginBox.style.setProperty("display", "none", "important");
@@ -633,11 +641,13 @@ return (s.includes("سادس") || s.includes("متوسط")) ? 5 : 4;
 }
 
 function renderVoucher(r) {
+currentVoucherData = r;
+document.getElementById("voucherActionStatus").textContent = "";
 const amt = Number(r.amount || 0);
 const riy = Math.floor(amt);
 const hal = String(Math.round((amt - riy) * 100)).padStart(2, "0");
 document.getElementById("voucherArea").innerHTML = `
-<div class="voucher">
+<div id="printableVoucherOnly" class="voucher">
 <div class="v-top">
 <div>
 <b style="font-size:1.05rem; color:#0f2c59;">مدارس جيل الإبداع فرع صامطة</b><br>
@@ -673,17 +683,94 @@ document.getElementById("voucherArea").innerHTML = `
 </div>
 
 <div class="no-print" style="margin-top:14px; text-align:center;">
-<button type="button" class="btn btn-n" onclick="window.print()">طباعة</button>
-<button type="button" class="btn btn-g" onclick='shareTextVoucher(${JSON.stringify(r)})'>مشاركة</button>
+<button type="button" class="btn btn-n" onclick="printVoucherNow()">طباعة / PDF</button>
+<button type="button" class="btn btn-g" onclick="shareVoucherImage()">مشاركة صورة (واتساب)</button>
+<button type="button" class="btn btn-b" onclick="downloadVoucherImage()">حفظ صورة</button>
 </div>
 </div>
 `;
 }
 
-window.shareTextVoucher = async function(r) {
-const txt = `إيصال إلكتروني رقم ${r.serialNumber}\nمدارس جيل الإبداع - فرع صامطة\nالاسم: ${r.receivedFrom}\nالمبلغ: ${r.amount} ر.س\nالبيان: ${r.against}\nالتاريخ: ${r.date}`;
-if (navigator.share) { try { await navigator.share({ text: txt }); } catch (_) {} }
-else { window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank"); }
+async function generateVoucherBlob() {
+const el = document.getElementById("printableVoucherOnly");
+if (!el || typeof html2canvas !== "function") return null;
+const canvas = await html2canvas(el, { scale: 2, backgroundColor: "#fefce8", useCORS: true });
+return await new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), "image/png"));
+}
+
+window.printVoucherNow = async function() {
+const statusEl = document.getElementById("voucherActionStatus");
+try {
+window.print();
+} catch (_) {}
+
+// في حال لم يفتح مربع الطباعة في بعض متصفحات الهاتف، نجهز ملف صورة جاهز للطباعة/PDF
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+if (isMobile) {
+const blob = await generateVoucherBlob();
+if (blob && navigator.canShare) {
+const file = new File([blob], `receipt-${currentVoucherData?.serialNumber || "voucher"}.png`, { type: "image/png" });
+if (navigator.canShare({ files: [file] })) {
+try {
+await navigator.share({ files: [file], title: "إيصال إلكتروني" });
+return;
+} catch (_) {}
+}
+}
+if (blob) {
+const url = URL.createObjectURL(blob);
+const a = document.createElement("a");
+a.href = url;
+a.download = `receipt-${currentVoucherData?.serialNumber || "voucher"}.png`;
+a.click();
+statusEl.textContent = "تم حفظ نسخة صورة من الإيصال لطباعتها أو تحويلها إلى PDF بسهولة.";
+}
+}
+};
+
+window.shareVoucherImage = async function() {
+const statusEl = document.getElementById("voucherActionStatus");
+statusEl.textContent = "جاري تجهيز صورة الإيصال...";
+const serial = currentVoucherData?.serialNumber || "voucher";
+const blob = await generateVoucherBlob();
+
+if (blob) {
+const file = new File([blob], `receipt-${serial}.png`, { type: "image/png" });
+if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+try {
+await navigator.share({
+files: [file],
+title: `إيصال إلكتروني رقم ${serial}`
+});
+statusEl.textContent = "تم فتح نافذة المشاركة بالصورة.";
+return;
+} catch (_) {}
+}
+
+// في الحاسوب أو المتصفحات التي لا تدعم مشاركة الملفات مباشرة: نحمّل الصورة ونفتح واتساب ويب
+const url = URL.createObjectURL(blob);
+const a = document.createElement("a");
+a.href = url;
+a.download = `receipt-${serial}.png`;
+a.click();
+statusEl.textContent = "تم تحميل صورة الإيصال على جهازك؛ أرفقها مباشرة في واتساب.";
+window.open("https://web.whatsapp.com/", "_blank");
+} else {
+statusEl.textContent = "تعذر توليد صورة الإيصال حالياً.";
+}
+};
+
+window.downloadVoucherImage = async function() {
+const statusEl = document.getElementById("voucherActionStatus");
+const serial = currentVoucherData?.serialNumber || "voucher";
+const blob = await generateVoucherBlob();
+if (!blob) return;
+const url = URL.createObjectURL(blob);
+const a = document.createElement("a");
+a.href = url;
+a.download = `receipt-${serial}.png`;
+a.click();
+statusEl.textContent = `تم حفظ صورة الإيصال رقم ${serial}.`;
 };
 
 async function nextSerial() {

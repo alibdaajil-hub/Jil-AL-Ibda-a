@@ -4,20 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>استمارة قبول وتسجيل طالب - مؤسسة جيل الإبداع والتميز</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
 --navy: #0f2c59;
---navy-dark: #091c3a;
 --navy-light: #e8eef7;
 --border: #b8c4d4;
 --label-bg: #f4f7fb;
 --gold: #D4AF37;
---gold-soft: #fffdf5;
 --warn-bg: #fffbeb;
 --warn-border: #f59e0b;
 --warn-text: #92400e;
---green: #15803d;
 --green-bg: #f0fdf4;
 }
 
@@ -27,37 +24,33 @@ body {
 margin: 0;
 background: #eef2f6;
 color: #1e293b;
-padding: 18px 10px 45px;
+padding: 18px 10px 40px;
 }
 
 .top-nav {
 max-width: 860px;
-margin: 0 auto 12px;
+margin: 0 auto 10px;
 display: flex;
 justify-content: space-between;
 align-items: center;
-gap: 10px;
+gap: 8px;
 }
 
-.nav-btn {
-display: inline-flex;
-align-items: center;
-gap: 6px;
+.back-link {
+display: inline-block;
 background: #fff;
 color: var(--navy);
 text-decoration: none;
 font-weight: 700;
-padding: 8px 14px;
+padding: 7px 14px;
 border-radius: 8px;
 border: 1px solid var(--border);
-font-size: 0.88rem;
+font-size: 0.9rem;
 cursor: pointer;
 }
 
-.nav-btn:hover { background: var(--navy-light); }
-
-.nav-btn-gold {
-background: var(--gold-soft);
+.fees-trigger {
+background: #fffdf5;
 border-color: var(--gold);
 color: #78350f;
 }
@@ -66,11 +59,11 @@ color: #78350f;
 max-width: 860px;
 margin: 0 auto;
 background: #fff;
-padding: 24px 26px;
-border-radius: 10px;
+padding: 22px 24px;
+border-radius: 8px;
 border: 1px solid #cfd8e3;
-border-top: 5px solid var(--gold);
-box-shadow: 0 10px 28px rgba(15, 44, 89, 0.1);
+border-top: 4px solid var(--gold);
+box-shadow: 0 8px 24px rgba(15, 44, 89, 0.1);
 }
 
 /* الترويسة بعد حذف التاريخ ورقم التسجيل */
@@ -78,79 +71,750 @@ box-shadow: 0 10px 28px rgba(15, 44, 89, 0.1);
 display: flex;
 justify-content: space-between;
 align-items: center;
-gap: 16px;
-padding-bottom: 12px;
+gap: 14px;
+font-size: 0.85rem;
+line-height: 1.65;
+padding-bottom: 10px;
 border-bottom: 1px solid #e2e8f0;
 margin-bottom: 12px;
 }
 
-.h-right {
-font-weight: 700;
-color: var(--navy);
-font-size: 0.85rem;
-line-height: 1.65;
-text-align: right;
-}
-
-.h-center {
-text-align: center;
-flex: 1;
-}
-
-.h-center h1 {
-margin: 0;
-font-size: 1.45rem;
-color: var(--navy);
-font-weight: 900;
-}
-
-.h-center .sub {
-font-size: 1.08rem;
-font-weight: 700;
-color: #2b4c7e;
-margin: 3px 0;
-}
-
-.h-center .stages {
-font-size: 0.8rem;
-color: #475569;
-font-weight: 600;
-}
-
-.h-logo img {
-max-height: 68px;
-width: auto;
-object-fit: contain;
-}
+.h-right { font-weight: 700; color: var(--navy); }
+.h-center { text-align: center; flex: 1; }
+.h-center h1 { margin: 0; font-size: 1.4rem; color: var(--navy); font-weight: 900; }
+.h-center .sub { font-size: 1.06rem; font-weight: 700; color: #2b4c7e; }
+.h-center .stages { font-size: 0.78rem; color: #475569; font-weight: 600; }
+.h-logo img { max-height: 64px; width: auto; }
 
 .banner {
-background: linear-gradient(135deg, var(--navy), #1e40af);
+background: var(--navy);
 color: #fff;
 text-align: center;
-font-weight: 800;
-font-size: 1.04rem;
-padding: 9px 12px;
-border-radius: 6px;
-margin-bottom: 14px;
+font-weight: 700;
+padding: 8px;
+border-radius: 5px;
+margin-bottom: 12px;
 }
 
 .sec-title {
 background: var(--navy-light);
 color: var(--navy);
 font-weight: 800;
-font-size: 0.95rem;
-padding: 7px 12px;
+font-size: 0.94rem;
+padding: 6px 12px;
 border-right: 4px solid var(--navy);
-border-radius: 4px;
-margin: 14px 0 7px;
+margin: 12px 0 6px;
 }
 
 table.form-tbl {
 width: 100%;
 border-collapse: collapse;
-font-size: 0.89rem;
+font-size: 0.88rem;
 margin-bottom: 8px;
 }
 
-table
+table.form-tbl td {
+border: 1px solid var(--border);
+padding: 7px 9px;
+vertical-align: middle;
+}
 
+.lbl {
+background: var(--label-bg);
+font-weight: 700;
+color: var(--navy);
+width: 22%;
+}
+
+.inp { width: 28%; }
+
+.inp input[type="text"],
+.inp input[type="tel"] {
+width: 100%;
+border: none;
+outline: none;
+font-size: 0.9rem;
+padding: 3px 4px;
+background: transparent;
+}
+
+.doc-choices {
+display: flex;
+flex-wrap: wrap;
+gap: 8px;
+margin-bottom: 7px;
+}
+
+.doc-btn {
+border: 1px solid var(--border);
+background: #f8fafc;
+color: var(--navy);
+padding: 5px 11px;
+border-radius: 6px;
+font-size: 0.82rem;
+font-weight: 700;
+cursor: pointer;
+}
+
+.doc-btn.active {
+background: var(--navy);
+color: #fff;
+border-color: var(--navy);
+}
+
+#studentIdInput {
+border: 1px dashed #94a3b8;
+border-radius: 5px;
+padding: 6px 9px;
+background: #fcfdff;
+font-weight: 800;
+letter-spacing: 1px;
+direction: ltr;
+text-align: right;
+text-transform: uppercase;
+}
+
+.hint-txt {
+font-size: 0.78rem;
+color: #64748b;
+margin-top: 4px;
+}
+
+.opts-row {
+display: flex;
+flex-wrap: wrap;
+gap: 12px;
+align-items: center;
+}
+
+.opts-2x2 {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 6px 12px;
+}
+
+.chk-lbl {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+font-size: 0.85rem;
+font-weight: 600;
+cursor: pointer;
+}
+
+.box-panel {
+border: 1px solid var(--border);
+background: #fafcff;
+padding: 10px 12px;
+font-size: 0.88rem;
+line-height: 1.8;
+margin-bottom: 8px;
+}
+
+.dotted-inp {
+border: none;
+border-bottom: 1.5px dotted var(--navy);
+width: 135px;
+text-align: center;
+font-weight: 800;
+color: var(--navy);
+background: transparent;
+outline: none;
+}
+
+.attach-panel {
+border: 1px solid var(--border);
+padding: 10px 12px;
+display: flex;
+flex-wrap: wrap;
+justify-content: space-between;
+gap: 10px;
+margin-bottom: 12px;
+}
+
+.footer-bar {
+border-top: 1.5px solid var(--border);
+padding-top: 8px;
+margin-top: 12px;
+display: flex;
+justify-content: space-between;
+font-size: 0.82rem;
+font-weight: 700;
+color: var(--navy);
+}
+
+.actions {
+display: flex;
+gap: 10px;
+justify-content: center;
+margin-top: 16px;
+}
+
+.btn-main {
+background: var(--navy);
+color: #fff;
+border: none;
+padding: 10px 24px;
+border-radius: 6px;
+font-weight: 700;
+font-size: 0.95rem;
+cursor: pointer;
+}
+
+.btn-print {
+background: #e2e8f0;
+color: #0f172a;
+border: none;
+padding: 10px 20px;
+border-radius: 6px;
+font-weight: 700;
+font-size: 0.95rem;
+cursor: pointer;
+}
+
+#msgBox {
+text-align: center;
+font-weight: 700;
+margin-top: 12px;
+font-size: 0.92rem;
+}
+
+/* النوافذ المنبثقة */
+.popup-overlay {
+position: fixed;
+inset: 0;
+background: rgba(15, 23, 42, 0.62);
+display: none;
+align-items: center;
+justify-content: center;
+padding: 14px;
+z-index: 9999;
+}
+
+.popup-overlay.show { display: flex; }
+
+.popup-box {
+max-width: 490px;
+width: 100%;
+background: #fff;
+border-radius: 12px;
+padding: 20px;
+border-top: 5px solid var(--gold);
+box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+max-height: 92vh;
+overflow-y: auto;
+}
+
+.popup-box.warn-box {
+max-width: 420px;
+border-top-color: var(--warn-border);
+}
+
+.popup-box h3 {
+margin: 0 0 12px;
+color: var(--navy);
+font-size: 1.1rem;
+text-align: center;
+}
+
+.fee-list {
+background: #f8fafc;
+border: 1px solid #cbd5e1;
+border-radius: 8px;
+padding: 10px 12px;
+margin-bottom: 10px;
+}
+
+.fee-item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 6px 0;
+border-bottom: 1px dashed #cbd5e1;
+font-size: 0.9rem;
+}
+
+.fee-item:last-child { border-bottom: none; }
+
+.fee-badge {
+background: var(--navy);
+color: #fff;
+padding: 3px 10px;
+border-radius: 16px;
+font-weight: 700;
+font-size: 0.84rem;
+}
+
+.reg-note {
+background: var(--warn-bg);
+border: 1px solid #fcd34d;
+color: var(--warn-text);
+padding: 10px 12px;
+border-radius: 8px;
+font-size: 0.87rem;
+line-height: 1.65;
+margin-bottom: 10px;
+}
+
+.offer-note {
+background: var(--green-bg);
+border: 1px solid #86efac;
+color: #14532d;
+padding: 10px 12px;
+border-radius: 8px;
+font-size: 0.88rem;
+line-height: 1.65;
+margin-bottom: 14px;
+}
+
+.popup-box .warn-text {
+background: var(--warn-bg);
+border: 1px solid #fde68a;
+color: var(--warn-text);
+padding: 12px;
+border-radius: 8px;
+font-size: 0.92rem;
+line-height: 1.65;
+margin-bottom: 14px;
+}
+
+.popup-box button {
+width: 100%;
+background: var(--navy);
+color: #fff;
+border: none;
+padding: 11px;
+border-radius: 8px;
+font-weight: 700;
+font-size: 0.95rem;
+cursor: pointer;
+}
+
+@media print {
+body { background: #fff; padding: 0; }
+.top-nav, .actions, .doc-choices, #msgBox, .popup-overlay { display: none !important; }
+.sheet { box-shadow: none; border: none; padding: 8px; }
+}
+
+@media (max-width: 680px) {
+.header-top { flex-direction: column; text-align: center; }
+table.form-tbl, table.form-tbl tbody, table.form-tbl tr, table.form-tbl td { display: block; width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="top-nav">
+<a href="index.html" class="back-link">🏠 العودة للرئيسية</a>
+<button type="button" class="back-link fees-trigger" id="showFeesAgain">💰 الرسوم وعروض الأشقاء</button>
+</div>
+
+<form class="sheet" id="regForm">
+<!-- الترويسة بدون التاريخ ورقم التسجيل -->
+<div class="header-top">
+<div class="h-right">
+<div>المملكة العربية السعودية</div>
+<div>وزارة التعليم</div>
+<div>مؤسسة جيل الإبداع والتميز</div>
+<div>فرع صامطة</div>
+</div>
+
+<div class="h-center">
+<h1>مؤسسة جيل الإبداع والتميز</h1>
+<div class="sub">استمارة قبول وتسجيل طالب</div>
+<div class="stages">رياض الأطفال – المرحلة الابتدائية – المرحلة المتوسطة – المرحلة الثانوية</div>
+</div>
+
+<div class="h-logo">
+<img src="logo.png.jpeg" alt="شعار المدرسة" onerror="this.style.display='none'">
+</div>
+</div>
+
+<div class="banner">طلب قبول وتسجيل طالب جديد – العام الدراسي 2026 / 2027 م</div>
+
+<div class="sec-title">أولاً: البيانات الأساسية والأكاديمية للطالب</div>
+<table class="form-tbl">
+<tr>
+<td class="lbl">اسم الطالب الكامل:</td>
+<td class="inp" colspan="3">
+<input type="text" id="studentName" placeholder="اكتب اسم الطالب كاملاً" autocomplete="name" required>
+</td>
+</tr>
+
+<tr>
+<td class="lbl" id="docLabel">رقم هوية الطالب:</td>
+<td class="inp" colspan="3">
+<div class="doc-choices">
+<button type="button" class="doc-btn active" data-mode="id">رقم هوية الطالب</button>
+<button type="button" class="doc-btn" data-mode="passport">جواز سفر الطالب</button>
+<button type="button" class="doc-btn" data-mode="border">رقم حدود الطالب</button>
+</div>
+<input type="hidden" id="docType" value="رقم هوية الطالب">
+<input type="text" id="studentIdInput" maxlength="10" placeholder="أدخل رقم هوية الطالب" autocomplete="on" autocapitalize="characters" spellcheck="false" required>
+<div class="hint-txt" id="hintTxt">يقبل أرقاماً وحروفاً إنجليزية كبيرة — يُسجل رقم هوية أو جواز الطالب نفسه وليس ولي الأمر.</div>
+</td>
+</tr>
+
+<tr>
+<td class="lbl">جنسية الطالب:</td>
+<td class="inp"><input type="text" id="nationality" placeholder="الجنسية" required></td>
+<td class="lbl">المرحلة الدراسية:</td>
+<td class="inp">
+<div class="opts-2x2">
+<label class="chk-lbl"><input type="radio" name="stage" value="رياض الأطفال" data-fee="2000" required> رياض الأطفال</label>
+<label class="chk-lbl"><input type="radio" name="stage" value="الابتدائي (1 - 5)" data-fee="2000"> الابتدائي (1 - 5)</label>
+<label class="chk-lbl"><input type="radio" name="stage" value="السادس الابتدائي" data-fee="2500"> السادس الابتدائي</label>
+<label class="chk-lbl"><input type="radio" name="stage" value="المتوسط" data-fee="2500"> المتوسط</label>
+</div>
+</td>
+</tr>
+
+<tr>
+<td class="lbl">المدرسة السابقة للطالب:</td>
+<td class="inp"><input type="text" id="prevSchool" placeholder="المدرسة السابقة"></td>
+<td class="lbl">الفصل الدراسي التالي للطالب:</td>
+<td class="inp"><input type="text" id="nextGrade" placeholder="الصف / الفصل الدراسي" required></td>
+</tr>
+
+<tr>
+<td class="lbl">المستوى الأكاديمي (التقدير والنسبة):</td>
+<td class="inp"><input type="text" id="academicLevel" placeholder="مثال: ممتاز / 98%"></td>
+<td class="lbl">الحالة الدراسية:</td>
+<td class="inp">
+<div class="opts-row">
+<label class="chk-lbl"><input type="radio" name="acadStatus" value="ناجح"> ناجح</label>
+<label class="chk-lbl"><input type="radio" name="acadStatus" value="راسب"> راسب</label>
+</div>
+</td>
+</tr>
+</table>
+
+<div class="sec-title">ثانياً: بيانات أولياء الأمور ووسائل الاتصال الرسمي</div>
+<table class="form-tbl">
+<tr>
+<td class="lbl">اسم ولي الأمر:</td>
+<td class="inp"><input type="text" id="guardianName" placeholder="اسم ولي الأمر" required></td>
+<td class="lbl">رقم ولي الأمر (مكالمات + واتساب):</td>
+<td class="inp"><input type="tel" id="guardianPhone" placeholder="05xxxxxxxx" required></td>
+</tr>
+<tr>
+<td class="lbl">اسم الأم:</td>
+<td class="inp"><input type="text" id="motherName" placeholder="اسم الأم"></td>
+<td class="lbl">رقم الأم (مكالمات + واتساب):</td>
+<td class="inp"><input type="tel" id="motherPhone" placeholder="05xxxxxxxx"></td>
+</tr>
+</table>
+
+<div class="sec-title">ثالثاً: الحالة الصحية للطالب</div>
+<table class="form-tbl">
+<tr>
+<td class="lbl">الحالة الصحية للطالب:</td>
+<td class="inp" colspan="3">
+<div class="opts-row">
+<label class="chk-lbl"><input type="radio" name="healthStatus" value="سليم ولا يعاني من أمراض" checked> سليم ولا يعاني من أمراض</label>
+<label class="chk-lbl"><input type="radio" name="healthStatus" value="يعاني من أمراض أو حالة صحية خاصة"> يعاني من أمراض أو حالة صحية خاصة</label>
+</div>
+</td>
+</tr>
+<tr>
+<td class="lbl">تفاصيل المرض الذي يعاني منه:</td>
+<td class="inp" colspan="3"><input type="text" id="illnessDetails" placeholder="تفاصيل الحالة الصحية إن وجدت"></td>
+</tr>
+</table>
+
+<div class="sec-title">رابعاً: بيانات وإقرار الشخص المرحّل للطالب</div>
+<table class="form-tbl">
+<tr>
+<td class="lbl">اسم الشخص المرحّل للطالب:</td>
+<td class="inp"><input type="text" id="driverName" placeholder="اسم الشخص المرحّل"></td>
+<td class="lbl">رقم هاتف الشخص المرحّل:</td>
+<td class="inp"><input type="tel" id="driverPhone" placeholder="05xxxxxxxx"></td>
+</tr>
+<tr>
+<td class="lbl">تعهد وانضباط المرحّل:</td>
+<td class="inp" colspan="3" style="font-size:0.84rem; color:#334155;">
+يتعهد الشخص المرحّل بالتزام المواعيد المحددة لبدء وانتهاء اليوم الدراسي، ولا يجوز نهائياً التأخير عن نهاية الدوام الرسمي للمدرسة تحت أي ظرف.
+</td>
+</tr>
+</table>
+
+<div class="sec-title">خامساً: إقرار وتعهد ولي الأمر بالرسوم الدراسية</div>
+<div class="box-panel">
+أقر وأتعهد أنا ولي أمر الطالب بالالتزام التام بإكمال كافة الرسوم الدراسية التي تقررها إدارة المدرسة، حيث تقرر تحديد الرسوم الدراسية بمبلغ وقدره:
+( <input type="text" id="tuitionAmount" class="dotted-inp" placeholder="................"> )
+ريال سعودي، بالإضافة إلى رسوم التسجيل والكتب الدراسية (<strong>200 ريال</strong>)، على أن يتم تسديدها كاملاً على عدد ( <strong>4</strong> ) أقساط دراسية منتظمة، ويحق للمؤسسة مطالبة ولي الأمر بالرسوم الدراسية المحددة في مواعيدها.
+</div>
+
+<div class="sec-title">سادساً: المستندات المطلوبة (المرفقات)</div>
+<div class="attach-panel">
+<label class="chk-lbl"><input type="checkbox" id="docGuardian"> صورة من هوية ولي الأمر</label>
+<label class="chk-lbl"><input type="checkbox" id="docPassport"> صورة من جواز الطالب</label>
+<label class="chk-lbl"><input type="checkbox" id="docConduct"> استخراج شهادة سير وسلوك من القنصلية العامة لبلد الطالب</label>
+</div>
+
+<div class="footer-bar">
+<div>مؤسسة جيل الإبداع والتميز – فرع صامطة | هاتف الشكاوى والملاحظات: 0535727692</div>
+<div>العام الدراسي 2026 / 2027 م</div>
+</div>
+
+<div id="msgBox"></div>
+
+<div class="actions">
+<button type="submit" class="btn-main" id="submitBtn">إرسال وتسجيل الطالب</button>
+<button type="button" class="btn-print" onclick="window.print()">طباعة الاستمارة</button>
+</div>
+</form>
+
+<!-- 1. الإشعار المنبثق الافتتاحي بالأسعار وعروض الأشقاء -->
+<div class="popup-overlay show" id="feesPopup">
+<div class="popup-box">
+<h3>📢 رسوم العام الدراسي وعروض الأشقاء</h3>
+<div class="fee-list">
+<div class="fee-item">
+<span><strong>رياض الأطفال والمرحلة الابتدائية (1 - 5):</strong></span>
+<span class="fee-badge">2,000 ريال سعودي</span>
+</div>
+<div class="fee-item">
+<span><strong>الصف السادس الابتدائي والمرحلة المتوسطة:</strong></span>
+<span class="fee-badge">2,500 ريال سعودي</span>
+</div>
+</div>
+
+<div class="reg-note">
+<strong>📌 رسوم التسجيل والكتب الدراسية:</strong><br>
+تُفرض رسوم تسجيل قدرها <strong>200 ريال سعودي</strong> لكل طالب (تشمل الكتب الدراسية)، وهي مفروضة على كل طالب حتى لو كان معفياً من الرسوم أو ابن معلم.
+</div>
+
+<div class="offer-note">
+<strong>🎁 عروض الأشقاء:</strong><br>
+• إذا كان الأشقاء <strong>ثلاثة</strong>: الشقيق الثالث <strong>بنصف القيمة (50%)</strong>.<br>
+• إذا كان الأشقاء <strong>أربعة</strong>: الشقيق الرابع <strong>مجاناً</strong>.
+</div>
+
+<button type="button" id="closeFeesBtn">فهمت، الانتقال للاستمارة</button>
+</div>
+</div>
+
+<!-- 2. الإشعار المنبثق لتنبيه تسجيل هوية أو جواز الطالب وليس ولي الأمر -->
+<div class="popup-overlay" id="idPopup">
+<div class="popup-box warn-box">
+<h3 style="color:#92400e;">⚠️ تنبيه هام بخصوص بيانات الطالب</h3>
+<div class="warn-text">
+يرجى تسجيل <strong>رقم هوية الطالب</strong> أو <strong>جواز سفر الطالب</strong> الخاص بالطالب نفسه، <strong>وليس رقم هوية أو جواز ولي الأمر</strong>.
+</div>
+<button type="button" id="closePopupBtn">فهمت، سأدخل بيانات الطالب</button>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
+authDomain: "jil-al-ibda-a.firebaseapp.com",
+projectId: "jil-al-ibda-a",
+storageBucket: "jil-al-ibda-a.firebasestorage.app",
+messagingSenderId: "1057703586286",
+appId: "1:1057703586286:web:e581aa576eef32930746ff",
+measurementId: "G-TSG3J0BCSE"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const feesPopup = document.getElementById("feesPopup");
+const closeFeesBtn = document.getElementById("closeFeesBtn");
+const showFeesAgain = document.getElementById("showFeesAgain");
+
+const docBtns = document.querySelectorAll(".doc-btn");
+const docLabel = document.getElementById("docLabel");
+const docType = document.getElementById("docType");
+const studentIdInput = document.getElementById("studentIdInput");
+const hintTxt = document.getElementById("hintTxt");
+const popup = document.getElementById("idPopup");
+const closePopupBtn = document.getElementById("closePopupBtn");
+const regForm = document.getElementById("regForm");
+const submitBtn = document.getElementById("submitBtn");
+const msgBox = document.getElementById("msgBox");
+
+let currentMode = "id";
+let popupShown = false;
+
+closeFeesBtn.addEventListener("click", () => {
+feesPopup.classList.remove("show");
+document.getElementById("studentName").focus();
+});
+
+showFeesAgain.addEventListener("click", () => {
+feesPopup.classList.add("show");
+});
+
+function showPopup() {
+popup.classList.add("show");
+}
+
+function hidePopup() {
+popup.classList.remove("show");
+studentIdInput.focus();
+}
+
+function applyMode(mode) {
+currentMode = mode;
+studentIdInput.value = "";
+if (mode === "passport") {
+docType.value = "جواز سفر الطالب";
+docLabel.textContent = "رقم جواز سفر الطالب:";
+studentIdInput.maxLength = 11;
+studentIdInput.placeholder = "مثال: P1234567890";
+hintTxt.textContent = "يُدخل حرف إنجليزي كبير واحد في البداية متبوعاً بأرقام فقط بحد أقصى 11 خانة (مثل P1234567890).";
+} else if (mode === "border") {
+docType.value = "رقم حدود الطالب";
+docLabel.textContent = "رقم حدود الطالب:";
+studentIdInput.maxLength = 10;
+studentIdInput.placeholder = "أدخل 10 أرقام فقط";
+hintTxt.textContent = "يقبل 10 أرقام إنجليزية فقط لرقم الحدود.";
+} else {
+docType.value = "رقم هوية الطالب";
+docLabel.textContent = "رقم هوية الطالب:";
+studentIdInput.maxLength = 10;
+studentIdInput.placeholder = "أدخل رقم هوية الطالب";
+hintTxt.textContent = "يقبل أرقاماً وحروفاً إنجليزية كبيرة (حتى 10 خانات) — وليس رقم هوية ولي الأمر.";
+}
+}
+
+docBtns.forEach((btn) => {
+btn.addEventListener("click", () => {
+docBtns.forEach((b) => b.classList.remove("active"));
+btn.classList.add("active");
+applyMode(btn.dataset.mode);
+showPopup();
+});
+});
+
+studentIdInput.addEventListener("focus", () => {
+if (!popupShown) {
+popupShown = true;
+showPopup();
+}
+});
+
+studentIdInput.addEventListener("input", () => {
+let val = studentIdInput.value.toUpperCase();
+if (currentMode === "passport") {
+val = val.replace(/[^A-Z0-9]/g, "");
+val = val.replace(/^[^A-Z]+/, "");
+if (val.length > 0) {
+const firstLetter = val.charAt(0);
+const restDigits = val.slice(1).replace(/[^0-9]/g, "").slice(0, 10);
+val = firstLetter + restDigits;
+}
+studentIdInput.value = val.slice(0, 11);
+} else if (currentMode === "border") {
+studentIdInput.value = val.replace(/[^0-9]/g, "").slice(0, 10);
+} else {
+studentIdInput.value = val.replace(/[^A-Z0-9]/g, "").slice(0, 10);
+}
+});
+
+document.querySelectorAll('input[name="stage"]').forEach((r) => {
+r.addEventListener("change", () => {
+if (r.dataset.fee) {
+document.getElementById("tuitionAmount").value = r.dataset.fee;
+}
+});
+});
+
+closePopupBtn.addEventListener("click", hidePopup);
+popup.addEventListener("click", (e) => {
+if (e.target === popup) hidePopup();
+});
+
+regForm.addEventListener("submit", async (e) => {
+e.preventDefault();
+
+const sName = document.getElementById("studentName").value.trim();
+const sId = studentIdInput.value.trim();
+const gradeVal = document.getElementById("nextGrade").value.trim();
+const stageChecked = document.querySelector('input[name="stage"]:checked');
+const stageVal = stageChecked ? stageChecked.value : "";
+
+if (!sName || !sId) {
+msgBox.style.color = "#c0392b";
+msgBox.textContent = "يرجى إدخال اسم الطالب ورقم الهوية أو الجواز.";
+if (!sId) showPopup();
+return;
+}
+
+if (currentMode === "passport" && !/^[A-Z][0-9]{1,10}$/.test(sId)) {
+msgBox.style.color = "#c0392b";
+msgBox.textContent = "رقم الجواز يجب أن يبدأ بحرف إنجليزي كبير واحد يليه أرقام فقط (بحد أقصى 11 خانة مثل P1234567890).";
+studentIdInput.focus();
+return;
+}
+
+if (currentMode === "border" && !/^[0-9]{10}$/.test(sId)) {
+msgBox.style.color = "#c0392b";
+msgBox.textContent = "رقم الحدود يجب أن يتكون من 10 أرقام فقط.";
+studentIdInput.focus();
+return;
+}
+
+submitBtn.disabled = true;
+submitBtn.textContent = "جاري الإرسال...";
+msgBox.textContent = "";
+
+const combinedClass = gradeVal && stageVal ? `${gradeVal} (${stageVal})` : (gradeVal || stageVal || "-");
+const acadChecked = document.querySelector('input[name="acadStatus"]:checked');
+const healthChecked = document.querySelector('input[name="healthStatus"]:checked');
+
+try {
+// الحفظ باستخدام setDoc ومعرّف المستند هو رقم الهوية/الجواز sId ليطابق نظام الإدارة والتعديل
+await setDoc(doc(db, "students", sId), {
+studentName: sName,
+class: combinedClass,
+nationalID: sId,
+paymentStatus: "غير مسدد",
+timestamp: serverTimestamp(),
+docType: docType.value,
+academicYear: "2026 / 2027 م",
+nationality: document.getElementById("nationality").value.trim(),
+stage: stageVal,
+nextGrade: gradeVal,
+previousSchool: document.getElementById("prevSchool").value.trim(),
+academicLevel: document.getElementById("academicLevel").value.trim(),
+academicStatus: acadChecked ? acadChecked.value : "",
+guardianName: document.getElementById("guardianName").value.trim(),
+guardianPhone: document.getElementById("guardianPhone").value.trim(),
+motherName: document.getElementById("motherName").value.trim(),
+motherPhone: document.getElementById("motherPhone").value.trim(),
+healthStatus: healthChecked ? healthChecked.value : "",
+illnessDetails: document.getElementById("illnessDetails").value.trim(),
+driverName: document.getElementById("driverName").value.trim(),
+driverPhone: document.getElementById("driverPhone").value.trim(),
+tuitionAmount: document.getElementById("tuitionAmount").value.trim(),
+registrationFee: 200,
+attachments: {
+guardianId: document.getElementById("docGuardian").checked,
+studentPassport: document.getElementById("docPassport").checked,
+conductCert: document.getElementById("docConduct").checked
+}
+});
+
+msgBox.style.color = "#27ae60";
+msgBox.textContent = "تم تسجيل الطالب بنجاح وإرسال بياناته إلى لوحة الإدارة ✅";
+regForm.reset();
+docBtns.forEach((b, idx) => b.classList.toggle("active", idx === 0));
+applyMode("id");
+} catch (err) {
+console.error("Firebase Error:", err);
+msgBox.style.color = "#c0392b";
+msgBox.textContent = "فشل الحفظ: " + (err.message || "تحقق من اتصال الإنترنت وصلاحيات Firestore");
+} finally {
+submitBtn.disabled = false;
+submitBtn.textContent = "إرسال وتسجيل الطالب";
+}
+});
+</script>
+</body>
+</html>

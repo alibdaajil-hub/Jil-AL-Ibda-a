@@ -259,6 +259,16 @@ border-top: 2px solid var(--primary);
 text-align: center;
 font-weight: 800;
 font-size: 0.86rem;
+align-items: center;
+}
+
+.owner-sig-img {
+max-height: 46px;
+max-width: 140px;
+object-fit: contain;
+display: block;
+margin: 4px auto 0;
+filter: contrast(145%) brightness(105%);
 }
 
 .media-picker-box {
@@ -544,6 +554,7 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://w
 
 const VALID_CODE = "Mus3ab";
 const VALID_PASS = "Rajnarok";
+const OWNER_SIGNATURE_SRC = "signature.png";
 
 const firebaseConfig = {
 apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
@@ -678,7 +689,10 @@ document.getElementById("voucherArea").innerHTML = `
 
 <div class="v-sigs">
 <div>المستلم: ${r.receiverName || ""}</div>
-<div>أمين الصندوق</div>
+<div>
+أمين الصندوق
+<img src="${OWNER_SIGNATURE_SRC}" alt="توقيع مصعب" class="owner-sig-img" crossorigin="anonymous" onerror="this.style.display='none'">
+</div>
 <div>المحاسب</div>
 </div>
 
@@ -704,7 +718,6 @@ try {
 window.print();
 } catch (_) {}
 
-// في حال لم يفتح مربع الطباعة في بعض متصفحات الهاتف، نجهز ملف صورة جاهز للطباعة/PDF
 const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 if (isMobile) {
 const blob = await generateVoucherBlob();
@@ -747,7 +760,6 @@ return;
 } catch (_) {}
 }
 
-// في الحاسوب أو المتصفحات التي لا تدعم مشاركة الملفات مباشرة: نحمّل الصورة ونفتح واتساب ويب
 const url = URL.createObjectURL(blob);
 const a = document.createElement("a");
 a.href = url;
@@ -1050,4 +1062,3 @@ tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none";
 </script>
 </body>
 </html>
-

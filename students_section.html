@@ -165,4 +165,995 @@ display: inline-block;
 .btn-n { background: var(--primary); color: #fff; }
 .btn-r { background: var(--red); color: #fff; }
 .btn-y { background: var(--gold); color: #0f172a; }
+.btn-b { background: var(--blue); color: #fff; }
+
+.table-wrap { overflow-x: auto; margin-top: 10px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { border: 1px solid #e2e8f0; padding: 10px; font-size: 0.86rem; text-align: right; }
+th { background: #f8fafc; color: var(--primary); font-weight: 800; white-space: nowrap; }
+
+.badge {
+display: inline-block;
+padding: 3px 10px;
+border-radius: 20px;
+font-size: 0.78rem;
+font-weight: 800;
+}
+.badge-ok { background: var(--green-bg); color: var(--green); }
+.badge-warn { background: var(--orange-bg); color: var(--orange); }
+.badge-late { background: var(--red-bg); color: var(--red); }
+
+.voucher {
+max-width: 760px;
+margin: 16px auto;
+background: #ffffff;
+border: 2px solid #0f172a;
+border-radius: 10px;
+padding: 18px 22px;
+color: #0f172a;
+}
+
+.v-top {
+display: flex;
+justify-content: space-between;
+align-items: center;
+border-bottom: 2.5px solid #0f172a;
+padding-bottom: 10px;
+margin-bottom: 12px;
+gap: 10px;
+flex-wrap: wrap;
+}
+
+.serial-box {
+background: #ffffff;
+border: 2px solid #0f172a;
+padding: 6px 14px;
+border-radius: 8px;
+text-align: center;
+}
+
+.v-money {
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 10px;
+border-bottom: 2px solid #0f172a;
+padding-bottom: 10px;
+margin-bottom: 10px;
+}
+
+.money-boxes {
+display: flex;
+border: 2px solid #0f172a;
+background: #ffffff;
+}
+
+.money-cell {
+padding: 5px 14px;
+min-width: 85px;
+text-align: center;
+font-weight: 900;
+border-left: 2px solid #0f172a;
+}
+
+.money-cell:last-child { border-left: none; }
+
+.v-line {
+display: flex;
+justify-content: space-between;
+gap: 10px;
+border-bottom: 1.5px dotted #0f172a;
+padding: 7px 4px;
+margin-bottom: 7px;
+font-size: 0.95rem;
+}
+
+.v-fixed-lbl {
+color: #0f172a;
+font-weight: 800;
+}
+
+.v-dyn-val {
+color: #1d4ed8;
+font-weight: 800;
+}
+
+.v-footer-row {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 16px;
+flex-wrap: wrap;
+margin-top: 16px;
+padding-top: 12px;
+border-top: 2px solid #0f172a;
+font-weight: 800;
+font-size: 0.92rem;
+}
+
+.v-accountant-right {
+color: #0f172a;
+font-weight: 900;
+}
+
+.v-accountant-name {
+color: #1d4ed8;
+font-weight: 900;
+}
+
+.v-sig-center {
+display: flex;
+align-items: center;
+gap: 8px;
+color: #0f172a;
+font-weight: 900;
+}
+
+.owner-sig-img {
+max-height: 46px;
+max-width: 140px;
+object-fit: contain;
+display: inline-block;
+filter: contrast(145%) brightness(105%);
+}
+
+.media-picker-box {
+border: 2px dashed var(--primary);
+background: #f8fafc;
+border-radius: 12px;
+padding: 16px;
+text-align: center;
+margin-bottom: 12px;
+}
+
+.preview-box img, .preview-box video {
+max-width: 100%;
+max-height: 260px;
+border-radius: 10px;
+margin-top: 10px;
+}
+
+@media print {
+body * { visibility: hidden !important; }
+#printableVoucherOnly, #printableVoucherOnly * { visibility: visible !important; }
+#printableVoucherOnly {
+position: fixed !important;
+top: 0 !important;
+left: 0 !important;
+width: 100% !important;
+margin: 0 !important;
+padding: 16px !important;
+background: #ffffff !important;
+}
+.no-print { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div id="loginBox">
+<h2>دخول الإدارة والحسابات</h2>
+<form id="ownerLoginForm" autocomplete="off">
+<label class="lbl">رمز الدخول
+<input type="text" id="accessCodeInput" required autocomplete="off">
+</label>
+<label class="lbl">كلمة السر
+<input type="password" id="accessPassInput" required autocomplete="new-password">
+</label>
+<button type="submit" class="btn btn-n" style="width:100%; padding:11px; font-size:0.95rem;">تسجيل الدخول</button>
+<div id="loginMsg" style="color:#b91c1c; font-weight:800; margin-top:10px; text-align:center; font-size:0.88rem;"></div>
+</form>
+</div>
+
+<div class="wrap" id="appBox">
+<div class="hdr no-print">
+<div>
+<h1>لوحة الإدارة والحسابات – مدارس جيل الإبداع (صامطة)</h1>
+<small id="userTag"></small>
+</div>
+<div style="display:flex; gap:8px; flex-wrap:wrap;">
+<a href="index.html" class="btn btn-y">الرئيسية</a>
+<a href="activities.html" class="btn btn-y">صفحة النشاطات</a>
+<button type="button" class="btn btn-r" id="logoutBtn">خروج</button>
+</div>
+</div>
+
+<div class="stats no-print">
+<div class="stat"><span>عدد الطلاب</span><b id="stCount">0</b></div>
+<div class="stat"><span>الأقساط المحصلة</span><b id="stPaidSum">0 ر.س</b></div>
+<div class="stat"><span>المنصرفات</span><b id="stExpSum">0 ر.س</b></div>
+<div class="stat"><span>المرتبات</span><b id="stPaySum">0 ر.س</b></div>
+</div>
+
+<div class="tabs no-print">
+<button type="button" class="tab-btn active" data-p="p1">الطلاب والأقساط</button>
+<button type="button" class="tab-btn" data-p="p2">الإيصالات والاستعلام</button>
+<button type="button" class="tab-btn" data-p="p3">المنصرفات</button>
+<button type="button" class="tab-btn" data-p="p4">المرتبات والموظفين</button>
+<button type="button" class="tab-btn" data-p="p5">رفع النشاطات</button>
+</div>
+
+<div class="panel active" id="p1">
+<div id="reminderBanner" style="background:#fff7ed; border:1px solid #fdba74; padding:11px; border-radius:10px; margin-bottom:12px; font-size:0.88rem;"></div>
+<input type="text" id="searchSt" placeholder="بحث باسم الطالب أو الهوية أو الصف...">
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>الطالب</th>
+<th>الصف</th>
+<th>الهوية/الجواز</th>
+<th>الأقساط (500 ر.س)</th>
+<th>المتبقي</th>
+<th>التذكير</th>
+<th class="no-print">إجراء</th>
+</tr>
+</thead>
+<tbody id="studentsRows">
+<tr><td colspan="7" style="text-align:center;">جاري تحميل بيانات الطلاب...</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="panel" id="p2">
+<h3>استعلام عن بيان إيصال إلكتروني بالرقم التسلسلي (0001 - 9999)</h3>
+<div class="no-print" style="display:flex; gap:8px; max-width:380px;">
+<input type="text" id="serialSearchInput" maxlength="4" placeholder="أدخل الرقم مثل: 0001">
+<button type="button" class="btn btn-n" id="btnFindSerial">استعلام</button>
+</div>
+<div id="voucherArea"></div>
+<div id="voucherActionStatus" class="no-print" style="text-align:center; font-weight:800; font-size:0.86rem; color:#0f2c59; margin-top:6px;"></div>
+
+<h3 style="margin-top:22px;">سجل الإيصالات الإلكترونية الصادرة</h3>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>الرقم التسلسلي</th>
+<th>الاسم</th>
+<th>البيان</th>
+<th>المبلغ</th>
+<th>التاريخ</th>
+<th class="no-print">عرض</th>
+</tr>
+</thead>
+<tbody id="receiptsRows">
+<tr><td colspan="6" style="text-align:center;">لا توجد إيصالات بعد.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="panel" id="p3">
+<h3>نافذة المنصرفات والمصروفات</h3>
+<form id="expForm" class="no-print">
+<div class="grid2">
+<label class="lbl">البند
+<select id="expCat">
+<option>أدوات تنظيف</option>
+<option>فاتورة الكهرباء</option>
+<option>إيجار الموقع</option>
+<option>أدوات دراسة (أقلام وقرطاسيات)</option>
+<option>مصروفات أخرى</option>
+</select>
+</label>
+<label class="lbl">المبلغ (ر.س)
+<input type="number" id="expAmt" step="0.01" required>
+</label>
+<label class="lbl">التاريخ
+<input type="date" id="expDt" required>
+</label>
+<label class="lbl">التفاصيل
+<input type="text" id="expDet" required>
+</label>
+</div>
+<button type="submit" class="btn btn-g">حفظ المنصرف</button>
+</form>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>التاريخ</th>
+<th>البند</th>
+<th>التفاصيل</th>
+<th>المبلغ</th>
+<th class="no-print">حذف</th>
+</tr>
+</thead>
+<tbody id="expRows">
+<tr><td colspan="5" style="text-align:center;">لا توجد منصرفات بعد.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="panel" id="p4">
+<h3>المرتبات والموظفين</h3>
+<div class="no-print" style="display:flex; gap:8px; max-width:360px; margin-bottom:14px;">
+<input type="number" id="staffNumInput" min="0" placeholder="عدد الموظفين يدوياً">
+<button type="button" class="btn btn-n" id="saveStaffNumBtn">حفظ العدد</button>
+</div>
+
+<form id="payForm" class="no-print">
+<div class="grid2">
+<label class="lbl">اسم الموظف
+<input type="text" id="payName" required>
+</label>
+<label class="lbl">الراتب الأساسي (ر.س)
+<input type="number" id="payBase" step="0.01" required>
+</label>
+<label class="lbl">حوافز (+)
+<input type="number" id="payBonus" step="0.01" value="0">
+</label>
+<label class="lbl">خصومات (-)
+<input type="number" id="payDed" step="0.01" value="0">
+</label>
+<label class="lbl">التاريخ
+<input type="date" id="payDt" required>
+</label>
+<label class="lbl">ملاحظات
+<input type="text" id="payNote">
+</label>
+</div>
+<button type="submit" class="btn btn-g">تأكيد التسليم وإصدار إيصال</button>
+</form>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>الاسم</th>
+<th>الأساسي</th>
+<th>حوافز</th>
+<th>خصومات</th>
+<th>الصافي</th>
+<th>التاريخ</th>
+<th class="no-print">إيصال</th>
+</tr>
+</thead>
+<tbody id="payRows">
+<tr><td colspan="7" style="text-align:center;">لا توجد مرتبات بعد.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="panel" id="p5">
+<h3>نشر نشاط جديد (صورة أو فيديو أو منشور)</h3>
+<form id="activityUploadForm" class="no-print">
+<div class="grid2">
+<label class="lbl">عنوان المنشور
+<input type="text" id="actTitle" required>
+</label>
+<label class="lbl">التصنيف
+<select id="actCategory">
+<option value="نشاط مدرسي">نشاط مدرسي</option>
+<option value="صور الفعاليات">صور الفعاليات</option>
+<option value="فيديو النشاطات">فيديو النشاطات</option>
+</select>
+</label>
+</div>
+
+<label class="lbl">نص المنشور / التفاصيل
+<textarea id="actDesc" rows="3" required></textarea>
+</label>
+
+<div class="media-picker-box">
+<div style="font-weight:800; color:#0f2c59; margin-bottom:8px;">اختيار صورة أو فيديو من الاستديو أو ملفات الجهاز</div>
+<button type="button" class="btn btn-n" id="pickMediaBtn">اختيار من الاستديو / الملفات</button>
+<input type="file" id="actMediaFile" accept="image/*,video/*" style="display:none;">
+<div id="selectedFileName" style="margin-top:8px; font-size:0.85rem; color:#475569;">لم يتم اختيار ملف وسائط.</div>
+<div class="preview-box" id="mediaPreviewBox"></div>
+</div>
+
+<button type="submit" class="btn btn-g" id="publishActBtn">نشر المنشور</button>
+<div id="actUploadStatus" style="margin-top:10px; font-weight:800; font-size:0.9rem;"></div>
+</form>
+
+<h3 style="margin-top:24px;">المنشورات الحالية</h3>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>العنوان</th>
+<th>النوع</th>
+<th>الوسائط</th>
+<th>التفاعل والتعليقات</th>
+<th>التاريخ</th>
+<th class="no-print">حذف</th>
+</tr>
+</thead>
+<tbody id="activitiesAdminRows">
+<tr><td colspan="6" style="text-align:center;">لا توجد منشورات بعد.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+const VALID_CODE = "Mus3ab";
+const VALID_PASS = "Rajnarok";
+const OWNER_SIGNATURE_SRC = "signature.png";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
+authDomain: "jil-al-ibda-a.firebaseapp.com",
+projectId: "jil-al-ibda-a",
+storageBucket: "jil-al-ibda-a.firebasestorage.app",
+messagingSenderId: "1057703586286",
+appId: "1:1057703586286:web:e581aa576eef32930746ff",
+measurementId: "G-TSG3J0BCSE"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+const loginBox = document.getElementById("loginBox");
+const appBox = document.getElementById("appBox");
+const loginMsg = document.getElementById("loginMsg");
+const today = new Date().toISOString().split("T")[0];
+document.getElementById("expDt").value = today;
+document.getElementById("payDt").value = today;
+
+let started = false;
+let currentVoucherData = null;
+
+function openDashboardView() {
+loginBox.style.setProperty("display", "none", "important");
+appBox.style.setProperty("display", "block", "important");
+document.getElementById("userTag").textContent = "المستخدم: " + VALID_CODE;
+if (!started) {
+started = true;
+runApp();
+}
+}
+
+function checkSession() {
+try {
+const localSaved = JSON.parse(localStorage.getItem("jilAdminAuth") || "null");
+const sessSaved = JSON.parse(sessionStorage.getItem("adminCodeSession") || "null");
+const active = (localSaved && localSaved.ok === true && Date.now() < localSaved.exp)
+|| (sessSaved && sessSaved.ok === true && Date.now() < sessSaved.exp);
+if (active) {
+openDashboardView();
+return;
+}
+} catch (_) {}
+loginBox.style.setProperty("display", "block", "important");
+appBox.style.setProperty("display", "none", "important");
+}
+
+checkSession();
+
+document.getElementById("ownerLoginForm").addEventListener("submit", (e) => {
+e.preventDefault();
+const code = document.getElementById("accessCodeInput").value.trim();
+const pass = document.getElementById("accessPassInput").value;
+loginMsg.textContent = "";
+
+if (code !== VALID_CODE || pass !== VALID_PASS) {
+loginMsg.textContent = "رمز الدخول أو كلمة السر غير صحيحة.";
+return;
+}
+
+const sessionObj = { ok: true, exp: Date.now() + 12 * 60 * 60 * 1000 };
+localStorage.setItem("jilAdminAuth", JSON.stringify(sessionObj));
+sessionStorage.setItem("adminCodeSession", JSON.stringify(sessionObj));
+openDashboardView();
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+localStorage.removeItem("jilAdminAuth");
+sessionStorage.removeItem("adminCodeSession");
+location.reload();
+});
+
+document.querySelectorAll(".tab-btn").forEach((b) => {
+b.addEventListener("click", () => {
+document.querySelectorAll(".tab-btn").forEach((x) => x.classList.remove("active"));
+document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+b.classList.add("active");
+document.getElementById(b.dataset.p).classList.add("active");
+});
+});
+
+function remText(n) {
+if (n <= 0) return "مسدد بالكامل";
+if (n === 1) return "متبقي قسط واحد";
+if (n === 2) return "متبقي قسطين";
+return `متبقي ${n} أقساط`;
+}
+
+function installmentOrdinalText(n) {
+const map = {
+1: "الأول",
+2: "الثاني",
+3: "الثالث",
+4: "الرابع",
+5: "الخامس"
+};
+return map[n] || `رقم ${n}`;
+}
+
+function amountToArabicWords(num) {
+const n = Math.floor(Number(num || 0));
+if (n === 0) return "صفر ريال سعودي";
+if (n === 500) return "خمسمائة ريال سعودي فقط لا غير";
+return `${n.toLocaleString("ar-SA")} ريال سعودي فقط لا غير`;
+}
+
+function instTotal(st) {
+const s = `${st.class || ""} ${st.stage || ""} ${st.nextGrade || ""}`;
+return (s.includes("سادس") || s.includes("متوسط")) ? 5 : 4;
+}
+
+function renderVoucher(r) {
+currentVoucherData = r;
+document.getElementById("voucherActionStatus").textContent = "";
+const amt = Number(r.amount || 0);
+const riy = Math.floor(amt);
+const hal = String(Math.round((amt - riy) * 100)).padStart(2, "0");
+const amountWords = r.amountWords || amountToArabicWords(amt);
+
+document.getElementById("voucherArea").innerHTML = `
+<div id="printableVoucherOnly" class="voucher">
+<div class="v-top">
+<div>
+<b class="v-fixed-lbl" style="font-size:1.05rem;">مدارس جيل الإبداع فرع صامطة</b><br>
+<small class="v-fixed-lbl">Jil Al-Ibda Schools - Samtah</small>
+</div>
+<div style="text-align:center;">
+<b class="v-fixed-lbl" style="font-size:1.35rem; text-decoration:underline;">سند قبض</b><br>
+<span class="v-fixed-lbl" style="font-size:0.9rem;">إيصال إلكتروني</span>
+</div>
+<div class="serial-box">
+<small class="v-fixed-lbl">الرقم التسلسلي</small><br>
+<b class="v-dyn-val" style="font-size:1.3rem; font-family:monospace;">${r.serialNumber}</b>
+</div>
+</div>
+
+<div class="v-money">
+<div><span class="v-fixed-lbl">التاريخ / Date:</span> <span class="v-dyn-val">${r.date || ""}</span></div>
+<div class="money-boxes">
+<div class="money-cell"><div class="v-fixed-lbl" style="font-size:0.75rem;">هـ</div><div class="v-dyn-val">${hal}</div></div>
+<div class="money-cell"><div class="v-fixed-lbl" style="font-size:0.75rem;">ريال S.R</div><div class="v-dyn-val">${riy}</div></div>
+</div>
+</div>
+
+<div class="v-line">
+<span><span class="v-fixed-lbl">استلمت من المكرم /</span> <span class="v-dyn-val">${r.receivedFrom || ""}</span></span>
+<span class="v-fixed-lbl">Received From</span>
+</div>
+
+<div class="v-line">
+<span><span class="v-fixed-lbl">مبلغاً وقدره /</span> <span class="v-dyn-val">${amt.toLocaleString("ar-SA")} ريال سعودي (${amountWords})</span></span>
+<span class="v-fixed-lbl">The Amount Of</span>
+</div>
+
+<div class="v-line">
+<span><span class="v-fixed-lbl">نقداً / بشيك /</span> <span class="v-dyn-val">${r.paymentMethod || "نقداً"}</span></span>
+<span class="v-fixed-lbl">The Bank</span>
+</div>
+
+<div class="v-line">
+<span><span class="v-fixed-lbl">وذلك عن /</span> <span class="v-dyn-val">${r.against || ""}</span></span>
+<span class="v-fixed-lbl">Against</span>
+</div>
+
+<div class="v-footer-row">
+<div class="v-accountant-right">
+<span class="v-fixed-lbl">المحاسب :</span>
+<span class="v-accountant-name">مصعب ابراهيم</span>
+</div>
+<div class="v-sig-center">
+<span class="v-fixed-lbl">التوقيع :</span>
+<img src="${OWNER_SIGNATURE_SRC}" alt="توقيع مصعب ابراهيم" class="owner-sig-img" crossorigin="anonymous" onerror="this.style.display='none'">
+</div>
+</div>
+
+<div class="no-print" style="margin-top:16px; text-align:center;">
+<button type="button" class="btn btn-n" id="btnPrintVoucher">طباعة / PDF</button>
+<button type="button" class="btn btn-g" id="btnShareVoucher">مشاركة صورة (واتساب)</button>
+<button type="button" class="btn btn-b" id="btnSaveVoucher">حفظ صورة</button>
+</div>
+</div>
+`;
+
+document.getElementById("btnPrintVoucher")?.addEventListener("click", printVoucherNow);
+document.getElementById("btnShareVoucher")?.addEventListener("click", shareVoucherImage);
+document.getElementById("btnSaveVoucher")?.addEventListener("click", downloadVoucherImage);
+}
+
+async function generateVoucherBlob() {
+const el = document.getElementById("printableVoucherOnly");
+if (!el || typeof html2canvas !== "function") return null;
+const canvas = await html2canvas(el, { scale: 2, backgroundColor: "#ffffff", useCORS: true });
+return await new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), "image/png"));
+}
+
+async function printVoucherNow() {
+const statusEl = document.getElementById("voucherActionStatus");
+try {
+window.print();
+} catch (_) {}
+
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+if (isMobile) {
+const blob = await generateVoucherBlob();
+if (blob && navigator.canShare) {
+const file = new File([blob], `receipt-${currentVoucherData?.serialNumber || "voucher"}.png`, { type: "image/png" });
+if (navigator.canShare({ files: [file] })) {
+try {
+await navigator.share({ files: [file], title: "إيصال إلكتروني" });
+return;
+} catch (_) {}
+}
+}
+if (blob) {
+const url = URL.createObjectURL(blob);
+const a = document.createElement("a");
+a.href = url;
+a.download = `receipt-${currentVoucherData?.serialNumber || "voucher"}.png`;
+a.click();
+statusEl.textContent = "تم حفظ نسخة صورة من الإيصال لطباعتها أو تحويلها إلى PDF بسهولة.";
+}
+}
+}
+
+async function shareVoucherImage() {
+const statusEl = document.getElementById("voucherActionStatus");
+statusEl.textContent = "جاري تجهيز صورة الإيصال...";
+const serial = currentVoucherData?.serialNumber || "voucher";
+const blob = await generateVoucherBlob();
+
+if (blob) {
+const file = new File([blob], `receipt-${serial}.png`, { type: "image/png" });
+if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+try {
+await navigator.share({
+files: [file],
+title: `إيصال إلكتروني رقم ${serial}`
+});
+statusEl.textContent = "تم فتح نافذة المشاركة بالصورة.";
+return;
+} catch (_) {}
+}
+
+const url = URL.createObjectURL(blob);
+const a = document.createElement("a");
+a.href = url;
+a.download = `receipt-${serial}.png`;
+a.click();
+statusEl.textContent = "تم تحميل صورة الإيصال على جهازك؛ أرفقها مباشرة في واتساب.";
+window.open("https://web.whatsapp.com/", "_blank");
+} else {
+statusEl.textContent = "تعذر توليد صورة الإيصال حالياً.";
+}
+}
+
+async function downloadVoucherImage() {
+const statusEl = document.getElementById("voucherActionStatus");
+const serial = currentVoucherData?.serialNumber || "voucher";
+const blob = await generateVoucherBlob();
+if (!blob) return;
+const url = URL.createObjectURL(blob);
+const a = document.createElement("a");
+a.href = url;
+a.download = `receipt-${serial}.png`;
+a.click();
+statusEl.textContent = `تم حفظ صورة الإيصال رقم ${serial}.`;
+}
+
+async function nextSerial() {
+const counterRef = doc(db, "counters", "receipts");
+const n = await runTransaction(db, async (tx) => {
+const s = await tx.get(counterRef);
+let cur = s.exists() ? (s.data().lastNumber || 0) : 0;
+cur = cur >= 9999 ? 1 : cur + 1;
+tx.set(counterRef, { lastNumber: cur }, { merge: true });
+return cur;
+});
+return String(n).padStart(4, "0");
+}
+
+async function createReceipt(obj) {
+const serialNumber = await nextSerial();
+const rec = { ...obj, serialNumber, timestamp: serverTimestamp() };
+await setDoc(doc(db, "receipts", serialNumber), rec);
+return rec;
+}
+
+function runApp() {
+let studentsMap = {};
+onSnapshot(collection(db, "students"), (snap) => {
+document.getElementById("stCount").textContent = snap.size;
+let paidSum = 0, html = "", late = [];
+studentsMap = {};
+const startStudy = new Date("2026-11-01");
+const now = new Date();
+const monthsElapsed = (now.getFullYear() - startStudy.getFullYear()) * 12 + (now.getMonth() - startStudy.getMonth()) + 1;
+
+snap.forEach((d) => {
+const st = d.data();
+const total = instTotal(st);
+const paid = Number(st.paidInstallmentsCount || 0);
+const rem = Math.max(0, total - paid);
+paidSum += paid * 500;
+studentsMap[d.id] = { id: d.id, ...st, total, paid, rem };
+
+const expectedDue = Math.max(0, Math.min(total, monthsElapsed - 1));
+const isLate = rem > 0 && paid < expectedDue;
+if (isLate) late.push(`${st.studentName || "طالب"} (${remText(rem)})`);
+
+html += `<tr>
+<td><b>${st.studentName || ""}</b></td>
+<td>${st.class || ""}</td>
+<td>${st.nationalID || d.id}</td>
+<td>${paid} / ${total} (${paid * 500} ر.س)</td>
+<td>${remText(rem)}</td>
+<td>${isLate ? '<span class="badge badge-late">تذكير متأخر</span>' : '<span class="badge badge-ok">منتظم</span>'}</td>
+<td class="no-print"><button type="button" class="btn btn-g" data-pay-id="${d.id}">سداد قسط</button></td>
+</tr>`;
+});
+
+document.getElementById("stPaidSum").textContent = paidSum.toLocaleString("ar-SA") + " ر.س";
+document.getElementById("studentsRows").innerHTML = html || '<tr><td colspan="7" style="text-align:center;">لا يوجد طلاب</td></tr>';
+document.getElementById("reminderBanner").innerHTML = late.length ? "<b>تنبيه تأخر:</b> " + late.join(" | ") : "لا يوجد طلاب متأخرون خارج فترة السماح حالياً.";
+
+document.querySelectorAll("[data-pay-id]").forEach((btn) => {
+btn.addEventListener("click", () => payInst(btn.dataset.payId));
+});
+}, () => {});
+
+async function payInst(id) {
+const st = studentsMap[id];
+if (!st) return;
+const nextPaid = Math.min(st.total, st.paid + 1);
+const rem = Math.max(0, st.total - nextPaid);
+await updateDoc(doc(db, "students", id), { paidInstallmentsCount: nextPaid, paymentStatus: remText(rem) });
+const ordText = installmentOrdinalText(nextPaid);
+const r = await createReceipt({
+receivedFrom: st.studentName || "ولي الأمر",
+amount: 500,
+amountWords: amountToArabicWords(500),
+date: today,
+paymentMethod: "نقداً",
+against: `سداد القسط ${ordText} (${remText(rem)})`,
+receiverName: st.studentName || ""
+});
+document.querySelector('[data-p="p2"]').click();
+renderVoucher(r);
+}
+
+onSnapshot(collection(db, "receipts"), (snap) => {
+const list = [];
+snap.forEach((d) => list.push(d.data()));
+list.sort((a, b) => String(b.serialNumber || "").localeCompare(String(a.serialNumber || "")));
+document.getElementById("receiptsRows").innerHTML = list.map((r) => `<tr>
+<td><b style="font-family:monospace;">${r.serialNumber}</b></td>
+<td>${r.receivedFrom || ""}</td>
+<td>${r.against || ""}</td>
+<td>${Number(r.amount || 0).toLocaleString("ar-SA")} ر.س</td>
+<td>${r.date || ""}</td>
+<td class="no-print"><button type="button" class="btn btn-n" data-serial="${r.serialNumber}">عرض</button></td>
+</tr>`).join("") || '<tr><td colspan="6" style="text-align:center;">لا توجد إيصالات</td></tr>';
+
+document.querySelectorAll("[data-serial]").forEach((btn) => {
+btn.addEventListener("click", () => showSerial(btn.dataset.serial));
+});
+}, () => {});
+
+async function showSerial(s) {
+const snap = await getDoc(doc(db, "receipts", String(s).trim().padStart(4, "0")));
+if (snap.exists()) renderVoucher(snap.data());
+else alert("لم يتم العثور على إيصال بهذا الرقم التسلسلي.");
+}
+
+document.getElementById("btnFindSerial").addEventListener("click", () => {
+const val = document.getElementById("serialSearchInput").value.trim();
+if (val) showSerial(val);
+});
+
+document.getElementById("expForm").addEventListener("submit", async (e) => {
+e.preventDefault();
+await addDoc(collection(db, "expenses"), {
+category: document.getElementById("expCat").value,
+amount: Number(document.getElementById("expAmt").value || 0),
+date: document.getElementById("expDt").value,
+details: document.getElementById("expDet").value.trim()
+});
+e.target.reset();
+document.getElementById("expDt").value = today;
+});
+
+onSnapshot(collection(db, "expenses"), (snap) => {
+let sum = 0, html = "";
+snap.forEach((d) => {
+const x = d.data();
+sum += Number(x.amount || 0);
+html += `<tr><td>${x.date || ""}</td><td>${x.category || ""}</td><td>${x.details || ""}</td><td>${Number(x.amount || 0).toLocaleString("ar-SA")} ر.س</td><td class="no-print"><button type="button" class="btn btn-r" data-del-exp="${d.id}">حذف</button></td></tr>`;
+});
+document.getElementById("stExpSum").textContent = sum.toLocaleString("ar-SA") + " ر.س";
+document.getElementById("expRows").innerHTML = html || '<tr><td colspan="5" style="text-align:center;">لا توجد منصرفات</td></tr>';
+
+document.querySelectorAll("[data-del-exp]").forEach((btn) => {
+btn.addEventListener("click", () => deleteDoc(doc(db, "expenses", btn.dataset.delExp)));
+});
+}, () => {});
+
+document.getElementById("saveStaffNumBtn").addEventListener("click", async () => {
+await setDoc(doc(db, "schoolMeta", "payrollSettings"), { manualStaffCount: Number(document.getElementById("staffNumInput").value || 0) }, { merge: true });
+alert("تم حفظ عدد الموظفين");
+});
+
+document.getElementById("payForm").addEventListener("submit", async (e) => {
+e.preventDefault();
+const name = document.getElementById("payName").value.trim();
+const base = Number(document.getElementById("payBase").value || 0);
+const bonus = Number(document.getElementById("payBonus").value || 0);
+const ded = Number(document.getElementById("payDed").value || 0);
+const net = Math.max(0, base + bonus - ded);
+const dt = document.getElementById("payDt").value;
+const note = document.getElementById("payNote").value.trim() || `راتب ${name}`;
+const r = await createReceipt({
+receivedFrom: name,
+amount: net,
+amountWords: amountToArabicWords(net),
+date: dt,
+paymentMethod: "نقداً",
+against: note,
+receiverName: name
+});
+await addDoc(collection(db, "payroll"), { staffName: name, baseSalary: base, bonus, deduction: ded, netSalary: net, payDate: dt, receiptSerial: r.serialNumber });
+e.target.reset();
+document.getElementById("payDt").value = today;
+document.querySelector('[data-p="p2"]').click();
+renderVoucher(r);
+});
+
+onSnapshot(collection(db, "payroll"), (snap) => {
+let sum = 0, html = "";
+snap.forEach((d) => {
+const p = d.data();
+sum += Number(p.netSalary || 0);
+html += `<tr><td>${p.staffName || ""}</td><td>${p.baseSalary || 0}</td><td>+${p.bonus || 0}</td><td>-${p.deduction || 0}</td><td><b>${Number(p.netSalary || 0).toLocaleString("ar-SA")} ر.س</b></td><td>${p.payDate || ""}</td><td class="no-print"><button type="button" class="btn btn-n" data-pay-serial="${p.receiptSerial}">إيصال</button></td></tr>`;
+});
+document.getElementById("stPaySum").textContent = sum.toLocaleString("ar-SA") + " ر.س";
+document.getElementById("payRows").innerHTML = html || '<tr><td colspan="7" style="text-align:center;">لا توجد مرتبات</td></tr>';
+
+document.querySelectorAll("[data-pay-serial]").forEach((btn) => {
+btn.addEventListener("click", () => showSerial(btn.dataset.paySerial));
+});
+}, () => {});
+
+const mediaInput = document.getElementById("actMediaFile");
+const pickMediaBtn = document.getElementById("pickMediaBtn");
+const selectedFileName = document.getElementById("selectedFileName");
+const mediaPreviewBox = document.getElementById("mediaPreviewBox");
+const uploadStatus = document.getElementById("actUploadStatus");
+const publishActBtn = document.getElementById("publishActBtn");
+let chosenFile = null;
+let chosenMediaType = "none";
+
+pickMediaBtn.addEventListener("click", () => mediaInput.click());
+
+mediaInput.addEventListener("change", () => {
+const file = mediaInput.files && mediaInput.files[0];
+if (!file) return;
+chosenFile = file;
+chosenMediaType = file.type.startsWith("video/") ? "video" : "image";
+selectedFileName.textContent = `${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} MB)`;
+const localUrl = URL.createObjectURL(file);
+mediaPreviewBox.innerHTML = chosenMediaType === "video"
+? `<video src="${localUrl}" controls></video>`
+: `<img src="${localUrl}" alt="معاينة">`;
+});
+
+document.getElementById("activityUploadForm").addEventListener("submit", async (e) => {
+e.preventDefault();
+const title = document.getElementById("actTitle").value.trim();
+const category = document.getElementById("actCategory").value;
+const description = document.getElementById("actDesc").value.trim();
+if (!title || !description) return;
+
+publishActBtn.disabled = true;
+uploadStatus.style.color = "#0f2c59";
+uploadStatus.textContent = "جاري النشر...";
+
+try {
+let mediaUrl = "";
+if (chosenFile) {
+const safeName = chosenFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+const storageRef = ref(storage, `activities/${Date.now()}_${safeName}`);
+const task = uploadBytesResumable(storageRef, chosenFile);
+
+await new Promise((resolve, reject) => {
+task.on(
+"state_changed",
+(snap) => {
+const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+uploadStatus.textContent = `جاري رفع الملف... ${pct}%`;
+},
+(err) => reject(err),
+() => resolve()
+);
+});
+
+mediaUrl = await getDownloadURL(storageRef);
+}
+
+await addDoc(collection(db, "activities"), {
+title,
+category,
+description,
+mediaUrl,
+mediaType: chosenMediaType,
+dateText: new Date().toLocaleString("ar-SA"),
+likesCount: 0,
+commentsCount: 0,
+timestamp: serverTimestamp()
+});
+
+document.getElementById("activityUploadForm").reset();
+chosenFile = null;
+chosenMediaType = "none";
+mediaInput.value = "";
+selectedFileName.textContent = "لم يتم اختيار ملف وسائط.";
+mediaPreviewBox.innerHTML = "";
+uploadStatus.style.color = "#15803d";
+uploadStatus.textContent = "تم النشر بنجاح.";
+} catch (err) {
+console.error(err);
+uploadStatus.style.color = "#b91c1c";
+uploadStatus.textContent = "تعذر النشر. تأكد من تفعيل Firebase Storage وصلاحياته.";
+} finally {
+publishActBtn.disabled = false;
+}
+});
+
+onSnapshot(collection(db, "activities"), (snap) => {
+const tbody = document.getElementById("activitiesAdminRows");
+const list = [];
+snap.forEach((d) => list.push({ id: d.id, ...d.data() }));
+list.sort((a, b) => (b.timestamp?.toMillis ? b.timestamp.toMillis() : 0) - (a.timestamp?.toMillis ? a.timestamp.toMillis() : 0));
+
+tbody.innerHTML = list.map((a) => `
+<tr>
+<td><b>${a.title || ""}</b></td>
+<td>${a.category || ""}</td>
+<td>${a.mediaType === "video" ? "فيديو" : (a.mediaType === "image" ? "صورة" : "نص")}</td>
+<td>${a.likesCount || 0} تفاعل | ${a.commentsCount || 0} تعليق</td>
+<td>${a.dateText || ""}</td>
+<td class="no-print"><button type="button" class="btn btn-r" data-del-act="${a.id}">حذف</button></td>
+</tr>
+`).join("") || '<tr><td colspan="6" style="text-align:center;">لا توجد منشورات بعد.</td></tr>';
+
+document.querySelectorAll("[data-del-act]").forEach((btn) => {
+btn.addEventListener("click", async () => {
+if (confirm("حذف هذا المنشور؟")) {
+await deleteDoc(doc(db, "activities", btn.dataset.delAct));
+}
+});
+});
+}, () => {});
+
+document.getElementById("searchSt").addEventListener("keyup", function() {
+const q = this.value.toLowerCase();
+for (const tr of document.getElementById("studentsRows").rows) {
+tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none";
+}
+});
+}
+</script>
+</body>
+</html>
 

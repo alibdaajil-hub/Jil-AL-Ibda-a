@@ -41,17 +41,17 @@ input, select { width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; borde
 <body>
 
 <div id="loginBox">
-<h2 style="margin:0 0 12px; color:#0f2c59; text-align:center;">دخول المالك (رمز تحقق)</h2>
-<form id="emailStepForm">
+<h2 style="margin:0 0 12px; color:#0f2c59; text-align:center;">دخول المالك</h2>
+<form id="emailStepForm" autocomplete="off">
 <label class="lbl">البريد الإلكتروني
-<input type="email" id="ownerEmailInput" required placeholder="musab.ibrahim1@icloud.com">
+<input type="email" id="ownerEmailInput" required placeholder="" autocomplete="off">
 </label>
 <button type="submit" class="btn btn-n" style="width:100%; padding:11px;">إرسال رمز التحقق</button>
 </form>
 
-<form id="otpStepForm" style="display:none; margin-top:14px;">
+<form id="otpStepForm" style="display:none; margin-top:14px;" autocomplete="off">
 <label class="lbl">أدخل الرمز المرسل إلى البريد (6 أرقام)
-<input type="text" id="otpCodeInput" maxlength="6" required placeholder="000000" style="text-align:center; font-weight:900; letter-spacing:4px;">
+<input type="text" id="otpCodeInput" maxlength="6" required placeholder="" autocomplete="off" style="text-align:center; font-weight:900; letter-spacing:4px;">
 </label>
 <button type="submit" class="btn btn-g" style="width:100%; padding:11px;">تأكيد الرمز والدخول</button>
 </form>
@@ -104,7 +104,7 @@ input, select { width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; borde
 <div class="panel" id="p2">
 <h3>استعلام عن إيصال إلكتروني بالرقم التسلسلي (0001 - 9999)</h3>
 <div class="no-print" style="display:flex; gap:8px; max-width:360px;">
-<input type="text" id="serialSearchInput" maxlength="4" placeholder="مثال: 0001">
+<input type="text" id="serialSearchInput" maxlength="4" placeholder="0001">
 <button type="button" class="btn btn-n" id="btnFindSerial">استعلام</button>
 </div>
 <div id="voucherArea"></div>
@@ -170,6 +170,13 @@ import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, delet
 
 const OWNER_EMAIL = "musab.ibrahim1@icloud.com";
 
+// إعدادات EmailJS لإرسال الرمز فعلياً إلى البريد دون إظهاره على الشاشة
+const EMAILJS_CONFIG = {
+publicKey: "YOUR_EMAILJS_PUBLIC_KEY",
+serviceId: "YOUR_EMAILJS_SERVICE_ID",
+templateId: "YOUR_EMAILJS_TEMPLATE_ID"
+};
+
 const firebaseConfig = {
 apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
 authDomain: "jil-al-ibda-a.firebaseapp.com",
@@ -207,20 +214,47 @@ if (!started) { started = true; runApp(); }
 
 unlockIfSessionValid();
 
-document.getElementById("emailStepForm").addEventListener("submit", (e) => {
+async function sendRealOtpEmail(toEmail, otpCode) {
+if (EMAILJS_CONFIG.publicKey.startsWith("YOUR_")) {
+throw new Error("EMAILJS_NOT_CONFIGURED");
+}
+const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({
+service_id: EMAILJS_CONFIG.serviceId,
+template_id: EMAILJS_CONFIG.templateId,
+user_id: EMAILJS_CONFIG.publicKey,
+template_params: {
+to_email: toEmail,
+otp_code: otpCode
+}
+})
+});
+if (!res.ok) throw new Error("SEND_FAILED");
+}
+
+document.getElementById("emailStepForm").addEventListener("submit", async (e) => {
 e.preventDefault();
 const enteredEmail = document.getElementById("ownerEmailInput").value.trim().toLowerCase();
 if (enteredEmail !== OWNER_EMAIL) {
 loginMsg.style.color = "#b91c1c";
-loginMsg.textContent = "هذا البريد غير مسموح له بالدخول.";
+loginMsg.textContent = "تعذر إرسال رمز التحقق لهذا البريد.";
 return;
 }
 
 generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
 otpExpiresAt = Date.now() + 5 * 60 * 1000;
+
+try {
+await sendRealOtpEmail(OWNER_EMAIL, generatedOtp);
 otpStepForm.style.display = "block";
 loginMsg.style.color = "#15803d";
-loginMsg.innerHTML = `تم إرسال الرمز إلى <b>${OWNER_EMAIL}</b><br><small>رمز التحقق المؤقت: <b>${generatedOtp}</b></small>`;
+loginMsg.textContent = "تم إرسال رمز التحقق إلى بريدك الإلكتروني.";
+} catch (err) {
+loginMsg.style.color = "#b91c1c";
+loginMsg.textContent = "خدمة إرسال البريد غير مفعلة بعد. يجب ربط EmailJS لإرسال الرمز إلى بريدك دون إظهاره على الشاشة.";
+}
 });
 
 document.getElementById("otpStepForm").addEventListener("submit", (e) => {
@@ -236,6 +270,7 @@ loginMsg.style.color = "#b91c1c";
 loginMsg.textContent = "رمز التحقق غير صحيح.";
 return;
 }
+generatedOtp = "";
 sessionStorage.setItem("ownerOtpAuth", JSON.stringify({ email: OWNER_EMAIL, exp: Date.now() + 12 * 60 * 60 * 1000 }));
 unlockIfSessionValid();
 });
@@ -463,4 +498,3 @@ tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none";
 </script>
 </body>
 </html>
-

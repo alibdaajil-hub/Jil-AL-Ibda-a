@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>النشاطات – مدارس جيل الإبداع والتميز</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+--navy: #0f2c59;
+--gold: #d4af37;
+--bg: #f0f2f5;
+--card: #ffffff;
+--border: #e2e8f0;
+--text: #0f172a;
+--muted: #64748b;
+--blue: #1877f2;
+}
+
+* { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+
+body {
+margin: 0;
+background: var(--bg);
+color: var(--text);
+padding-bottom: 50px;
+}
+
+.header {
+background: linear-gradient(135deg, var(--navy), #1e3a8a);
+color: #fff;
+padding: 16px 20px;
+border-bottom: 4px solid var(--gold);
+position: sticky;
+top: 0;
+z-index: 100;
+box-shadow: 0 4px 16px rgba(15, 44, 89, 0.14);
+}
+
+.header-inner {
+max-width: 760px;
+margin: 0 auto;
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 10px;
+}
+
+.header h1 {
+margin: 0;
+font-size: 1.25rem;
+font-weight: 900;
+}
+
+.header small {
+display: block;
+opacity: 0.88;
+font-size: 0.8rem;
+}
+
+.back-btn {
+text-decoration: none;
+background: rgba(255, 255, 255, 0.16);
+color: #fff;
+padding: 8px 14px;
+border-radius: 10px;
+font-weight: 800;
+font-size: 0.88rem;
+border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.feed {
+max-width: 760px;
+margin: 20px auto;
+padding: 0 12px;
+display: flex;
+flex-direction: column;
+gap: 18px;
+}
+
+.post-card {
+background: var(--card);
+border-radius: 14px;
+border: 1px solid var(--border);
+box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+overflow: hidden;
+}
+
+.post-head {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 14px 16px 10px;
+}
+
+.avatar {
+width: 44px;
+height: 44px;
+border-radius: 50%;
+background: var(--navy);
+color: var(--gold);
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: 900;
+font-size: 1.05rem;
+border: 2px solid var(--gold);
+flex-shrink: 0;
+}
+
+.post-author {
+font-weight: 900;
+color: var(--navy);
+font-size: 0.98rem;
+}
+
+.post-time {
+font-size: 0.78rem;
+color: var(--muted);
+}
+
+.post-body {
+padding: 0 16px 12px;
+}
+
+.post-title {
+margin: 0 0 6px;
+font-size: 1.08rem;
+font-weight: 900;
+color: #0f172a;
+}
+
+.post-desc {
+margin: 0;
+font-size: 0.94rem;
+color: #1e293b;
+white-space: pre-line;
+}
+
+.post-media {
+width: 100%;
+background: #0f172a;
+}
+
+.post-media img {
+width: 100%;
+max-height: 520px;
+object-fit: cover;
+display: block;
+}
+
+.post-media video {
+width: 100%;
+max-height: 520px;
+display: block;
+background: #000;
+}
+
+.post-stats {
+display: flex;
+justify-content: space-between;
+padding: 10px 16px;
+font-size: 0.84rem;
+color: var(--muted);
+border-bottom: 1px solid #f1f5f9;
+}
+
+.post-actions {
+display: grid;
+grid-template-columns: 1fr 1fr;
+padding: 6px 10px;
+border-bottom: 1px solid #f1f5f9;
+}
+
+.act-btn {
+background: transparent;
+border: none;
+padding: 9px;
+border-radius: 8px;
+font-weight: 800;
+font-size: 0.92rem;
+color: #475569;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 6px;
+transition: 0.15s;
+}
+
+.act-btn:hover {
+background: #f1f5f9;
+}
+
+.act-btn.liked {
+color: var(--blue);
+background: #eff6ff;
+}
+
+.comments-box {
+padding: 12px 16px 16px;
+background: #f8fafc;
+display: none;
+}
+
+.comments-box.open {
+display: block;
+}
+
+.comment-form {
+display: flex;
+flex-direction: column;
+gap: 8px;
+margin-bottom: 12px;
+}
+
+.comment-form input,
+.comment-form textarea {
+width: 100%;
+padding: 9px 12px;
+border: 1.5px solid #cbd5e1;
+border-radius: 10px;
+font-size: 0.9rem;
+background: #fff;
+}
+
+.comment-form textarea {
+min-height: 64px;
+resize: vertical;
+}
+
+.comment-submit {
+align-self: flex-start;
+background: var(--navy);
+color: #fff;
+border: none;
+padding: 8px 18px;
+border-radius: 9px;
+font-weight: 800;
+cursor: pointer;
+font-size: 0.88rem;
+}
+
+.comment-item {
+background: #fff;
+border: 1px solid #e2e8f0;
+border-radius: 10px;
+padding: 9px 12px;
+margin-bottom: 8px;
+}
+
+.comment-author {
+font-weight: 800;
+font-size: 0.86rem;
+color: var(--navy);
+}
+
+.comment-text {
+font-size: 0.9rem;
+color: #1e293b;
+margin-top: 3px;
+white-space: pre-line;
+}
+
+.comment-date {
+font-size: 0.74rem;
+color: var(--muted);
+margin-top: 4px;
+}
+
+.empty-state {
+background: #fff;
+border-radius: 14px;
+padding: 32px 20px;
+text-align: center;
+border: 1px solid var(--border);
+color: var(--muted);
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+<div class="header-inner">
+<div>
+<h1>🎉 نشاطات المدرسة</h1>
+<small>صور وفيديوهات وفعاليات مدارس جيل الإبداع – فرع صامطة</small>
+</div>
+<a href="index.html" class="back-btn">🏠 الرئيسية</a>
+</div>
+</header>
+
+<main class="feed" id="activitiesFeed">
+<div class="empty-state">جاري تحميل النشاطات والصور والفيديوهات...</div>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+getFirestore, collection, doc, updateDoc, addDoc, onSnapshot,
+increment, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
+authDomain: "jil-al-ibda-a.firebaseapp.com",
+projectId: "jil-al-ibda-a",
+storageBucket: "jil-al-ibda-a.firebasestorage.app",
+messagingSenderId: "1057703586286",
+appId: "1:1057703586286:web:e581aa576eef32930746ff",
+measurementId: "G-TSG3J0BCSE"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const feedEl = document.getElementById("activitiesFeed");
+const commentUnsubs = {};
+
+function getLikedSet() {
+try {
+return new Set(JSON.parse(localStorage.getItem("jilLikedPosts") || "[]"));
+} catch (_) {
+return new Set();
+}
+}
+
+function saveLikedSet(set) {
+localStorage.setItem("jilLikedPosts", JSON.stringify([...set]));
+}
+
+onSnapshot(collection(db, "activities"), (snap) => {
+const posts = [];
+snap.forEach((d) => posts.push({ id: d.id, ...d.data() }));
+posts.sort((a, b) => (b.timestamp?.toMillis ? b.timestamp.toMillis() : 0) - (a.timestamp?.toMillis ? a.timestamp.toMillis() : 0));
+
+if (!posts.length) {
+feedEl.innerHTML = `<div class="empty-state">لا توجد نشاطات منشورة حتى الآن.</div>`;
+return;
+}
+
+const likedSet = getLikedSet();
+
+feedEl.innerHTML = posts.map((p) => {
+const likesCount = Number(p.likesCount || 0);
+const commentsCount = Number(p.commentsCount || 0);
+const isLiked = likedSet.has(p.id);
+
+let mediaTag = "";
+if (p.mediaUrl) {
+if (p.mediaType === "video") {
+mediaTag = `<div class="post-media"><video src="${p.mediaUrl}" controls playsinline preload="metadata"></video></div>`;
+} else {
+mediaTag = `<div class="post-media"><img src="${p.mediaUrl}" alt="${p.title || "نشاط مدرسي"}"></div>`;
+}
+}
+
+return `
+<article class="post-card" id="post-${p.id}">
+<div class="post-head">
+<div class="avatar">ج</div>
+<div>
+<div class="post-author">مدارس جيل الإبداع – فرع صامطة</div>
+<div class="post-time">${p.dateText || ""} ${p.category ? "• " + p.category : ""}</div>
+</div>
+</div>
+
+<div class="post-body">
+${p.title ? `<h2 class="post-title">${p.title}</h2>` : ""}
+${p.description ? `<p class="post-desc">${p.description}</p>` : ""}
+</div>
+
+${mediaTag}
+
+<div class="post-stats">
+<span id="likes-label-${p.id}">👍 ${likesCount} تفاعل</span>
+<span id="comments-label-${p.id}">💬 ${commentsCount} تعليق</span>
+</div>
+
+<div class="post-actions">
+<button type="button" class="act-btn ${isLiked ? "liked" : ""}" id="like-btn-${p.id}" onclick="toggleReact('${p.id}')">
+👍 ${isLiked ? "تم التفاعل" : "تفاعل"}
+</button>
+<button type="button" class="act-btn" onclick="toggleCommentsBox('${p.id}')">
+💬 تعليق
+</button>
+</div>
+
+<div class="comments-box" id="comments-box-${p.id}">
+<form class="comment-form" onsubmit="submitComment(event, '${p.id}')">
+<input type="text" id="cname-${p.id}" placeholder="اسمك (مثال: ولي أمر الطالب / أحمد)" required>
+<textarea id="ctext-${p.id}" placeholder="اكتب تعليقك هنا..." required></textarea>
+<button type="submit" class="comment-submit">نشر التعليق</button>
+</form>
+<div id="comments-list-${p.id}">جاري تحميل التعليقات...</div>
+</div>
+</article>
+`;
+}).join("");
+});
+
+window.toggleReact = async function(postId) {
+const likedSet = getLikedSet();
+const alreadyLiked = likedSet.has(postId);
+const delta = alreadyLiked ? -1 : 1;
+
+if (alreadyLiked) likedSet.delete(postId);
+else likedSet.add(postId);
+saveLikedSet(likedSet);
+
+const btn = document.getElementById(`like-btn-${postId}`);
+if (btn) {
+btn.classList.toggle("liked", !alreadyLiked);
+btn.innerHTML = `👍 ${!alreadyLiked ? "تم التفاعل" : "تفاعل"}`;
+}
+
+await updateDoc(doc(db, "activities", postId), {
+likesCount: increment(delta)
+});
+};
+
+window.toggleCommentsBox = function(postId) {
+const box = document.getElementById(`comments-box-${postId}`);
+if (!box) return;
+const willOpen = !box.classList.contains("open");
+box.classList.toggle("open", willOpen);
+
+if (willOpen && !commentUnsubs[postId]) {
+const listEl = document.getElementById(`comments-list-${postId}`);
+commentUnsubs[postId] = onSnapshot(collection(db, "activities", postId, "comments"), (snap) => {
+const items = [];
+snap.forEach((d) => items.push(d.data()));
+items.sort((a, b) => (a.timestamp?.toMillis ? a.timestamp.toMillis() : 0) - (b.timestamp?.toMillis ? b.timestamp.toMillis() : 0));
+
+if (!items.length) {
+listEl.innerHTML = `<div style="color:#64748b; font-size:0.86rem;">لا توجد تعليقات بعد، كن أول من يعلق.</div>`;
+return;
+}
+
+listEl.innerHTML = items.map((c) => `
+<div class="comment-item">
+<div class="comment-author">${c.authorName || "زائر"}</div>
+<div class="comment-text">${c.commentText || ""}</div>
+<div class="comment-date">${c.dateText || ""}</div>
+</div>
+`).join("");
+});
+}
+};
+
+window.submitComment = async function(e, postId) {
+e.preventDefault();
+const nameInput = document.getElementById(`cname-${postId}`);
+const textInput = document.getElementById(`ctext-${postId}`);
+const authorName = nameInput.value.trim();
+const commentText = textInput.value.trim();
+if (!authorName || !commentText) return;
+
+const dateText = new Date().toLocaleString("ar-SA");
+await addDoc(collection(db, "activities", postId, "comments"), {
+authorName,
+commentText,
+dateText,
+timestamp: serverTimestamp()
+});
+
+await updateDoc(doc(db, "activities", postId), {
+commentsCount: increment(1)
+});
+
+textInput.value = "";
+};
+</script>
+</body>
+</html>

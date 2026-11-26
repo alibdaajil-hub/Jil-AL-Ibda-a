@@ -41,22 +41,17 @@ input, select { width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; borde
 <body>
 
 <div id="loginBox">
-<h2 style="margin:0 0 12px; color:#0f2c59; text-align:center;">دخول المالك</h2>
-<form id="emailStepForm" autocomplete="off">
-<label class="lbl">البريد الإلكتروني
-<input type="email" id="ownerEmailInput" required placeholder="" autocomplete="off">
+<h2 style="margin:0 0 14px; color:#0f2c59; text-align:center;">دخول الإدارة والحسابات</h2>
+<form id="ownerLoginForm" autocomplete="off">
+<label class="lbl">رمز الدخول
+<input type="text" id="accessCodeInput" required placeholder="" autocomplete="off">
 </label>
-<button type="submit" class="btn btn-n" style="width:100%; padding:11px;">إرسال رمز التحقق</button>
-</form>
-
-<form id="otpStepForm" style="display:none; margin-top:14px;" autocomplete="off">
-<label class="lbl">أدخل الرمز المرسل إلى البريد (6 أرقام)
-<input type="text" id="otpCodeInput" maxlength="6" required placeholder="" autocomplete="off" style="text-align:center; font-weight:900; letter-spacing:4px;">
+<label class="lbl">كلمة السر
+<input type="password" id="accessPassInput" required placeholder="" autocomplete="new-password">
 </label>
-<button type="submit" class="btn btn-g" style="width:100%; padding:11px;">تأكيد الرمز والدخول</button>
+<button type="submit" class="btn btn-n" style="width:100%; padding:11px;">تسجيل الدخول</button>
+<div id="loginMsg" style="color:#b91c1c; font-weight:700; margin-top:10px; text-align:center; font-size:0.88rem;"></div>
 </form>
-
-<div id="loginMsg" style="font-weight:700; margin-top:10px; text-align:center; font-size:0.88rem;"></div>
 </div>
 
 <div class="wrap" id="appBox">
@@ -168,14 +163,8 @@ input, select { width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; borde
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const OWNER_EMAIL = "musab.ibrahim1@icloud.com";
-
-// إعدادات EmailJS لإرسال الرمز فعلياً إلى البريد دون إظهاره على الشاشة
-const EMAILJS_CONFIG = {
-publicKey: "YOUR_EMAILJS_PUBLIC_KEY",
-serviceId: "YOUR_EMAILJS_SERVICE_ID",
-templateId: "YOUR_EMAILJS_TEMPLATE_ID"
-};
+const VALID_CODE = "Mus3ab";
+const VALID_PASS = "Rajnarok";
 
 const firebaseConfig = {
 apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
@@ -193,90 +182,41 @@ const db = getFirestore(app);
 const loginBox = document.getElementById("loginBox");
 const appBox = document.getElementById("appBox");
 const loginMsg = document.getElementById("loginMsg");
-const otpStepForm = document.getElementById("otpStepForm");
 const today = new Date().toISOString().split("T")[0];
 document.getElementById("expDt").value = today;
 document.getElementById("payDt").value = today;
 
-let generatedOtp = "";
-let otpExpiresAt = 0;
 let started = false;
 
-function unlockIfSessionValid() {
-const saved = JSON.parse(sessionStorage.getItem("ownerOtpAuth") || "null");
-if (saved && saved.email === OWNER_EMAIL && Date.now() < saved.exp) {
+function checkSession() {
+const saved = JSON.parse(sessionStorage.getItem("adminCodeSession") || "null");
+if (saved && saved.ok === true && Date.now() < saved.exp) {
 loginBox.style.display = "none";
 appBox.style.display = "block";
-document.getElementById("userTag").textContent = "المالك: " + OWNER_EMAIL;
+document.getElementById("userTag").textContent = "المستخدم: " + VALID_CODE;
 if (!started) { started = true; runApp(); }
 }
 }
 
-unlockIfSessionValid();
+checkSession();
 
-async function sendRealOtpEmail(toEmail, otpCode) {
-if (EMAILJS_CONFIG.publicKey.startsWith("YOUR_")) {
-throw new Error("EMAILJS_NOT_CONFIGURED");
-}
-const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
-method: "POST",
-headers: { "Content-Type": "application/json" },
-body: JSON.stringify({
-service_id: EMAILJS_CONFIG.serviceId,
-template_id: EMAILJS_CONFIG.templateId,
-user_id: EMAILJS_CONFIG.publicKey,
-template_params: {
-to_email: toEmail,
-otp_code: otpCode
-}
-})
-});
-if (!res.ok) throw new Error("SEND_FAILED");
-}
-
-document.getElementById("emailStepForm").addEventListener("submit", async (e) => {
+document.getElementById("ownerLoginForm").addEventListener("submit", (e) => {
 e.preventDefault();
-const enteredEmail = document.getElementById("ownerEmailInput").value.trim().toLowerCase();
-if (enteredEmail !== OWNER_EMAIL) {
-loginMsg.style.color = "#b91c1c";
-loginMsg.textContent = "تعذر إرسال رمز التحقق لهذا البريد.";
+const code = document.getElementById("accessCodeInput").value.trim();
+const pass = document.getElementById("accessPassInput").value;
+loginMsg.textContent = "";
+
+if (code !== VALID_CODE || pass !== VALID_PASS) {
+loginMsg.textContent = "رمز الدخول أو كلمة السر غير صحيحة.";
 return;
 }
 
-generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
-otpExpiresAt = Date.now() + 5 * 60 * 1000;
-
-try {
-await sendRealOtpEmail(OWNER_EMAIL, generatedOtp);
-otpStepForm.style.display = "block";
-loginMsg.style.color = "#15803d";
-loginMsg.textContent = "تم إرسال رمز التحقق إلى بريدك الإلكتروني.";
-} catch (err) {
-loginMsg.style.color = "#b91c1c";
-loginMsg.textContent = "خدمة إرسال البريد غير مفعلة بعد. يجب ربط EmailJS لإرسال الرمز إلى بريدك دون إظهاره على الشاشة.";
-}
-});
-
-document.getElementById("otpStepForm").addEventListener("submit", (e) => {
-e.preventDefault();
-const code = document.getElementById("otpCodeInput").value.trim();
-if (!generatedOtp || Date.now() > otpExpiresAt) {
-loginMsg.style.color = "#b91c1c";
-loginMsg.textContent = "انتهت صلاحية الرمز، أعد إرسال رمز جديد.";
-return;
-}
-if (code !== generatedOtp) {
-loginMsg.style.color = "#b91c1c";
-loginMsg.textContent = "رمز التحقق غير صحيح.";
-return;
-}
-generatedOtp = "";
-sessionStorage.setItem("ownerOtpAuth", JSON.stringify({ email: OWNER_EMAIL, exp: Date.now() + 12 * 60 * 60 * 1000 }));
-unlockIfSessionValid();
+sessionStorage.setItem("adminCodeSession", JSON.stringify({ ok: true, exp: Date.now() + 12 * 60 * 60 * 1000 }));
+checkSession();
 });
 
 document.getElementById("logoutBtn").addEventListener("click", () => {
-sessionStorage.removeItem("ownerOtpAuth");
+sessionStorage.removeItem("adminCodeSession");
 location.reload();
 });
 
@@ -498,3 +438,4 @@ tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none";
 </script>
 </body>
 </html>
+

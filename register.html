@@ -4,9 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>استمارة قبول وتسجيل طالب - مؤسسة جيل الإبداع والتميز</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
 <style>
 :root {
 --navy: #0f2c59;
@@ -16,6 +14,7 @@
 --label-bg: #f4f7fb;
 --text-dark: #1e293b;
 --muted: #64748b;
+--gold: #D4AF37;
 --warn-bg: #fffbeb;
 --warn-border: #f59e0b;
 --warn-text: #92400e;
@@ -25,7 +24,7 @@
 
 * {
 box-sizing: border-box;
-font-family: "Tajawal", "Segoe UI", Tahoma, Arial, sans-serif;
+font-family: "Tajawal", sans-serif;
 }
 
 body {
@@ -33,6 +32,34 @@ margin: 0;
 background-color: #eef2f6;
 color: var(--text-dark);
 padding: 20px 12px 40px;
+}
+
+.top-bar {
+max-width: 860px;
+margin: 0 auto 12px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 10px;
+}
+
+.back-home-btn {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+background: #ffffff;
+color: var(--navy);
+text-decoration: none;
+font-weight: 700;
+font-size: 0.9rem;
+padding: 8px 14px;
+border-radius: 8px;
+border: 1px solid var(--border-color);
+box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.back-home-btn:hover {
+background: var(--navy-light);
 }
 
 .paper-sheet {
@@ -43,9 +70,9 @@ padding: 24px 28px;
 border-radius: 8px;
 box-shadow: 0 10px 30px rgba(15, 44, 89, 0.12);
 border: 1px solid #d1d9e6;
+border-top: 4px solid var(--gold);
 }
 
-/* الترويسة العلوية */
 .form-header {
 display: flex;
 justify-content: space-between;
@@ -64,7 +91,7 @@ min-width: 155px;
 }
 
 .brand-logo {
-max-height: 52px;
+max-height: 54px;
 width: auto;
 object-fit: contain;
 margin-bottom: 6px;
@@ -80,7 +107,7 @@ flex: 1;
 margin: 0;
 font-size: 1.38rem;
 color: var(--navy);
-font-weight: 800;
+font-weight: 900;
 }
 
 .header-center .sub-title {
@@ -119,7 +146,6 @@ padding: 1px 4px;
 text-align: center;
 }
 
-/* الشريط الأزرق الرئيسي */
 .main-banner {
 background-color: var(--navy);
 color: #ffffff;
@@ -131,9 +157,11 @@ border-radius: 5px;
 margin-bottom: 14px;
 }
 
-/* عناوين الأقسام */
 .section-header {
 background-color: var(--navy-light);
 color: var(--navy);
 font-weight: 800;
-font-size
+font-size: 0.95rem;
+padding: 6px 12px;
+border-right: 4px solid var(--navy);
+margin-top: 14px

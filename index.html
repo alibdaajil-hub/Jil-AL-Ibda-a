@@ -88,6 +88,7 @@ border-radius: 10px;
 font-weight: 700;
 font-size: 0.88rem;
 transition: 0.2s;
+cursor: pointer;
 }
 
 .nav-link:hover {
@@ -231,6 +232,72 @@ font-size: 0.78rem;
 color: var(--muted);
 }
 
+/* نافذة تسجيل الدخول للإدارة */
+.modal-backdrop {
+position: fixed;
+inset: 0;
+background: rgba(9, 27, 56, 0.65);
+display: none;
+align-items: center;
+justify-content: center;
+padding: 16px;
+z-index: 999;
+}
+
+.modal-backdrop.show {
+display: flex;
+}
+
+.modal-card {
+width: 100%;
+max-width: 390px;
+background: #fff;
+border-radius: 16px;
+padding: 22px;
+border-top: 4px solid var(--gold);
+box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+}
+
+.modal-card h3 {
+margin: 0 0 14px;
+color: var(--navy);
+font-size: 1.2rem;
+font-weight: 900;
+text-align: center;
+}
+
+.field-lbl {
+display: block;
+font-size: 0.86rem;
+font-weight: 700;
+margin-bottom: 12px;
+color: var(--text);
+}
+
+.field-lbl input {
+width: 100%;
+padding: 10px 12px;
+border: 1.5px solid #cbd5e1;
+border-radius: 9px;
+margin-top: 5px;
+font-size: 0.94rem;
+}
+
+.modal-actions {
+display: flex;
+gap: 8px;
+margin-top: 8px;
+}
+
+.modal-error {
+color: #b91c1c;
+font-size: 0.86rem;
+font-weight: 800;
+text-align: center;
+margin-top: 10px;
+min-height: 20px;
+}
+
 footer {
 text-align: center;
 color: var(--muted);
@@ -258,7 +325,7 @@ padding: 20px 10px;
 <a href="search.html" class="nav-link">استعلام طالب</a>
 <a href="feedback.html" class="nav-link">الشكاوى والمقترحات</a>
 <a href="contact.html" class="nav-link">تواصل معنا</a>
-<a href="students_section.html" class="nav-link">دخول الإدارة</a>
+<button type="button" class="nav-link" id="openAdminLoginBtn">دخول الإدارة</button>
 </nav>
 </div>
 </header>
@@ -312,6 +379,26 @@ padding: 20px 10px;
 </section>
 </main>
 
+<!-- نافذة التحقق قبل فتح صفحة الإدارة -->
+<div class="modal-backdrop" id="adminAuthModal" aria-hidden="true">
+<div class="modal-card">
+<h3>دخول صفحة الإدارة</h3>
+<form id="adminGateForm" autocomplete="off">
+<label class="field-lbl">اسم المستخدم
+<input type="text" id="gateUserInput" required placeholder="" autocomplete="off">
+</label>
+<label class="field-lbl">كلمة المرور
+<input type="password" id="gatePassInput" required placeholder="" autocomplete="new-password">
+</label>
+<div class="modal-actions">
+<button type="submit" class="btn btn-primary" style="flex:1;">دخول</button>
+<button type="button" class="btn btn-soft" id="closeAdminModalBtn">إلغاء</button>
+</div>
+<div class="modal-error" id="gateErrorMsg"></div>
+</form>
+</div>
+</div>
+
 <footer>
 مؤسسة جيل الإبداع والتميز – فرع صامطة | هاتف الشكاوى والملاحظات: 0535727692
 </footer>
@@ -319,6 +406,9 @@ padding: 20px 10px;
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const ADMIN_USER = "Mus3ab";
+const ADMIN_PASS = "Rajnarok";
 
 const firebaseConfig = {
 apiKey: "AIzaSyDuotSqXkOwPrWIAxNC7KCqWlyYonsUIBA",
@@ -333,34 +423,55 @@ measurementId: "G-TSG3J0BCSE"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+const modal = document.getElementById("adminAuthModal");
+const openBtn = document.getElementById("openAdminLoginBtn");
+const closeBtn = document.getElementById("closeAdminModalBtn");
+const gateForm = document.getElementById("adminGateForm");
+const userInput = document.getElementById("gateUserInput");
+const passInput = document.getElementById("gatePassInput");
+const errMsg = document.getElementById("gateErrorMsg");
+
+openBtn.addEventListener("click", () => {
+userInput.value = "";
+passInput.value = "";
+errMsg.textContent = "";
+modal.classList.add("show");
+modal.setAttribute("aria-hidden", "false");
+userInput.focus();
+});
+
+closeBtn.addEventListener("click", () => {
+modal.classList.remove("show");
+modal.setAttribute("aria-hidden", "true");
+});
+
+modal.addEventListener("click", (e) => {
+if (e.target === modal) {
+modal.classList.remove("show");
+modal.setAttribute("aria-hidden", "true");
+}
+});
+
+gateForm.addEventListener("submit", (e) => {
+e.preventDefault();
+const u = userInput.value.trim();
+const p = passInput.value;
+
+if (u === ADMIN_USER && p === ADMIN_PASS) {
+sessionStorage.setItem("adminCodeSession", JSON.stringify({
+ok: true,
+exp: Date.now() + 12 * 60 * 60 * 1000
+}));
+window.location.href = "students_section.html";
+} else {
+errMsg.textContent = "اسم المستخدم أو كلمة المرور غير صحيحة.";
+}
+});
+
 onSnapshot(collection(db, "activities"), (snap) => {
 const box = document.getElementById("homeActivitiesPreview");
 const posts = [];
 snap.forEach((d) => posts.push({ id: d.id, ...d.data() }));
 posts.sort((a, b) => (b.timestamp?.toMillis ? b.timestamp.toMillis() : 0) - (a.timestamp?.toMillis ? a.timestamp.toMillis() : 0));
 
-const top3 = posts.slice(0, 3);
-if (!top3.length) {
-box.innerHTML = `<div class="mini-post"><div class="title">لا توجد منشورات بعد</div><div class="meta">النشاطات المنشورة تظهر هنا.</div></div>`;
-return;
-}
-
-box.innerHTML = top3.map((p) => {
-const mediaHtml = p.mediaType === "video" && p.mediaUrl
-? `<video src="${p.mediaUrl}" controls preload="metadata"></video>`
-: (p.mediaUrl ? `<img src="${p.mediaUrl}" alt="${p.title || "منشور"}">` : "");
-
-return `
-<div class="mini-post">
-${mediaHtml}
-<div class="title">${p.title || "منشور"}</div>
-<p style="margin:0 0 8px; font-size:0.86rem; color:#334155;">${p.description || ""}</p>
-<div class="meta">${p.dateText || ""} • <a href="activities.html" style="color:#0f2c59; font-weight:800; text-decoration:none;">عرض المنشور ←</a></div>
-</div>
-`;
-}).join("");
-});
-</script>
-</body>
-</html>
-
+const top3 =
